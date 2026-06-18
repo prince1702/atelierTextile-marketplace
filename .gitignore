@@ -30,3 +30,5 @@ dist-ssr
 
 # Backend (has its own .gitignore)
 atelierTextile-backend/.env
+
+.vercel

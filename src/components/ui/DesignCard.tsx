@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import type { Design } from '../data/mockData';
-import { useCart } from '../contexts/CartContext';
+import type { Design } from '../../data/mockData';
+import { useCart } from '../../contexts/CartContext';
 
 interface DesignCardProps {
   design: Design;

@@ -37,9 +37,10 @@ export const api = {
       await delay(600);
       return orders;
     },
-    getByUserId: async (userId: string): Promise<Order[]> => {
+    getByUserId: async (_userId: string): Promise<Order[]> => {
       await delay(500);
-      return orders.filter(o => o.buyerId === userId);
+      // When backend is integrated, filter by real userId
+      return orders;
     }
   }
 };
