@@ -1,10 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { designs } from '../../data/mockData';
+import { api } from '../../services/api';
+import type { Design } from '../../types';
 import { DesignCard } from '../../components/ui/DesignCard';
 
 export function Landing() {
-  const featuredDesigns = designs.slice(0, 4);
+  const [designs, setDesigns] = useState<Design[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDesigns = async () => {
+      try {
+        const response = await api.designs.getAll({ limit: 4 });
+        setDesigns(response.designs);
+      } catch (error) {
+        console.error('Failed to fetch landing designs:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchDesigns();
+  }, []);
+
+  const featuredDesigns = designs;
 
   return (
     <div className="flex flex-col bg-background">
@@ -58,22 +76,26 @@ export function Landing() {
             </div>
           </div>
 
-          <div className="relative h-[600px] w-full rounded-2xl overflow-hidden shadow-2xl animate-fade-in group">
-            <img 
-              src={designs[1].image} 
-              alt="Premium Textile Display" 
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
-            
-            <div className="absolute bottom-8 left-8 right-8 glass rounded-xl p-6 border border-white/20 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-              <div className="flex justify-between items-center mb-2">
-                <span className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md">Featured Design</span>
-                <span className="text-white font-bold text-xl">$1,250</span>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-1">Indigo Amber Flow</h3>
-              <p className="text-white/80 text-sm">By Atelier Rousseau</p>
-            </div>
+          <div className="relative h-[600px] w-full rounded-2xl overflow-hidden shadow-2xl animate-fade-in group bg-surface-container-low">
+            {designs.length > 0 && (
+              <>
+                <img 
+                  src={designs[1]?.image || designs[0]?.image} 
+                  alt="Premium Textile Display" 
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+                
+                <div className="absolute bottom-8 left-8 right-8 glass rounded-xl p-6 border border-white/20 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md">Featured Design</span>
+                    <span className="text-white font-bold text-xl">${(designs[1]?.price || designs[0]?.price || 1250).toLocaleString()}</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-1">{designs[1]?.title || designs[0]?.title || 'Indigo Amber Flow'}</h3>
+                  <p className="text-white/80 text-sm">By {designs[1]?.designerName || designs[0]?.designerName || 'Atelier Rousseau'}</p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>

@@ -1,35 +1,57 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
+import { api } from '../../services/api';
 
 export function Profile() {
   const { user } = useAuth();
   const { showToast } = useNotification();
+  const [isSaving, setIsSaving] = useState(false);
   
   const [firstName, setFirstName] = useState(user?.name.split(' ')[0] || '');
   const [lastName, setLastName] = useState(user?.name.split(' ').slice(1).join(' ') || '');
   const [email, setEmail] = useState(user?.email || '');
   const [bio, setBio] = useState('Textile professional focusing on premium patterns and sustainable materials.');
   
-  const handleSavePersonal = (e: React.FormEvent) => {
+  const handleSavePersonal = async (e: React.FormEvent) => {
     e.preventDefault();
-    showToast('Personal information updated!');
+    if (!user) return;
+    setIsSaving(true);
+    try {
+      await api.users.update(user.id, {
+        name: `${firstName} ${lastName}`.trim(),
+      });
+      showToast('Personal information updated successfully!', 'success');
+    } catch (error) {
+      showToast('Failed to update personal information', 'error');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleSaveContact = (e: React.FormEvent) => {
+  const handleSaveContact = async (e: React.FormEvent) => {
     e.preventDefault();
-    showToast('Contact details saved!');
+    if (!user) return;
+    setIsSaving(true);
+    try {
+      await api.users.update(user.id, { email });
+      showToast('Contact email saved!', 'success');
+    } catch (error) {
+      showToast('Failed to update contact details', 'error');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSaveSecurity = (e: React.FormEvent) => {
     e.preventDefault();
-    showToast('Password changed successfully!');
+    showToast('Password changed successfully! (Demo)', 'success');
   };
 
   if (!user) return null;
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
+    <div className="space-y-6 animate-fade-in max-w-5xl mx-auto animate-sans">
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-primary mb-1">User Profile</h1>
         <p className="text-sm text-on-surface-variant">Manage your personal information and account settings.</p>
@@ -39,7 +61,7 @@ export function Profile() {
         {/* Left Column: Profile Card */}
         <div className="lg:col-span-1 space-y-5">
           <div className="bg-white rounded-xl border border-outline-variant p-6 flex flex-col items-center text-center shadow-sm card-lift">
-            <div className="relative w-32 h-32 mb-4 group cursor-pointer rounded-full bg-primary-container text-white flex items-center justify-center text-4xl font-bold border-4 border-surface-container shadow-md">
+            <div className="relative w-32 h-32 mb-4 group cursor-pointer rounded-full bg-primary-container text-white flex items-center justify-center text-4xl font-bold border-4 border-surface-container shadow-md select-none">
               {user.initials}
               <div className="absolute inset-0 bg-primary/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
                 <span className="material-symbols-outlined text-white text-[28px]">photo_camera</span>
@@ -49,11 +71,8 @@ export function Profile() {
             <p className="text-sm text-on-surface-variant capitalize mb-1">{user.role}</p>
             <div className="flex items-center gap-1 text-xs text-surface-tint mb-4">
               <span className="material-symbols-outlined text-[14px]">location_on</span>
-              <span>Global User</span>
+              <span>{user.country || 'Global User'}</span>
             </div>
-            <button className="text-sm font-semibold text-primary border border-primary hover:bg-surface-variant px-5 py-2 rounded-lg transition-colors w-full">
-              Change Photo
-            </button>
           </div>
 
           <div className="bg-white rounded-xl border border-outline-variant p-5 shadow-sm">
@@ -101,7 +120,7 @@ export function Profile() {
                 <p className="text-xs text-on-surface-variant mt-1.5 text-right">{bio.length}/500 characters</p>
               </div>
               <div className="flex justify-end pt-2 border-t border-outline-variant">
-                <button className="bg-primary-container hover:bg-primary text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2 shadow-sm" type="submit">
+                <button className="bg-primary-container hover:bg-primary text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2 shadow-sm" type="submit" disabled={isSaving}>
                   <span className="material-symbols-outlined text-[16px]">save</span>
                   Save Changes
                 </button>
@@ -124,7 +143,7 @@ export function Profile() {
                     <input className="w-full bg-white border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" type="email" value={email} onChange={e => setEmail(e.target.value)}/>
                   </div>
                 </div>
-                <button className="text-sm font-semibold text-primary border border-primary hover:bg-surface-variant px-4 py-2 rounded-lg transition-colors w-full" type="submit">
+                <button className="text-sm font-semibold text-primary border border-primary hover:bg-surface-variant px-4 py-2 rounded-lg transition-colors w-full" type="submit" disabled={isSaving}>
                   Update Contact
                 </button>
               </form>

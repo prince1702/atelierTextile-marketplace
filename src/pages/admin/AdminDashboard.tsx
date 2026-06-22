@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatCard } from '../../components/ui/StatCard';
 import { useAuth } from '../../contexts/AuthContext';
-import { users, orders, monthlyRevenue, months } from '../../data/mockData';
+import { api } from '../../services/api';
+import { useNotification } from '../../contexts/NotificationContext';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -18,13 +19,33 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 export function AdminDashboard() {
   const { user } = useAuth();
+  const { showToast } = useNotification();
+  const [stats, setStats] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await api.users.getStats();
+        setStats(data);
+      } catch (error) {
+        console.error('Failed to load dashboard stats:', error);
+        showToast('Failed to load platform statistics', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchStats();
+  }, [showToast]);
+
+  const months = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 
   const chartData = {
-    labels: months.slice(0, 6),
+    labels: months,
     datasets: [
       {
-        label: 'Revenue ($)',
-        data: monthlyRevenue.slice(0, 6),
+        label: 'Platform Revenue ($)',
+        data: stats?.monthlyRevenue || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         borderColor: '#1e3a8a',
         backgroundColor: 'rgba(30, 58, 138, 0.08)',
         borderWidth: 2,
@@ -46,6 +67,14 @@ export function AdminDashboard() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-20 bg-white border border-outline-variant rounded-xl shadow-sm">
+        <div className="w-10 h-10 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-up">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -61,19 +90,19 @@ export function AdminDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard 
-          title="Total Users" value="12,450" icon="group" trend="up" trendValue="+12% this month"
+          title="Total Users" value={stats.totalUsers} icon="group" trend="up" trendValue="+12% this month"
           colorClass={{ bg: 'bg-primary-fixed', iconBg: 'bg-primary-fixed/50', iconText: 'text-primary' }}
         />
         <StatCard 
-          title="Total Sellers" value="842" icon="storefront" trend="up" trendValue="+5% this month"
+          title="Total Sellers" value={stats.totalSellers} icon="storefront" trend="up" trendValue="+5% this month"
           colorClass={{ bg: 'bg-secondary-fixed', iconBg: 'bg-secondary-container/20', iconText: 'text-secondary-container' }}
         />
         <StatCard 
-          title="Active Accounts" value="8,921" icon="how_to_reg" trend="neutral" trendValue="Stable this week"
+          title="Total Orders" value={stats.totalOrders} icon="how_to_reg" trend="neutral" trendValue="Stable this week"
           colorClass={{ bg: 'bg-tertiary-fixed', iconBg: 'bg-tertiary-container/20', iconText: 'text-tertiary-container' }}
         />
         <StatCard 
-          title="Revenue (MTD)" value="$84K" icon="payments" trend="up" trendValue="+22% vs last month"
+          title="Platform Revenue" value={`$${stats.totalRevenue.toLocaleString()}`} icon="payments" trend="up" trendValue="+22% vs last month"
           colorClass={{ bg: 'bg-surface-variant', iconBg: 'bg-surface-variant', iconText: 'text-on-surface-variant' }}
         />
       </div>
@@ -89,46 +118,29 @@ export function AdminDashboard() {
         </div>
 
         <div className="bg-white border border-outline-variant rounded-xl shadow-sm p-6 flex flex-col">
-          <h3 className="text-base font-bold text-primary mb-5">Recent Activity</h3>
-          <div className="space-y-4 flex-1">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary shrink-0 mt-0.5">
-                <span className="material-symbols-outlined text-[16px]">publish</span>
+          <h3 className="text-base font-bold text-primary mb-5">Quick Actions</h3>
+          <div className="space-y-3 flex-1">
+            <a href="/admin/inventory" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">
+              <span className="material-symbols-outlined text-[24px] text-primary">pending_actions</span>
+              <div className="text-left">
+                <p className="text-sm font-bold text-on-surface">Pending Approvals</p>
+                <p className="text-xs text-on-surface-variant">Review new design submissions</p>
               </div>
-              <div className="flex-1 bg-surface-container-low rounded-lg p-3">
-                <div className="flex justify-between items-start mb-1">
-                  <span className="text-xs font-semibold text-primary">New Pattern</span>
-                  <span className="text-[10px] text-on-surface-variant">2m ago</span>
-                </div>
-                <p className="text-xs text-on-surface-variant">Studio Nord uploaded 'Summer Silk Wave'</p>
+            </a>
+            <a href="/admin/users" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">
+              <span className="material-symbols-outlined text-[24px] text-secondary">group</span>
+              <div className="text-left">
+                <p className="text-sm font-bold text-on-surface">Manage Users</p>
+                <p className="text-xs text-on-surface-variant">Suspend, activate, or view members</p>
               </div>
-            </div>
-            
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary-container shrink-0 mt-0.5">
-                <span className="material-symbols-outlined text-[16px]">shopping_bag</span>
+            </a>
+            <a href="/admin/analytics" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">
+              <span className="material-symbols-outlined text-[24px] text-tertiary">analytics</span>
+              <div className="text-left">
+                <p className="text-sm font-bold text-on-surface">Detailed Analytics</p>
+                <p className="text-xs text-on-surface-variant">Platform orders and user growth reports</p>
               </div>
-              <div className="flex-1 bg-surface-container-low rounded-lg p-3">
-                <div className="flex justify-between items-start mb-1">
-                  <span className="text-xs font-semibold text-primary">Order Placed</span>
-                  <span className="text-[10px] text-on-surface-variant">1h ago</span>
-                </div>
-                <p className="text-xs text-on-surface-variant">Order #8492 fulfilled by ThreadCo</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-error-container flex items-center justify-center text-error shrink-0 mt-0.5">
-                <span className="material-symbols-outlined text-[16px]">report</span>
-              </div>
-              <div className="flex-1 bg-surface-container-low rounded-lg p-3">
-                <div className="flex justify-between items-start mb-1">
-                  <span className="text-xs font-semibold text-error">IP Flag</span>
-                  <span className="text-[10px] text-on-surface-variant">5h ago</span>
-                </div>
-                <p className="text-xs text-on-surface-variant">Pattern #2234 flagged for review</p>
-              </div>
-            </div>
+            </a>
           </div>
         </div>
       </div>

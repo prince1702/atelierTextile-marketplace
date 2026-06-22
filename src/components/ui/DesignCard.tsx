@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import type { Design } from '../../data/mockData';
+import type { Design } from '../../types';
 import { useCart } from '../../contexts/CartContext';
 
 interface DesignCardProps {
@@ -62,7 +62,7 @@ export function DesignCard({ design }: DesignCardProps) {
         </div>
         
         <p className="text-xs text-on-surface-variant mb-4 flex items-center gap-1">
-          <span>by <span className="font-medium text-on-surface">{design.designer}</span></span>
+          <span>by <span className="font-medium text-on-surface">{design.designerName}</span></span>
           <span className="w-1 h-1 rounded-full bg-outline-variant"></span>
           <span>{design.fabric}</span>
         </p>

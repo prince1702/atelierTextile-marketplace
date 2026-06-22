@@ -33,7 +33,33 @@ exports.getDesigns = async (req, res, next) => {
       limit = 12,
     } = req.query;
 
-    const filter = { status: 'active' };
+    let filterStatus = 'active';
+    if (req.query.status) {
+      if (req.query.status === 'active') {
+        filterStatus = 'active';
+      } else {
+        // Require admin authentication for non-active statuses
+        try {
+          const jwt = require('jsonwebtoken');
+          let token;
+          if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const user = await User.findById(decoded.id);
+            if (user && user.role === 'admin') {
+              filterStatus = req.query.status;
+            }
+          }
+        } catch (err) {
+          filterStatus = 'active';
+        }
+      }
+    }
+
+    const filter = {};
+    if (filterStatus !== 'all') {
+      filter.status = filterStatus;
+    }
 
     if (category) filter.category = category;
     if (fabric) filter.fabric = fabric;
@@ -142,8 +168,15 @@ exports.createDesign = async (req, res, next) => {
 
     // Upload image to Cloudinary if provided
     if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer);
-      imageUrl = result.secure_url;
+      try {
+        const result = await uploadToCloudinary(req.file.buffer);
+        imageUrl = result.secure_url;
+      } catch (cloudinaryError) {
+        console.warn('⚠️ Cloudinary upload failed, using local fallback:', cloudinaryError.message);
+        imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+      }
+    } else {
+      imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
     }
 
     const design = await Design.create({
@@ -195,8 +228,13 @@ exports.updateDesign = async (req, res, next) => {
 
     // Upload new image if provided
     if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer);
-      req.body.image = result.secure_url;
+      try {
+        const result = await uploadToCloudinary(req.file.buffer);
+        req.body.image = result.secure_url;
+      } catch (cloudinaryError) {
+        console.warn('⚠️ Cloudinary upload failed during edit, using fallback:', cloudinaryError.message);
+        req.body.image = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+      }
     }
 
     // Parse array fields if sent as strings

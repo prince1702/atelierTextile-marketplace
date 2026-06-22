@@ -1,28 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { designs } from '../../data/mockData';
+import { api } from '../../services/api';
+import type { Design } from '../../types';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNotification } from '../../contexts/NotificationContext';
 
 export function DesignDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isInWishlist } = useCart();
   const { isAuthenticated } = useAuth();
-  
-  const design = designs.find(d => d.id === id) || designs[0];
+  const { showToast } = useNotification();
+
+  const [design, setDesign] = useState<Design | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedLicense, setSelectedLicense] = useState('Standard');
   const [activeTab, setActiveTab] = useState('details');
 
-  const isWishlisted = isInWishlist(design.id);
+  useEffect(() => {
+    const fetchDesign = async () => {
+      if (!id) return;
+      setIsLoading(true);
+      try {
+        const data = await api.designs.getById(id);
+        setDesign(data);
+      } catch (err: any) {
+        console.error(err);
+        setError('Design not found or failed to load');
+        showToast('Failed to load design details', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchDesign();
+  }, [id, showToast]);
+
+  const isWishlisted = design ? isInWishlist(design.id) : false;
 
   const handleAddToCart = () => {
+    if (!design) return;
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
     addToCart(design, selectedLicense);
   };
+
+  const getPrice = (price: number, license: string) => {
+    if (license === 'Extended') return price * 2.5;
+    if (license === 'Exclusive Buyout') return price * 8;
+    return price;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] bg-surface flex justify-center items-center">
+        <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (error || !design) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] bg-surface flex flex-col justify-center items-center p-6 text-center">
+        <span className="material-symbols-outlined text-[64px] text-outline mb-4">error</span>
+        <h2 className="text-2xl font-bold text-on-surface mb-2">Something went wrong</h2>
+        <p className="text-on-surface-variant mb-6">{error || 'Design not found'}</p>
+        <Link to="/marketplace" className="px-6 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary-container transition-colors shadow-sm">
+          Return to Marketplace
+        </Link>
+      </div>
+    );
+  }
 
   const licenseOptions = [
     { name: 'Standard', price: design.price, desc: 'Up to 500 units. Digital + Print.' },
@@ -43,7 +94,7 @@ export function DesignDetail() {
         </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-6 md:px-10 pt-8 animate-fade-in">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-10 pt-8 animate-fade-in animate-sans">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
           {/* Left: Image Gallery */}
@@ -76,10 +127,10 @@ export function DesignDetail() {
               <h1 className="text-3xl md:text-4xl font-bold text-on-surface mb-2 leading-tight">{design.title}</h1>
               <div className="flex items-center gap-4 text-sm text-on-surface-variant mb-6">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold">
+                  <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold">
                     {design.designerAvatar}
                   </div>
-                  <span className="font-semibold text-primary hover:underline cursor-pointer">{design.designer}</span>
+                  <span className="font-semibold text-primary hover:underline cursor-pointer">{design.designerName}</span>
                 </div>
                 <div className="w-1 h-1 rounded-full bg-outline-variant"></div>
                 <div className="flex items-center gap-1 text-secondary-container">
@@ -113,7 +164,7 @@ export function DesignDetail() {
               <div className="mt-6 pt-6 border-t border-outline-variant/50">
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-on-surface-variant">Total Payment</span>
-                  <span className="text-3xl font-bold text-primary">${licenseOptions.find(l => l.name === selectedLicense)?.price.toLocaleString()}</span>
+                  <span className="text-3xl font-bold text-primary">${getPrice(design.price, selectedLicense).toLocaleString()}</span>
                 </div>
                 <button onClick={handleAddToCart} className="w-full py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-2 group">
                   <span className="material-symbols-outlined group-hover:scale-110 transition-transform">shopping_cart</span>

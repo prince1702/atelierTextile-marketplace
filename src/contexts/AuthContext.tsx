@@ -1,69 +1,83 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'admin' | 'seller' | 'customer';
-  initials: string;
-  avatar?: string;
-}
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import type { User } from '../types';
+import { api } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string, role?: 'admin' | 'seller' | 'customer') => Promise<void>;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (name: string, email: string, password: string, role: 'seller' | 'customer') => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const DEMO_USERS: Record<string, User & { password: string }> = {
-  'admin@atelier.com': { id: '1', name: 'Admin User', email: 'admin@atelier.com', role: 'admin', initials: 'AU', password: 'admin123' },
-  'seller@atelier.com': { id: '2', name: 'Elena Jenkins', email: 'seller@atelier.com', role: 'seller', initials: 'EJ', password: 'seller123' },
-  'customer@atelier.com': { id: '3', name: 'Marcus Reed', email: 'customer@atelier.com', role: 'customer', initials: 'MR', password: 'customer123' },
-};
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    const stored = localStorage.getItem('atelier_user');
-    return stored ? JSON.parse(stored) : null;
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = useCallback(async (email: string, _password: string, role?: 'admin' | 'seller' | 'customer') => {
-    await new Promise(r => setTimeout(r, 800));
-    const demoUser = DEMO_USERS[email];
-    if (demoUser) {
-      const { password: _, ...userData } = demoUser;
-      setUser(userData);
-      localStorage.setItem('atelier_user', JSON.stringify(userData));
-    } else {
-      // Create a demo user based on role or email
-      const inferredRole = role || (email.includes('admin') ? 'admin' : email.includes('seller') ? 'seller' : 'customer');
-      const name = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
-      const newUser: User = { id: Date.now().toString(), name, email, role: inferredRole, initials };
-      setUser(newUser);
-      localStorage.setItem('atelier_user', JSON.stringify(newUser));
+  // Check auth status on startup
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = localStorage.getItem('atelier_token');
+      if (token) {
+        try {
+          const profile = await api.auth.getMe();
+          setUser(profile);
+        } catch (error) {
+          console.error('Session restoration failed:', error);
+          // Token expired or invalid
+          localStorage.removeItem('atelier_token');
+          localStorage.removeItem('atelier_user');
+          setUser(null);
+        }
+      }
+      setIsLoading(false);
+    };
+
+    initAuth();
+  }, []);
+
+  const login = useCallback(async (email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      const { token, user: loggedUser } = await api.auth.login(email, password);
+      localStorage.setItem('atelier_token', token);
+      localStorage.setItem('atelier_user', JSON.stringify(loggedUser));
+      setUser(loggedUser);
+    } catch (error) {
+      setUser(null);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
-  const register = useCallback(async (name: string, email: string, _password: string, role: 'seller' | 'customer') => {
-    await new Promise(r => setTimeout(r, 1000));
-    const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
-    const newUser: User = { id: Date.now().toString(), name, email, role, initials };
-    setUser(newUser);
-    localStorage.setItem('atelier_user', JSON.stringify(newUser));
+  const register = useCallback(async (name: string, email: string, password: string, role: 'seller' | 'customer') => {
+    setIsLoading(true);
+    try {
+      const { token, user: registeredUser } = await api.auth.register(name, email, password, role);
+      localStorage.setItem('atelier_token', token);
+      localStorage.setItem('atelier_user', JSON.stringify(registeredUser));
+      setUser(registeredUser);
+    } catch (error) {
+      setUser(null);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
+    localStorage.removeItem('atelier_token');
     localStorage.removeItem('atelier_user');
+    api.auth.logout().catch(err => console.error('Logout error on backend:', err));
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, register }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );
