@@ -30,8 +30,9 @@ export function Register() {
       await register(name, email, password, role);
       showToast('Account created successfully!');
       setTimeout(() => navigate(`/${role}/dashboard`), 100);
-    } catch (error) {
-      showToast('Error creating account', 'error');
+    } catch (error: any) {
+      const message = error.response?.data?.error || error.message || 'Error creating account';
+      showToast(message, 'error');
     } finally {
       setIsLoading(false);
     }

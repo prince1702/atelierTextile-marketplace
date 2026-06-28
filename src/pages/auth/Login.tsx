@@ -28,8 +28,9 @@ export function Login() {
       // Navigate is handled by ProtectedRoute once auth state updates, 
       // but we can force it here for UX flow.
       setTimeout(() => navigate('/profile'), 100);
-    } catch (error) {
-      showToast('Invalid credentials', 'error');
+    } catch (error: any) {
+      const message = error.response?.data?.error || error.message || 'Invalid credentials';
+      showToast(message, 'error');
     } finally {
       setIsLoading(false);
     }
