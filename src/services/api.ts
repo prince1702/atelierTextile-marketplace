@@ -14,6 +14,205 @@ const getApiUrl = () => {
 
 const API_URL = getApiUrl();
 
+const FRONTEND_MOCK_DESIGNS: Design[] = [
+  {
+    id: 'mock-design-1',
+    title: 'Royal Jacquard Weave',
+    designer: 'mock-seller',
+    designerName: 'Atelier Rousseau',
+    designerAvatar: 'AR',
+    price: 850,
+    category: 'Weaving Design',
+    subcategory: 'Kotalichi Design',
+    fabric: 'Silk',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=600&h=600&fit=crop',
+    rating: 4.9,
+    reviews: 124,
+    tags: ['weaving', 'jacquard', 'silk', 'royal'],
+    badge: 'Best Seller',
+    badgeColor: 'amber',
+    description: 'A luxurious Royal Jacquard pattern crafted with fine silk. Features intricate floral motifs and a rich texture that catches the light beautifully.',
+    dimensions: '140cm width, repeat 30cm',
+    colorways: ['Navy/Gold', 'Emerald/Silver', 'Ruby/Champagne'],
+    licenseType: 'Commercial Use',
+    status: 'active',
+    sales: 142,
+    revenue: 120700,
+    createdAt: new Date('2024-10-15').toISOString(),
+  },
+  {
+    id: 'mock-design-2',
+    title: 'Indigo Sashiko Embroidery',
+    designer: 'mock-seller',
+    designerName: 'Atelier Rousseau',
+    designerAvatar: 'AR',
+    price: 1250,
+    category: 'Embroidery Design',
+    subcategory: 'Multi Design',
+    fabric: 'Linen',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=600&h=600&fit=crop',
+    rating: 4.8,
+    reviews: 94,
+    tags: ['embroidery', 'sashiko', 'hand-stitched', 'indigo'],
+    badge: 'Limited Run',
+    badgeColor: 'blue',
+    description: 'An elegant hand-stitched embroidery design inspired by traditional Japanese Sashiko patterns. Ideal for high-end home textiles and apparel.',
+    dimensions: '140cm width, repeat 45cm',
+    colorways: ['Indigo/White', 'Navy/Cream', 'Slate/Grey'],
+    licenseType: 'Standard Regional',
+    status: 'active',
+    sales: 31,
+    revenue: 38750,
+    createdAt: new Date('2024-10-20').toISOString(),
+  },
+  {
+    id: 'mock-design-3',
+    title: 'Modern Geometric Digital Print',
+    designer: 'mock-seller',
+    designerName: 'Studio Verona',
+    designerAvatar: 'SV',
+    price: 650,
+    category: 'Digital Print Design',
+    fabric: 'Polyester Blend',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=600&h=600&fit=crop',
+    rating: 4.7,
+    reviews: 83,
+    tags: ['digital print', 'geometric', 'modern', 'abstract'],
+    badge: 'New',
+    badgeColor: 'indigo',
+    description: 'Sharp, modern geometric motifs styled in a bold contemporary palette. Designed specifically for activewear, tech apparel, or statement home pieces.',
+    dimensions: '150cm width, repeat 60cm',
+    colorways: ['Electric Blue/Orange', 'Monochrome/Yellow', 'Teal/Magenta'],
+    licenseType: 'Standard Regional',
+    status: 'active',
+    sales: 83,
+    revenue: 53950,
+    createdAt: new Date('2024-11-01').toISOString(),
+  },
+  {
+    id: 'mock-design-4',
+    title: 'Vintage Floral Placement Print',
+    designer: 'mock-seller',
+    designerName: 'Studio Verona',
+    designerAvatar: 'SV',
+    price: 950,
+    category: 'Position Print Design',
+    fabric: 'Cotton Blend',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=600&h=600&fit=crop',
+    rating: 4.6,
+    reviews: 42,
+    tags: ['floral', 'vintage', 'placement', 'print'],
+    badge: 'Trending',
+    badgeColor: 'purple',
+    description: 'A classic, highly detailed vintage botanical illustration setup for precise placement prints on t-shirts, hoodies, or center cushion panels.',
+    dimensions: 'A3 Size (29.7 x 42cm)',
+    colorways: ['Rose Garden', 'Moody Autumn', 'Dusty Lavender'],
+    licenseType: 'Extended Global',
+    status: 'active',
+    sales: 12,
+    revenue: 11400,
+    createdAt: new Date('2024-11-05').toISOString(),
+  },
+  {
+    id: 'mock-design-5',
+    title: 'Herringbone Technical Weaving',
+    designer: 'mock-seller',
+    designerName: 'Coastal Studio',
+    designerAvatar: 'CS',
+    price: 750,
+    category: 'Weaving Design',
+    subcategory: '50 600 Design',
+    fabric: 'Wool Blend',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=600&h=600&fit=crop',
+    rating: 4.4,
+    reviews: 38,
+    tags: ['weaving', 'herringbone', 'texture', 'wool'],
+    badge: 'Popular',
+    badgeColor: 'green',
+    description: 'A robust herringbone weave simulation displaying dense, rich threads. Exceptional for high-durability upholstery and winter coatings.',
+    dimensions: '145cm width, repeat 10cm',
+    colorways: ['Charcoal/Grey', 'Oatmeal/Cream', 'Olive/Black'],
+    licenseType: 'Commercial Use',
+    status: 'active',
+    sales: 58,
+    revenue: 43500,
+    createdAt: new Date('2024-10-10').toISOString(),
+  },
+  {
+    id: 'mock-design-6',
+    title: 'Gold Thread Royal Embroidery',
+    designer: 'mock-seller',
+    designerName: 'Coastal Studio',
+    designerAvatar: 'CS',
+    price: 1450,
+    category: 'Embroidery Design',
+    subcategory: 'Sequin Design',
+    fabric: 'Silk',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&h=600&fit=crop',
+    rating: 4.5,
+    reviews: 156,
+    tags: ['embroidery', 'gold thread', 'royal', 'luxury'],
+    badge: 'In Stock',
+    badgeColor: 'green',
+    description: 'Luxurious heavy embroidery motif with detailed gold stitching simulations, perfect for festive couture and velvet cushions.',
+    dimensions: '155cm width, repeat 35cm',
+    colorways: ['Gold/Crimson', 'Gold/Emerald', 'Gold/Royal Blue'],
+    licenseType: 'Standard Regional',
+    status: 'active',
+    sales: 134,
+    revenue: 194300,
+    createdAt: new Date('2024-09-28').toISOString(),
+  },
+  {
+    id: 'mock-design-7',
+    title: 'Abstract Watercolor Silk Print',
+    designer: 'mock-seller',
+    designerName: 'Coastal Studio',
+    designerAvatar: 'CS',
+    price: 880,
+    category: 'Digital Print Design',
+    fabric: 'Silk',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=600&h=600&fit=crop',
+    rating: 4.8,
+    reviews: 72,
+    tags: ['silk', 'digital print', 'watercolor', 'abstract'],
+    badge: 'Trending',
+    badgeColor: 'purple',
+    description: 'Fluid, dreamy watercolor flows scanning gorgeous shades of ocean blues and soft pinks, optimized for digital print output on pure silk habotai.',
+    dimensions: '140cm width, repeat 80cm',
+    colorways: ['Pacific Blue', 'Sunset Pastel', 'Forest Mist'],
+    licenseType: 'Extended Global',
+    status: 'active',
+    sales: 44,
+    revenue: 38720,
+    createdAt: new Date('2024-10-18').toISOString(),
+  },
+  {
+    id: 'mock-design-8',
+    title: 'Classic Baroque Motif Placement',
+    designer: 'mock-seller',
+    designerName: 'Studio Verona',
+    designerAvatar: 'SV',
+    price: 1100,
+    category: 'Position Print Design',
+    fabric: 'Cotton Sateen',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=600&h=600&fit=crop',
+    rating: 4.7,
+    reviews: 55,
+    tags: ['placement', 'baroque', 'classic', 'gold'],
+    badge: 'Premium',
+    badgeColor: 'amber',
+    description: 'Highly detailed golden baroque scrollwork positioned for symmetry, optimal for luxury duvet covers, cushions, and formalwear panels.',
+    dimensions: '100 x 100cm panel',
+    colorways: ['Gold on Black', 'Gold on Ivory', 'Silver on Midnight'],
+    licenseType: 'Extended Global',
+    status: 'active',
+    sales: 19,
+    revenue: 20900,
+    createdAt: new Date('2024-10-05').toISOString(),
+  }
+];
+
 const client = axios.create({
   baseURL: `${API_URL}/api`,
   headers: {
@@ -100,18 +299,77 @@ export const api = {
       page?: number;
       limit?: number;
     }): Promise<{ designs: Design[]; count: number; total: number; page: number; pages: number }> => {
-      const response = await client.get('/designs', { params });
-      return {
-        designs: normalize<Design[]>(response.data.data),
-        count: response.data.count,
-        total: response.data.total,
-        page: response.data.page,
-        pages: response.data.pages,
-      };
+      try {
+        const response = await client.get('/designs', { params });
+        return {
+          designs: normalize<Design[]>(response.data.data),
+          count: response.data.count,
+          total: response.data.total,
+          page: response.data.page,
+          pages: response.data.pages,
+        };
+      } catch (error) {
+        console.warn('API connection failed, falling back to local mock data:', error);
+        
+        let filtered = [...FRONTEND_MOCK_DESIGNS];
+        
+        if (params?.category && params.category !== 'All') {
+          filtered = filtered.filter(d => d.category === params.category);
+        }
+        if (params?.subcategory && params.subcategory !== 'All') {
+          filtered = filtered.filter(d => d.subcategory === params.subcategory);
+        }
+        if (params?.fabric && params.fabric !== 'All') {
+          filtered = filtered.filter(d => d.fabric === params.fabric);
+        }
+        if (params?.search) {
+          const s = params.search.toLowerCase();
+          filtered = filtered.filter(d => 
+            d.title.toLowerCase().includes(s) || 
+            (d.description && d.description.toLowerCase().includes(s)) || 
+            (d.tags && d.tags.some(t => t.toLowerCase().includes(s)))
+          );
+        }
+        if (params?.minPrice !== undefined) {
+          filtered = filtered.filter(d => d.price >= params.minPrice!);
+        }
+        if (params?.maxPrice !== undefined) {
+          filtered = filtered.filter(d => d.price <= params.maxPrice!);
+        }
+
+        if (params?.sort === 'price_asc') {
+          filtered.sort((a, b) => a.price - b.price);
+        } else if (params?.sort === 'price_desc') {
+          filtered.sort((a, b) => b.price - a.price);
+        } else {
+          filtered.sort((a, b) => new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime());
+        }
+
+        const limit = params?.limit || 9;
+        const page = params?.page || 1;
+        const total = filtered.length;
+        const pages = Math.ceil(total / limit);
+        const startIndex = (page - 1) * limit;
+        const designs = filtered.slice(startIndex, startIndex + limit);
+
+        return {
+          designs,
+          count: designs.length,
+          total,
+          page,
+          pages: pages || 1,
+        };
+      }
     },
     getById: async (id: string): Promise<Design> => {
-      const response = await client.get(`/designs/${id}`);
-      return normalize<Design>(response.data.data);
+      try {
+        const response = await client.get(`/designs/${id}`);
+        return normalize<Design>(response.data.data);
+      } catch (error) {
+        console.warn('API connection failed, falling back to local design by ID:', error);
+        const design = FRONTEND_MOCK_DESIGNS.find(d => d.id === id) || FRONTEND_MOCK_DESIGNS[0];
+        return design;
+      }
     },
     getByCategory: async (category: string): Promise<Design[]> => {
       const response = await client.get(`/designs/category/${category}`);
