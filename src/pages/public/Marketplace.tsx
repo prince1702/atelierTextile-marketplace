@@ -657,6 +657,8 @@ export function Marketplace() {
               })}
             </div>
           </div>
+        )}
+
         {/* Position Print Subcategories Visual Grid */}
         {activeCategory === 'Position Print Design' && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
