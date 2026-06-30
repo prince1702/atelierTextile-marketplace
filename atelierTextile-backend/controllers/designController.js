@@ -1,6 +1,8 @@
 const Design = require('../models/Design');
 const User = require('../models/User');
 const cloudinary = require('../config/cloudinary');
+const fs = require('fs');
+const path = require('path');
 
 // Helper: upload buffer to Cloudinary
 const uploadToCloudinary = (buffer) => {
@@ -168,14 +170,42 @@ exports.createDesign = async (req, res, next) => {
 
     let imageUrl = '';
 
-    // Upload image to Cloudinary if provided
+    // Upload image to Cloudinary if provided, otherwise save locally
     if (req.file) {
-      try {
-        const result = await uploadToCloudinary(req.file.buffer);
-        imageUrl = result.secure_url;
-      } catch (cloudinaryError) {
-        console.warn('⚠️ Cloudinary upload failed, using local fallback:', cloudinaryError.message);
-        imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+      const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
+                                     process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
+                                     process.env.CLOUDINARY_API_KEY && 
+                                     process.env.CLOUDINARY_API_KEY !== 'your_api_key';
+      
+      let uploadSuccess = false;
+      
+      if (isCloudinaryConfigured) {
+        try {
+          const result = await uploadToCloudinary(req.file.buffer);
+          imageUrl = result.secure_url;
+          uploadSuccess = true;
+        } catch (cloudinaryError) {
+          console.warn('⚠️ Cloudinary upload failed, using local fallback:', cloudinaryError.message);
+        }
+      }
+
+      if (!uploadSuccess) {
+        try {
+          const uploadsDir = path.join(__dirname, '../public/uploads');
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+          const filename = `design-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(req.file.originalname) || '.jpg'}`;
+          const filePath = path.join(uploadsDir, filename);
+          fs.writeFileSync(filePath, req.file.buffer);
+          
+          // Resolve backend URL dynamically
+          const host = req.get('host');
+          imageUrl = `${req.protocol}://${host}/uploads/${filename}`;
+        } catch (localError) {
+          console.error('❌ Local file write failed:', localError);
+          imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500'; // Final fallback
+        }
       }
     } else {
       imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
@@ -230,12 +260,40 @@ exports.updateDesign = async (req, res, next) => {
 
     // Upload new image if provided
     if (req.file) {
-      try {
-        const result = await uploadToCloudinary(req.file.buffer);
-        req.body.image = result.secure_url;
-      } catch (cloudinaryError) {
-        console.warn('⚠️ Cloudinary upload failed during edit, using fallback:', cloudinaryError.message);
-        req.body.image = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+      const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
+                                     process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
+                                     process.env.CLOUDINARY_API_KEY && 
+                                     process.env.CLOUDINARY_API_KEY !== 'your_api_key';
+      
+      let uploadSuccess = false;
+      
+      if (isCloudinaryConfigured) {
+        try {
+          const result = await uploadToCloudinary(req.file.buffer);
+          req.body.image = result.secure_url;
+          uploadSuccess = true;
+        } catch (cloudinaryError) {
+          console.warn('⚠️ Cloudinary upload failed during edit, using local fallback:', cloudinaryError.message);
+        }
+      }
+
+      if (!uploadSuccess) {
+        try {
+          const uploadsDir = path.join(__dirname, '../public/uploads');
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+          const filename = `design-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(req.file.originalname) || '.jpg'}`;
+          const filePath = path.join(uploadsDir, filename);
+          fs.writeFileSync(filePath, req.file.buffer);
+          
+          // Resolve backend URL dynamically
+          const host = req.get('host');
+          req.body.image = `${req.protocol}://${host}/uploads/${filename}`;
+        } catch (localError) {
+          console.error('❌ Local file write failed during edit:', localError);
+          req.body.image = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+        }
       }
     }
 
