@@ -353,7 +353,7 @@ export function Marketplace() {
         {activeCategory === 'All' && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
             <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">All Categories</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 justify-center">
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-6 justify-center">
               {ALL_SUBCATEGORIES_WITH_IMAGES.map(sub => (
                 <button
                   key={sub.name}
@@ -364,14 +364,14 @@ export function Marketplace() {
                   }}
                   className="flex flex-col items-center group focus:outline-none"
                 >
-                  <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-on-surface/80 transition-all duration-300 group-hover:border-primary group-hover:scale-105 group-hover:shadow-md">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-on-surface/80 transition-all duration-300 group-hover:border-primary group-hover:scale-105 group-hover:shadow-md">
                     <img 
                       src={sub.image} 
                       alt={sub.name} 
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   </div>
-                  <span className="mt-3 text-[11px] font-bold uppercase tracking-wider text-center max-w-[120px] transition-colors leading-tight text-on-surface-variant group-hover:text-primary">
+                  <span className="mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-[90px] sm:max-w-[120px] transition-colors leading-tight text-on-surface-variant group-hover:text-primary">
                     {sub.name}
                   </span>
                 </button>
@@ -384,7 +384,7 @@ export function Marketplace() {
         {activeCategory === 'Weaving Design' && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
             <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">Categories</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 justify-center">
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-6 justify-center">
               {WEAVING_SUBCATEGORIES_WITH_IMAGES.map(sub => {
                 const isActive = activeSubcategory === sub.name;
                 return (
@@ -393,7 +393,7 @@ export function Marketplace() {
                     onClick={() => { setActiveSubcategory(sub.name); setCurrentPage(1); }}
                     className="flex flex-col items-center group focus:outline-none"
                   >
-                    <div className={`w-28 h-28 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                    <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
                       isActive 
                         ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
                         : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
@@ -404,7 +404,7 @@ export function Marketplace() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
-                    <span className={`mt-3 text-[11px] font-bold uppercase tracking-wider text-center max-w-[120px] transition-colors leading-tight ${
+                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-[90px] sm:max-w-[120px] transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name === 'All' ? 'All Weaving' : sub.name}
@@ -420,7 +420,7 @@ export function Marketplace() {
         {activeCategory === 'Embroidery Design' && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
             <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">Categories</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 justify-center">
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-6 justify-center">
               {EMBROIDERY_SUBCATEGORIES_WITH_IMAGES.map(sub => {
                 const isActive = activeSubcategory === sub.name;
                 return (
@@ -429,7 +429,7 @@ export function Marketplace() {
                     onClick={() => { setActiveSubcategory(sub.name); setCurrentPage(1); }}
                     className="flex flex-col items-center group focus:outline-none"
                   >
-                    <div className={`w-28 h-28 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                    <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
                       isActive 
                         ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
                         : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
@@ -440,7 +440,7 @@ export function Marketplace() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
-                    <span className={`mt-3 text-[11px] font-bold uppercase tracking-wider text-center max-w-[120px] transition-colors leading-tight ${
+                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-[90px] sm:max-w-[120px] transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name === 'All' ? 'All Embroidery' : sub.name}
