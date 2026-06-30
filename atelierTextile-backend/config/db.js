@@ -8,9 +8,9 @@ const connectDB = async () => {
 
     if (!mongoUri) {
       console.log('⚠️  No MONGODB_URI environment variable found.');
-      console.log('🚀 Starting an in-memory MongoDB database server (downloading stable v5.0.19 binary if not cached)...');
+      console.log('🚀 Starting an in-memory MongoDB database server (downloading stable v7.0.14 binary if not cached)...');
       // Set the version to a smaller, stable version to ensure fast download and execution
-      process.env.MONGOMS_VERSION = '5.0.19';
+      process.env.MONGOMS_VERSION = '7.0.14';
       
       const { MongoMemoryServer } = require('mongodb-memory-server');
       const mongoServer = await MongoMemoryServer.create();
