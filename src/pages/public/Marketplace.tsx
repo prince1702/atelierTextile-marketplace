@@ -97,22 +97,101 @@ const EMBROIDERY_SUBCATEGORIES_WITH_IMAGES = [
   }
 ];
 
-const MAIN_CATEGORIES_WITH_IMAGES = [
+const ALL_SUBCATEGORIES_WITH_IMAGES = [
   {
-    name: 'Weaving Design',
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=300&h=300&fit=crop',
+    name: 'Kotalichi Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
   },
   {
-    name: 'Embroidery Design',
-    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=300&h=300&fit=crop',
+    name: '50 600 Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
   },
   {
-    name: 'Digital Print Design',
-    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=300&h=300&fit=crop',
+    name: 'Nylon Design',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
   },
   {
-    name: 'Position Print Design',
-    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=300&h=300&fit=crop',
+    name: 'Satin Design',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
+  },
+  {
+    name: 'Cotton Design',
+    image: 'https://images.unsplash.com/photo-1598048145816-43b9dfdc8857?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
+  },
+  {
+    name: 'All Over Design',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
+  },
+  {
+    name: 'Suit Design',
+    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
+  },
+  {
+    name: 'Dupatta Design',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
+  },
+  {
+    name: 'Blouse Design',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
+  },
+  {
+    name: 'Lehengha Design',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
+  },
+  {
+    name: 'Lace Design',
+    image: 'https://images.unsplash.com/photo-1565192647048-f997ded87ab5?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
+  },
+  {
+    name: 'Multi Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+    parentCategory: 'Embroidery Design'
+  },
+  {
+    name: 'Sequin Design',
+    image: 'https://images.unsplash.com/photo-1518002171953-a080ee81be25?w=200&h=200&fit=crop',
+    parentCategory: 'Embroidery Design'
+  },
+  {
+    name: 'Cording Design',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+    parentCategory: 'Embroidery Design'
+  },
+  {
+    name: 'Chain Design',
+    image: 'https://images.unsplash.com/photo-1565192647048-f997ded87ab5?w=200&h=200&fit=crop',
+    parentCategory: 'Embroidery Design'
+  },
+  {
+    name: 'Beads Design',
+    image: 'https://images.unsplash.com/photo-1605722243979-fe0be8158232?w=200&h=200&fit=crop',
+    parentCategory: 'Embroidery Design'
+  },
+  {
+    name: 'Folder Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+    parentCategory: 'Embroidery Design'
+  },
+  {
+    name: 'LTC Design',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+    parentCategory: 'Embroidery Design'
+  },
+  {
+    name: 'Free Download',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+    parentCategory: 'Embroidery Design'
   }
 ];
 
@@ -270,26 +349,30 @@ export function Marketplace() {
           </div>
         </div>
 
-        {/* Main Categories Visual Grid (Only shown when activeCategory is 'All') */}
+        {/* All Subcategories Visual Grid (Shown when activeCategory is 'All') */}
         {activeCategory === 'All' && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
-            <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">Main Categories</h3>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 justify-center">
-              {MAIN_CATEGORIES_WITH_IMAGES.map(cat => (
+            <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">All Categories</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 justify-center">
+              {ALL_SUBCATEGORIES_WITH_IMAGES.map(sub => (
                 <button
-                  key={cat.name}
-                  onClick={() => { setActiveCategory(cat.name); setActiveSubcategory('All'); setCurrentPage(1); }}
+                  key={sub.name}
+                  onClick={() => { 
+                    setActiveCategory(sub.parentCategory); 
+                    setActiveSubcategory(sub.name); 
+                    setCurrentPage(1); 
+                  }}
                   className="flex flex-col items-center group focus:outline-none"
                 >
-                  <div className="w-40 h-40 rounded-2xl overflow-hidden border-2 border-on-surface/80 transition-all duration-300 group-hover:border-primary group-hover:scale-105 group-hover:shadow-md">
+                  <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-on-surface/80 transition-all duration-300 group-hover:border-primary group-hover:scale-105 group-hover:shadow-md">
                     <img 
-                      src={cat.image} 
-                      alt={cat.name} 
+                      src={sub.image} 
+                      alt={sub.name} 
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   </div>
-                  <span className="mt-3 text-xs font-bold uppercase tracking-wider text-center transition-colors text-on-surface-variant group-hover:text-primary">
-                    {cat.name}
+                  <span className="mt-3 text-[11px] font-bold uppercase tracking-wider text-center max-w-[120px] transition-colors leading-tight text-on-surface-variant group-hover:text-primary">
+                    {sub.name}
                   </span>
                 </button>
               ))}
@@ -369,8 +452,7 @@ export function Marketplace() {
           </div>
         )}
 
-        {activeCategory !== 'All' ? (
-          <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
             
             {/* Advanced Filters Sidebar (Collapsible) */}
             {showFilters && (
@@ -510,12 +592,6 @@ export function Marketplace() {
             </div>
 
           </div>
-        ) : (
-          <div className="text-center py-12 bg-white rounded-2xl border border-outline-variant border-dashed mt-6">
-            <span className="material-symbols-outlined text-[48px] text-outline mb-2">category</span>
-            <p className="text-sm font-semibold text-on-surface-variant">Please select one of the main categories above to browse designs.</p>
-          </div>
-        )}
       </div>
     </div>
   );
