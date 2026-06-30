@@ -452,7 +452,13 @@ export function Marketplace() {
           </div>
         )}
 
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
+        {((designs && designs.length > 0) || 
+          activeCategory !== 'All' || 
+          activeSubcategory !== 'All' || 
+          selectedFabric !== 'All' || 
+          selectedPriceRange !== 'All' || 
+          searchTrigger.trim() !== '') && (
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
             
             {/* Advanced Filters Sidebar (Collapsible) */}
             {showFilters && (
@@ -590,8 +596,8 @@ export function Marketplace() {
                 </div>
               )}
             </div>
-
           </div>
+        )}
       </div>
     </div>
   );
