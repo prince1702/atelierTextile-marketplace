@@ -9,6 +9,7 @@ export function Register() {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<'customer' | 'seller'>('customer');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const { register } = useAuth();
@@ -129,7 +130,23 @@ export function Register() {
               <div className="space-y-5 animate-slide-in">
                 <div>
                   <label className="block text-sm font-semibold text-on-surface mb-1.5">Password</label>
-                  <input required value={password} onChange={e => setPassword(e.target.value)} className="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm outline-none transition-all" placeholder="••••••••" type="password" />
+                  <div className="relative">
+                    <input 
+                      required 
+                      value={password} 
+                      onChange={e => setPassword(e.target.value)} 
+                      className="w-full pl-4 pr-10 py-2.5 bg-white border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm outline-none transition-all" 
+                      placeholder="••••••••" 
+                      type={showPassword ? 'text' : 'password'} 
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-primary transition-colors focus:outline-none"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">{showPassword ? 'visibility' : 'visibility_off'}</span>
+                    </button>
+                  </div>
                   <p className="text-xs text-on-surface-variant mt-2">Must be at least 8 characters long.</p>
                 </div>
                 <div className="flex items-start mt-4 gap-3">
