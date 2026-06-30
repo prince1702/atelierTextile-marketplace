@@ -70,8 +70,8 @@ export default function App() {
             <Routes>
               {/* Public Routes */}
               <Route element={<PublicLayout />}>
-                <Route path="/" element={<Landing />} />
-                <Route path="/marketplace" element={<Marketplace />} />
+                <Route path="/" element={<Marketplace />} />
+                <Route path="/marketplace" element={<Navigate to="/" replace />} />
                 <Route path="/design/:id" element={<DesignDetail />} />
                 <Route path="/cart" element={<CartPage />} />
               </Route>
