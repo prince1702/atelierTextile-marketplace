@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const { seedDataWithoutExit } = require('../seeder');
 const User = require('../models/User');
 
@@ -13,6 +12,7 @@ const connectDB = async () => {
       // Set the version to a smaller, stable version to ensure fast download and execution
       process.env.MONGOMS_VERSION = '5.0.19';
       
+      const { MongoMemoryServer } = require('mongodb-memory-server');
       const mongoServer = await MongoMemoryServer.create();
       mongoUri = mongoServer.getUri();
       
