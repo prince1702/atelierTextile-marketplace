@@ -452,12 +452,11 @@ export function Marketplace() {
           </div>
         )}
 
-        {((designs && designs.length > 0) || 
-          activeCategory !== 'All' || 
-          activeSubcategory !== 'All' || 
-          selectedFabric !== 'All' || 
-          selectedPriceRange !== 'All' || 
-          searchTrigger.trim() !== '') && (
+        {((activeCategory !== 'All' || searchTrigger.trim() !== '') && 
+          ((designs && designs.length > 0) || 
+           activeSubcategory !== 'All' || 
+           selectedFabric !== 'All' || 
+           selectedPriceRange !== 'All')) && (
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             
             {/* Advanced Filters Sidebar (Collapsible) */}
