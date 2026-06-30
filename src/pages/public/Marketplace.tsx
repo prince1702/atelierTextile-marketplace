@@ -30,7 +30,7 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Cotton Design',
-    image: 'https://images.unsplash.com/photo-1598048145816-43b9dfdc8857?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
   },
   {
     name: 'All Over Design',
@@ -54,7 +54,7 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Lace Design',
-    image: 'https://images.unsplash.com/photo-1565192647048-f997ded87ab5?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
   }
 ];
 
@@ -69,7 +69,7 @@ const EMBROIDERY_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Sequin Design',
-    image: 'https://images.unsplash.com/photo-1518002171953-a080ee81be25?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1520004481444-76651b2203c2?w=200&h=200&fit=crop',
   },
   {
     name: 'Cording Design',
@@ -77,7 +77,7 @@ const EMBROIDERY_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Chain Design',
-    image: 'https://images.unsplash.com/photo-1565192647048-f997ded87ab5?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1584992236310-6edddc085ff8?w=200&h=200&fit=crop',
   },
   {
     name: 'Beads Design',
@@ -120,7 +120,7 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Cotton Design',
-    image: 'https://images.unsplash.com/photo-1598048145816-43b9dfdc8857?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
     parentCategory: 'Weaving Design'
   },
   {
@@ -150,7 +150,7 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Lace Design',
-    image: 'https://images.unsplash.com/photo-1565192647048-f997ded87ab5?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
     parentCategory: 'Weaving Design'
   },
   {
@@ -160,7 +160,7 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Sequin Design',
-    image: 'https://images.unsplash.com/photo-1518002171953-a080ee81be25?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1520004481444-76651b2203c2?w=200&h=200&fit=crop',
     parentCategory: 'Embroidery Design'
   },
   {
@@ -170,7 +170,7 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Chain Design',
-    image: 'https://images.unsplash.com/photo-1565192647048-f997ded87ab5?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1584992236310-6edddc085ff8?w=200&h=200&fit=crop',
     parentCategory: 'Embroidery Design'
   },
   {
