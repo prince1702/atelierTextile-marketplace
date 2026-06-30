@@ -30,6 +30,8 @@ export function UploadPage() {
       setSubcategory('Multi Design');
     } else if (category === 'Digital Print Design') {
       setSubcategory('Allover Design');
+    } else if (category === 'Position Print Design') {
+      setSubcategory('Saree Design');
     } else {
       setSubcategory('Other');
     }
@@ -77,6 +79,14 @@ export function UploadPage() {
           'Pakistani Suit',
           'Lehenga Design',
           'Other Design'
+        ];
+      case 'Position Print Design':
+        return [
+          'Saree Design',
+          'Dupatta Design',
+          'Allover Design',
+          'Blouse Design',
+          'Kali + Lehenga Design'
         ];
       default:
         return ['Other'];
@@ -207,20 +217,18 @@ export function UploadPage() {
             </div>
 
             {/* Subcategory */}
-            {category !== 'Position Print Design' && (
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Subcategory *</label>
-                <select 
-                  value={subcategory} 
-                  onChange={(e) => setSubcategory(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-                >
-                  {getSubcategories().map(sub => (
-                    <option key={sub} value={sub}>{sub}</option>
-                  ))}
-                </select>
-              </div>
-            )}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Subcategory *</label>
+              <select 
+                value={subcategory} 
+                onChange={(e) => setSubcategory(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+              >
+                {getSubcategories().map(sub => (
+                  <option key={sub} value={sub}>{sub}</option>
+                ))}
+              </select>
+            </div>
 
             {/* Fabric */}
             <div className="space-y-1">
