@@ -97,6 +97,65 @@ const EMBROIDERY_SUBCATEGORIES_WITH_IMAGES = [
   }
 ];
 
+const DIGITAL_PRINT_SUBCATEGORIES_WITH_IMAGES = [
+  {
+    name: 'All',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Allover Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Saree Design',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Dupatta Design',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Suit + Dupatta Set',
+    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kurti Design',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Sherwani Design',
+    image: 'https://images.unsplash.com/photo-1593030103066-0093718efeb9?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Daman Design',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Tshirt Design',
+    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Shirt Design',
+    image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kaftan Design',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Pakistani Suit',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Lehenga Design',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Other Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  }
+];
+
 const ALL_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'Kotalichi Design',
@@ -192,6 +251,71 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
     name: 'Free Download',
     image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
     parentCategory: 'Embroidery Design'
+  },
+  {
+    name: 'Allover Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Saree Design',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Dupatta Design',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Suit + Dupatta Set',
+    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Kurti Design',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Sherwani Design',
+    image: 'https://images.unsplash.com/photo-1593030103066-0093718efeb9?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Daman Design',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Tshirt Design',
+    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Shirt Design',
+    image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Kaftan Design',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Pakistani Suit',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Lehenga Design',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Other Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
   }
 ];
 
@@ -254,7 +378,7 @@ export function Marketplace() {
       };
 
       if (activeCategory !== 'All') params.category = activeCategory;
-      if ((activeCategory === 'Weaving Design' || activeCategory === 'Embroidery Design') && activeSubcategory !== 'All') {
+      if ((activeCategory === 'Weaving Design' || activeCategory === 'Embroidery Design' || activeCategory === 'Digital Print Design') && activeSubcategory !== 'All') {
         params.subcategory = activeSubcategory;
       }
       if (selectedFabric !== 'All') params.fabric = selectedFabric;
@@ -444,6 +568,42 @@ export function Marketplace() {
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name === 'All' ? 'All Embroidery' : sub.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Digital Print Subcategories Visual Grid */}
+        {activeCategory === 'Digital Print Design' && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
+            <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">Categories</h3>
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-6 justify-center">
+              {DIGITAL_PRINT_SUBCATEGORIES_WITH_IMAGES.map(sub => {
+                const isActive = activeSubcategory === sub.name;
+                return (
+                  <button
+                    key={sub.name}
+                    onClick={() => { setActiveSubcategory(sub.name); setCurrentPage(1); }}
+                    className="flex flex-col items-center group focus:outline-none"
+                  >
+                    <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-[90px] sm:max-w-[120px] transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name === 'All' ? 'All Digital Print' : sub.name}
                     </span>
                   </button>
                 );

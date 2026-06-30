@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';
@@ -12,6 +12,7 @@ export function UploadPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Weaving Design');
+  const [subcategory, setSubcategory] = useState('Kotalichi Design');
   const [fabric, setFabric] = useState('Cotton Blend');
   const [price, setPrice] = useState('');
   const [tags, setTags] = useState('');
@@ -20,6 +21,67 @@ export function UploadPage() {
   const [licenseType, setLicenseType] = useState('Standard Regional');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Dynamically update subcategory when category changes
+  useEffect(() => {
+    if (category === 'Weaving Design') {
+      setSubcategory('Kotalichi Design');
+    } else if (category === 'Embroidery Design') {
+      setSubcategory('Multi Design');
+    } else if (category === 'Digital Print Design') {
+      setSubcategory('Allover Design');
+    } else {
+      setSubcategory('Other');
+    }
+  }, [category]);
+
+  const getSubcategories = () => {
+    switch (category) {
+      case 'Weaving Design':
+        return [
+          'Kotalichi Design',
+          '50 600 Design',
+          'Nylon Design',
+          'Satin Design',
+          'Cotton Design',
+          'All Over Design',
+          'Suit Design',
+          'Dupatta Design',
+          'Blouse Design',
+          'Lehengha Design',
+          'Lace Design'
+        ];
+      case 'Embroidery Design':
+        return [
+          'Multi Design',
+          'Sequin Design',
+          'Cording Design',
+          'Chain Design',
+          'Beads Design',
+          'Folder Design',
+          'LTC Design',
+          'Free Download'
+        ];
+      case 'Digital Print Design':
+        return [
+          'Allover Design',
+          'Saree Design',
+          'Dupatta Design',
+          'Suit + Dupatta Set',
+          'Kurti Design',
+          'Sherwani Design',
+          'Daman Design',
+          'Tshirt Design',
+          'Shirt Design',
+          'Kaftan Design',
+          'Pakistani Suit',
+          'Lehenga Design',
+          'Other Design'
+        ];
+      default:
+        return ['Other'];
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -42,6 +104,7 @@ export function UploadPage() {
       formData.append('title', title);
       formData.append('description', description);
       formData.append('category', category);
+      formData.append('subcategory', subcategory);
       formData.append('fabric', fabric);
       formData.append('price', price);
       formData.append('tags', tags);
@@ -142,6 +205,22 @@ export function UploadPage() {
                 <option>Position Print Design</option>
               </select>
             </div>
+
+            {/* Subcategory */}
+            {category !== 'Position Print Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Subcategory *</label>
+                <select 
+                  value={subcategory} 
+                  onChange={(e) => setSubcategory(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  {getSubcategories().map(sub => (
+                    <option key={sub} value={sub}>{sub}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Fabric */}
             <div className="space-y-1">
