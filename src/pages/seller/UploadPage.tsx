@@ -11,7 +11,7 @@ export function UploadPage() {
   // Form Fields
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Geometric');
+  const [category, setCategory] = useState('Weaving Design');
   const [fabric, setFabric] = useState('Cotton Blend');
   const [price, setPrice] = useState('');
   const [tags, setTags] = useState('');
@@ -136,13 +136,10 @@ export function UploadPage() {
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
               >
-                <option>Geometric</option>
-                <option>Floral</option>
-                <option>Watercolor</option>
-                <option>Technical</option>
-                <option>Tapestry</option>
-                <option>Organic</option>
-                <option>Abstract</option>
+                <option>Weaving Design</option>
+                <option>Embroidery Design</option>
+                <option>Digital Print Design</option>
+                <option>Position Print Design</option>
               </select>
             </div>
 

@@ -19,7 +19,8 @@ export interface Design {
   designerName: string;
   designerAvatar: string;
   price: number;
-  category: 'Geometric' | 'Floral' | 'Watercolor' | 'Technical' | 'Tapestry' | 'Organic' | 'Abstract';
+  category: 'Weaving Design' | 'Embroidery Design' | 'Digital Print Design' | 'Position Print Design';
+  subcategory?: string;
   fabric: 'Cotton Blend' | 'Silk' | 'Linen' | 'Polyester Blend' | 'Wool Blend' | 'Cotton Sateen';
   image: string;
   rating: number;

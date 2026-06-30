@@ -4,19 +4,109 @@ import type { Design } from '../../types';
 import { DesignCard } from '../../components/ui/DesignCard';
 import { useNotification } from '../../contexts/NotificationContext';
 
-const CATEGORIES = ['All', 'Geometric', 'Floral', 'Watercolor', 'Technical', 'Tapestry', 'Organic', 'Abstract'];
+const CATEGORIES = ['All', 'Weaving Design', 'Embroidery Design', 'Digital Print Design', 'Position Print Design'];
 const FABRICS = ['All', 'Cotton Blend', 'Silk', 'Linen', 'Polyester Blend', 'Wool Blend', 'Cotton Sateen'];
 const PRICE_RANGES = ['All', 'Under $500', '$500 - $800', '$800 - $1000', 'Over $1000'];
+const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
+  {
+    name: 'All',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kotalichi Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+  },
+  {
+    name: '50 600 Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Nylon Design',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Satin Design',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Cotton Design',
+    image: 'https://images.unsplash.com/photo-1598048145816-43b9dfdc8857?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'All Over Design',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Suit Design',
+    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Dupatta Design',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Blouse Design',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Lehengha Design',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Lace Design',
+    image: 'https://images.unsplash.com/photo-1565192647048-f997ded87ab5?w=200&h=200&fit=crop',
+  }
+];
+
+const EMBROIDERY_SUBCATEGORIES_WITH_IMAGES = [
+  {
+    name: 'All',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Multi Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Sequin Design',
+    image: 'https://images.unsplash.com/photo-1518002171953-a080ee81be25?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Cording Design',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Chain Design',
+    image: 'https://images.unsplash.com/photo-1565192647048-f997ded87ab5?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Beads Design',
+    image: 'https://images.unsplash.com/photo-1605722243979-fe0be8158232?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Folder Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'LTC Design',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Free Download',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+  }
+];
 
 export function Marketplace() {
   const { showToast } = useNotification();
   const [activeCategory, setActiveCategory] = useState('All');
+  const [activeSubcategory, setActiveSubcategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTrigger, setSearchTrigger] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedFabric, setSelectedFabric] = useState('All');
   const [selectedPriceRange, setSelectedPriceRange] = useState('All');
-  const [sortOption, setSortOption] = useState('Recommended');
+  const [sortOption, setSortOption] = useState('Newest Arrivals');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
@@ -66,6 +156,9 @@ export function Marketplace() {
       };
 
       if (activeCategory !== 'All') params.category = activeCategory;
+      if ((activeCategory === 'Weaving Design' || activeCategory === 'Embroidery Design') && activeSubcategory !== 'All') {
+        params.subcategory = activeSubcategory;
+      }
       if (selectedFabric !== 'All') params.fabric = selectedFabric;
       if (searchTrigger.trim()) params.search = searchTrigger;
       if (minPrice !== undefined) params.minPrice = minPrice;
@@ -85,7 +178,7 @@ export function Marketplace() {
 
   useEffect(() => {
     fetchDesigns();
-  }, [activeCategory, selectedFabric, selectedPriceRange, sortOption, currentPage, searchTrigger]);
+  }, [activeCategory, activeSubcategory, selectedFabric, selectedPriceRange, sortOption, currentPage, searchTrigger]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,11 +188,12 @@ export function Marketplace() {
 
   const handleClearAll = () => {
     setActiveCategory('All');
+    setActiveSubcategory('All');
     setSelectedFabric('All');
     setSelectedPriceRange('All');
     setSearchQuery('');
     setSearchTrigger('');
-    setSortOption('Recommended');
+    setSortOption('Newest Arrivals');
     setCurrentPage(1);
   };
 
@@ -140,7 +234,11 @@ export function Marketplace() {
             {CATEGORIES.map(category => (
               <button
                 key={category}
-                onClick={() => { setActiveCategory(category); setCurrentPage(1); }}
+                onClick={() => { 
+                  setActiveCategory(category); 
+                  setActiveSubcategory('All');
+                  setCurrentPage(1); 
+                }}
                 className={`whitespace-nowrap px-5 py-2 rounded-xl text-sm font-semibold transition-colors ${
                   activeCategory === category 
                     ? 'bg-primary text-white shadow-sm' 
@@ -151,14 +249,79 @@ export function Marketplace() {
               </button>
             ))}
           </div>
-          <button 
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2 bg-surface-variant text-on-surface rounded-xl font-semibold text-sm hover:bg-outline-variant/30 transition-colors shrink-0"
-          >
-            <span className="material-symbols-outlined text-[20px]">tune</span>
-            <span>Filters</span>
-          </button>
         </div>
+
+        {/* Weaving Subcategories Visual Grid (Image-based like the 2nd image) */}
+        {activeCategory === 'Weaving Design' && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
+            <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">Categories</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 justify-center">
+              {WEAVING_SUBCATEGORIES_WITH_IMAGES.map(sub => {
+                const isActive = activeSubcategory === sub.name;
+                return (
+                  <button
+                    key={sub.name}
+                    onClick={() => { setActiveSubcategory(sub.name); setCurrentPage(1); }}
+                    className="flex flex-col items-center group focus:outline-none"
+                  >
+                    <div className={`w-28 h-28 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-[11px] font-bold uppercase tracking-wider text-center max-w-[120px] transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name === 'All' ? 'All Weaving' : sub.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Embroidery Subcategories Visual Grid */}
+        {activeCategory === 'Embroidery Design' && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
+            <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">Categories</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 justify-center">
+              {EMBROIDERY_SUBCATEGORIES_WITH_IMAGES.map(sub => {
+                const isActive = activeSubcategory === sub.name;
+                return (
+                  <button
+                    key={sub.name}
+                    onClick={() => { setActiveSubcategory(sub.name); setCurrentPage(1); }}
+                    className="flex flex-col items-center group focus:outline-none"
+                  >
+                    <div className={`w-28 h-28 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-[11px] font-bold uppercase tracking-wider text-center max-w-[120px] transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name === 'All' ? 'All Embroidery' : sub.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
@@ -215,7 +378,16 @@ export function Marketplace() {
           {/* Design Grid */}
           <div className="flex-1 w-full">
             <div className="flex justify-between items-center mb-6">
-              <p className="text-sm font-semibold text-on-surface-variant">Showing <span className="text-primary">{totalResults}</span> results</p>
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-semibold text-on-surface-variant">Showing <span className="text-primary">{totalResults}</span> results</p>
+                <button 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2 px-4 py-2 bg-surface-variant text-on-surface rounded-xl font-semibold text-sm hover:bg-outline-variant/30 transition-colors shrink-0 animate-fade-in"
+                >
+                  <span className="material-symbols-outlined text-[20px]">tune</span>
+                  <span>{showFilters ? 'Hide Filters' : 'Filters'}</span>
+                </button>
+              </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-on-surface-variant">Sort by:</span>
                 <select 
@@ -223,7 +395,6 @@ export function Marketplace() {
                   onChange={(e) => { setSortOption(e.target.value); setCurrentPage(1); }}
                   className="bg-transparent border-none text-sm font-semibold text-primary focus:outline-none cursor-pointer"
                 >
-                  <option>Recommended</option>
                   <option>Newest Arrivals</option>
                   <option>Price: Low to High</option>
                   <option>Price: High to Low</option>

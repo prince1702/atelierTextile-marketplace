@@ -79,6 +79,7 @@ export const api = {
   designs: {
     getAll: async (params?: {
       category?: string;
+      subcategory?: string;
       fabric?: string;
       minPrice?: number;
       maxPrice?: number;

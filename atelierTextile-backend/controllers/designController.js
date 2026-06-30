@@ -23,6 +23,7 @@ exports.getDesigns = async (req, res, next) => {
   try {
     const {
       category,
+      subcategory,
       fabric,
       minPrice,
       maxPrice,
@@ -62,6 +63,7 @@ exports.getDesigns = async (req, res, next) => {
     }
 
     if (category) filter.category = category;
+    if (subcategory) filter.subcategory = subcategory;
     if (fabric) filter.fabric = fabric;
     if (badge) filter.badge = badge;
 

@@ -20,11 +20,8 @@ const DESIGN_IMAGES = [
   'https://lh3.googleusercontent.com/aida-public/AB6AXuBoic2Xl_q5yRw_w2TEo7JfsBhSb2fMehgYXLk_yY2e-5k35yb30oBwocUzvCUxXeTbgq-u5WJv01Xe4xkmtMhRD08SXMAxnIPtHs30ieIIHJfPSxkidIS-B9INpIQdDl6YIab7nnPUO2qBJljvMOjrkoxXBQtR8fB0Vww5WwGefzb5c9DmTVwmq7BCszsYQC-F47KWroGPet-jpD6MEfSnsp9PedbPrOrp6k-y6saEKIBU7x3uqbyHOCn_EEBiDpMdVLdd2Hl9eZM',
 ];
 
-const seedData = async () => {
+const seedDataWithoutExit = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ Connected to MongoDB');
-
     // Clear all collections
     await User.deleteMany();
     await Design.deleteMany();
@@ -61,83 +58,83 @@ const seedData = async () => {
     // --- SEED DESIGNS ---
     const designsData = [
       {
-        title: 'Geometric Navy Gold', designer: seller1._id, designerName: 'Studio Nord', designerAvatar: seller1.initials,
-        price: 840, category: 'Geometric', fabric: 'Cotton Blend', image: DESIGN_IMAGES[0],
-        rating: 4.9, reviews: 128, tags: ['geometric', 'navy', 'gold', 'corporate'],
+        title: 'Royal Jacquard Weave', designer: seller1._id, designerName: 'Studio Nord', designerAvatar: seller1.initials,
+        price: 950, category: 'Weaving Design', subcategory: 'Kotalichi Design', fabric: 'Wool Blend', image: DESIGN_IMAGES[0],
+        rating: 4.9, reviews: 128, tags: ['weaving', 'jacquard', 'textured', 'traditional'],
         badge: 'New Arrival', badgeColor: 'amber',
-        description: 'A sophisticated geometric pattern featuring precise angular forms in deep navy and warm gold. Perfect for corporate upholstery and premium fashion applications.',
-        dimensions: '150cm width, repeat 30cm', colorways: ['Navy/Gold', 'Charcoal/Silver', 'Forest/Copper'],
-        licenseType: 'Exclusive Global', status: 'active', sales: 47, revenue: 39480,
+        description: 'A sophisticated jacquard woven textile design featuring rich textures and intricate traditional weaving patterns. Excellent for premium heavy fabrics.',
+        dimensions: '150cm width, repeat 30cm', colorways: ['Gold/Navy', 'Silver/Charcoal', 'Copper/Forest'],
+        licenseType: 'Exclusive Global', status: 'active', sales: 47, revenue: 44650,
         createdAt: new Date('2024-10-24'),
       },
       {
-        title: 'Indigo Amber Flow', designer: seller3._id, designerName: 'Atelier Rousseau', designerAvatar: seller3.initials,
-        price: 1250, category: 'Watercolor', fabric: 'Silk', image: DESIGN_IMAGES[1],
-        rating: 4.8, reviews: 94, tags: ['indigo', 'amber', 'watercolor', 'luxury'],
+        title: 'Indigo Sashiko Embroidery', designer: seller3._id, designerName: 'Atelier Rousseau', designerAvatar: seller3.initials,
+        price: 1250, category: 'Embroidery Design', subcategory: 'Multi Design', fabric: 'Linen', image: DESIGN_IMAGES[1],
+        rating: 4.8, reviews: 94, tags: ['embroidery', 'sashiko', 'hand-stitched', 'indigo'],
         badge: 'Limited Run', badgeColor: 'blue',
-        description: 'An elegant watercolor-style textile design with flowing lines of rich indigo and warm amber.',
-        dimensions: '140cm width, repeat 45cm', colorways: ['Indigo/Amber', 'Navy/Bronze', 'Teal/Gold'],
+        description: 'An elegant hand-stitched embroidery design inspired by traditional Japanese Sashiko patterns. Ideal for high-end home textiles and apparel.',
+        dimensions: '140cm width, repeat 45cm', colorways: ['Indigo/White', 'Navy/Cream', 'Slate/Grey'],
         licenseType: 'Standard Regional', status: 'active', sales: 31, revenue: 38750,
         createdAt: new Date('2024-10-20'),
       },
       {
-        title: 'Precision Weave Technical', designer: seller2._id, designerName: 'ThreadMasters Co', designerAvatar: seller2.initials,
-        price: 620, category: 'Technical', fabric: 'Polyester Blend', image: DESIGN_IMAGES[2],
-        rating: 4.7, reviews: 203, tags: ['technical', 'precision', 'weave', 'industrial'],
+        title: 'Modernist Abstract Digital Print', designer: seller2._id, designerName: 'ThreadMasters Co', designerAvatar: seller2.initials,
+        price: 850, category: 'Digital Print Design', fabric: 'Silk', image: DESIGN_IMAGES[2],
+        rating: 4.7, reviews: 203, tags: ['digital print', 'abstract', 'colorful', 'modernist'],
         badge: 'In Stock', badgeColor: 'green',
-        description: 'An ultra-precise technical weave pattern designed for industrial and performance textile applications.',
-        dimensions: '160cm width, repeat 20cm', colorways: ['Cream/Navy', 'White/Grey', 'Ecru/Taupe'],
-        licenseType: 'Open Regional', status: 'active', sales: 89, revenue: 55180,
+        description: 'A vibrant abstract digital print design with fluid gradients and high-definition details, perfectly engineered for digital printers on luxury silk.',
+        dimensions: '160cm width, repeat 20cm', colorways: ['Cyan/Magenta', 'Yellow/Violet', 'Orange/Blue'],
+        licenseType: 'Open Regional', status: 'active', sales: 89, revenue: 75650,
         createdAt: new Date('2024-10-15'),
       },
       {
-        title: 'Global Harvest Tapestry', designer: seller1._id, designerName: 'Weave & Wonder', designerAvatar: seller1.initials,
-        price: 960, category: 'Tapestry', fabric: 'Wool Blend', image: DESIGN_IMAGES[3],
-        rating: 4.6, reviews: 67, tags: ['tapestry', 'organic', 'harvest', 'artisan'],
+        title: 'Symmetrical Positioned Chest Print', designer: seller1._id, designerName: 'Weave & Wonder', designerAvatar: seller1.initials,
+        price: 650, category: 'Position Print Design', fabric: 'Cotton Sateen', image: DESIGN_IMAGES[3],
+        rating: 4.6, reviews: 67, tags: ['position print', 'symmetrical', 'placement', 'motif'],
         badge: 'Bestseller', badgeColor: 'orange',
-        description: 'A rich tapestry-inspired pattern drawing from global artisan traditions.',
-        dimensions: '145cm width, repeat 60cm', colorways: ['Earth/Rust', 'Ochre/Brown', 'Sage/Terracotta'],
-        licenseType: 'Exclusive Global', status: 'active', sales: 62, revenue: 59520,
+        description: 'A placement/position print design featuring a symmetrical artisan motif, precisely sized for placement on garments and center panels.',
+        dimensions: '145cm width, repeat 60cm', colorways: ['Cream/Black', 'Gold/Charcoal', 'Rust/Ivory'],
+        licenseType: 'Exclusive Global', status: 'active', sales: 62, revenue: 40300,
         createdAt: new Date('2024-10-10'),
       },
       {
-        title: 'Silk Road Geometric', designer: seller2._id, designerName: 'Heritage Patterns', designerAvatar: seller2.initials,
-        price: 1100, category: 'Geometric', fabric: 'Silk', image: DESIGN_IMAGES[0],
-        rating: 4.9, reviews: 45, tags: ['silk', 'road', 'heritage', 'eastern'],
+        title: 'Herringbone Technical Weaving', designer: seller2._id, designerName: 'Heritage Patterns', designerAvatar: seller2.initials,
+        price: 720, category: 'Weaving Design', subcategory: '50 600 Design', fabric: 'Cotton Blend', image: DESIGN_IMAGES[0],
+        rating: 4.9, reviews: 45, tags: ['weaving', 'herringbone', 'technical', 'structural'],
         badge: 'New Arrival', badgeColor: 'amber',
-        description: 'Inspired by ancient Silk Road trade routes, this geometric pattern blends Eastern motifs with contemporary precision.',
-        dimensions: '135cm width, repeat 40cm', colorways: ['Gold/Ivory', 'Burgundy/Gold', 'Midnight/Silver'],
-        licenseType: 'Exclusive Global', status: 'active', sales: 18, revenue: 19800,
+        description: 'A modern structural herringbone weaving pattern with detailed warp and weft layouts, designed for techwear and outdoor accessories.',
+        dimensions: '135cm width, repeat 40cm', colorways: ['Olive/Black', 'Grey/White', 'Navy/Brown'],
+        licenseType: 'Exclusive Global', status: 'active', sales: 18, revenue: 12960,
         createdAt: new Date('2024-11-01'),
       },
       {
-        title: 'Ocean Wave Linen', designer: seller3._id, designerName: 'Coastal Studio', designerAvatar: seller3.initials,
-        price: 490, category: 'Organic', fabric: 'Linen', image: DESIGN_IMAGES[1],
-        rating: 4.5, reviews: 156, tags: ['ocean', 'wave', 'linen', 'coastal'],
+        title: 'Gold Thread Royal Embroidery', designer: seller3._id, designerName: 'Coastal Studio', designerAvatar: seller3.initials,
+        price: 1450, category: 'Embroidery Design', subcategory: 'Sequin Design', fabric: 'Silk', image: DESIGN_IMAGES[1],
+        rating: 4.5, reviews: 156, tags: ['embroidery', 'gold thread', 'royal', 'luxury'],
         badge: 'In Stock', badgeColor: 'green',
-        description: 'A flowing wave pattern in natural linen tones. Captures the organic movement of ocean waves.',
-        dimensions: '155cm width, repeat 35cm', colorways: ['Sea Blue/Cream', 'Sand/Sky', 'Sage/White'],
-        licenseType: 'Standard Regional', status: 'active', sales: 134, revenue: 65660,
+        description: 'Luxurious heavy embroidery motif with detailed gold stitching simulations, perfect for festive couture and velvet cushions.',
+        dimensions: '155cm width, repeat 35cm', colorways: ['Gold/Crimson', 'Gold/Emerald', 'Gold/Royal Blue'],
+        licenseType: 'Standard Regional', status: 'active', sales: 134, revenue: 194300,
         createdAt: new Date('2024-09-28'),
       },
       {
-        title: 'Urban Grid Matrix', designer: seller1._id, designerName: 'Studio Nord', designerAvatar: seller1.initials,
-        price: 720, category: 'Geometric', fabric: 'Cotton Blend', image: DESIGN_IMAGES[2],
-        rating: 4.7, reviews: 89, tags: ['urban', 'grid', 'matrix', 'modern'],
+        title: 'Vibrant Floral Digital Print', designer: seller1._id, designerName: 'Studio Nord', designerAvatar: seller1.initials,
+        price: 890, category: 'Digital Print Design', fabric: 'Cotton Sateen', image: DESIGN_IMAGES[2],
+        rating: 4.7, reviews: 89, tags: ['digital print', 'floral', 'watercolor', 'botanical'],
         badge: 'Bestseller', badgeColor: 'orange',
-        description: 'A bold urban grid pattern inspired by city architecture.',
-        dimensions: '150cm width, repeat 25cm', colorways: ['Charcoal/White', 'Navy/Grey', 'Black/Gold'],
-        licenseType: 'Open Regional', status: 'active', sales: 76, revenue: 54720,
+        description: 'Ultra-high-definition digital textile print of contemporary watercolor florals, ready for roll-to-roll printing.',
+        dimensions: '150cm width, repeat 25cm', colorways: ['Pastel Pink/Sage', 'Bold Blue/Amber', 'Mauve/Teal'],
+        licenseType: 'Open Regional', status: 'active', sales: 76, revenue: 67640,
         createdAt: new Date('2024-09-15'),
       },
       {
-        title: 'Botanical Bloom Print', designer: seller2._id, designerName: 'Nature Designs Co', designerAvatar: seller2.initials,
-        price: 580, category: 'Floral', fabric: 'Cotton Sateen', image: DESIGN_IMAGES[3],
-        rating: 4.6, reviews: 112, tags: ['botanical', 'floral', 'bloom', 'nature'],
+        title: 'Border Accent Position Motif', designer: seller2._id, designerName: 'Nature Designs Co', designerAvatar: seller2.initials,
+        price: 720, category: 'Position Print Design', fabric: 'Linen', image: DESIGN_IMAGES[3],
+        rating: 4.6, reviews: 112, tags: ['position print', 'border', 'motif', 'placement'],
         badge: 'Limited Run', badgeColor: 'blue',
-        description: 'A luxurious botanical print featuring intricate hand-drawn flowers and foliage.',
-        dimensions: '145cm width, repeat 50cm', colorways: ['Blush/Green', 'Ivory/Blue', 'Mauve/Sage'],
-        licenseType: 'Standard Regional', status: 'active', sales: 58, revenue: 33640,
+        description: 'A border-aligned placement print designed specifically for skirt hems, sleeve cuffs, and tablecloth margins.',
+        dimensions: '145cm width, repeat 50cm', colorways: ['White/Blue', 'Cream/Rust', 'Ecru/Sage'],
+        licenseType: 'Standard Regional', status: 'active', sales: 58, revenue: 41760,
         createdAt: new Date('2024-10-05'),
       },
     ];
@@ -225,9 +222,17 @@ const seedData = async () => {
     console.log('  Seller:   seller@atelier.com   / seller123');
     console.log('  Customer: customer@atelier.com / customer123\n');
 
-    process.exit(0);
   } catch (error) {
     console.error('❌ Seeder Error:', error);
+    throw error;
+  }
+};
+
+const seedData = async () => {
+  try {
+    await seedDataWithoutExit();
+    process.exit(0);
+  } catch (error) {
     process.exit(1);
   }
 };
@@ -252,9 +257,18 @@ const destroyData = async () => {
   }
 };
 
+module.exports = {
+  seedDataWithoutExit,
+  seedData,
+  destroyData
+};
+
 // CLI usage: node seeder.js --import  |  node seeder.js --destroy
-if (process.argv[2] === '--destroy') {
-  destroyData();
-} else {
-  seedData();
+if (require.main === module) {
+  if (process.argv[2] === '--destroy') {
+    destroyData();
+  } else {
+    seedData();
+  }
 }
+

@@ -30,8 +30,12 @@ const designSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Geometric', 'Floral', 'Watercolor', 'Technical', 'Tapestry', 'Organic', 'Abstract'],
+    enum: ['Weaving Design', 'Embroidery Design', 'Digital Print Design', 'Position Print Design'],
     required: [true, 'Category is required'],
+  },
+  subcategory: {
+    type: String,
+    default: '',
   },
   fabric: {
     type: String,
