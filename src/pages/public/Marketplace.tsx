@@ -97,6 +97,25 @@ const EMBROIDERY_SUBCATEGORIES_WITH_IMAGES = [
   }
 ];
 
+const MAIN_CATEGORIES_WITH_IMAGES = [
+  {
+    name: 'Weaving Design',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=300&h=300&fit=crop',
+  },
+  {
+    name: 'Embroidery Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=300&h=300&fit=crop',
+  },
+  {
+    name: 'Digital Print Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=300&h=300&fit=crop',
+  },
+  {
+    name: 'Position Print Design',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=300&h=300&fit=crop',
+  }
+];
+
 export function Marketplace() {
   const { showToast } = useNotification();
   const [activeCategory, setActiveCategory] = useState('All');
@@ -251,6 +270,33 @@ export function Marketplace() {
           </div>
         </div>
 
+        {/* Main Categories Visual Grid (Only shown when activeCategory is 'All') */}
+        {activeCategory === 'All' && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
+            <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">Main Categories</h3>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 justify-center">
+              {MAIN_CATEGORIES_WITH_IMAGES.map(cat => (
+                <button
+                  key={cat.name}
+                  onClick={() => { setActiveCategory(cat.name); setActiveSubcategory('All'); setCurrentPage(1); }}
+                  className="flex flex-col items-center group focus:outline-none"
+                >
+                  <div className="w-40 h-40 rounded-2xl overflow-hidden border-2 border-on-surface/80 transition-all duration-300 group-hover:border-primary group-hover:scale-105 group-hover:shadow-md">
+                    <img 
+                      src={cat.image} 
+                      alt={cat.name} 
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                  </div>
+                  <span className="mt-3 text-xs font-bold uppercase tracking-wider text-center transition-colors text-on-surface-variant group-hover:text-primary">
+                    {cat.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Weaving Subcategories Visual Grid (Image-based like the 2nd image) */}
         {activeCategory === 'Weaving Design' && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
@@ -323,146 +369,153 @@ export function Marketplace() {
           </div>
         )}
 
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          
-          {/* Advanced Filters Sidebar (Collapsible) */}
-          {showFilters && (
-            <aside className="w-full lg:w-72 bg-white rounded-2xl border border-outline-variant p-6 shadow-sm shrink-0 animate-fade-in lg:sticky lg:top-24">
+        {activeCategory !== 'All' ? (
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            
+            {/* Advanced Filters Sidebar (Collapsible) */}
+            {showFilters && (
+              <aside className="w-full lg:w-72 bg-white rounded-2xl border border-outline-variant p-6 shadow-sm shrink-0 animate-fade-in lg:sticky lg:top-24">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="font-bold text-lg text-primary">Filters</h3>
+                  <button onClick={handleClearAll} className="text-sm font-semibold text-error hover:underline">Clear All</button>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Fabric Type</h4>
+                    <div className="space-y-2">
+                      {FABRICS.map(fabric => (
+                        <label key={fabric} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                          <input 
+                            type="radio" 
+                            name="fabric"
+                            checked={selectedFabric === fabric}
+                            onChange={() => { setSelectedFabric(fabric); setCurrentPage(1); }}
+                            className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
+                          />
+                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{fabric}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="w-full h-px bg-outline-variant/50"></div>
+
+                  <div>
+                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Price Range</h4>
+                    <div className="space-y-2">
+                      {PRICE_RANGES.map(price => (
+                        <label key={price} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                          <input 
+                            type="radio" 
+                            name="price" 
+                            checked={selectedPriceRange === price}
+                            onChange={() => { setSelectedPriceRange(price); setCurrentPage(1); }}
+                            className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
+                          />
+                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{price}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </aside>
+            )}
+
+            {/* Design Grid */}
+            <div className="flex-1 w-full">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="font-bold text-lg text-primary">Filters</h3>
-                <button onClick={handleClearAll} className="text-sm font-semibold text-error hover:underline">Clear All</button>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Fabric Type</h4>
-                  <div className="space-y-2">
-                    {FABRICS.map(fabric => (
-                      <label key={fabric} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
-                        <input 
-                          type="radio" 
-                          name="fabric"
-                          checked={selectedFabric === fabric}
-                          onChange={() => { setSelectedFabric(fabric); setCurrentPage(1); }}
-                          className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
-                        />
-                        <span className="text-on-surface-variant group-hover:text-primary transition-colors">{fabric}</span>
-                      </label>
-                    ))}
-                  </div>
+                <div className="flex items-center gap-3">
+                  <p className="text-sm font-semibold text-on-surface-variant">Showing <span className="text-primary">{totalResults}</span> results</p>
+                  <button 
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="flex items-center gap-2 px-4 py-2 bg-surface-variant text-on-surface rounded-xl font-semibold text-sm hover:bg-outline-variant/30 transition-colors shrink-0 animate-fade-in"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">tune</span>
+                    <span>{showFilters ? 'Hide Filters' : 'Filters'}</span>
+                  </button>
                 </div>
-
-                <div className="w-full h-px bg-outline-variant/50"></div>
-
-                <div>
-                  <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Price Range</h4>
-                  <div className="space-y-2">
-                    {PRICE_RANGES.map(price => (
-                      <label key={price} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
-                        <input 
-                          type="radio" 
-                          name="price" 
-                          checked={selectedPriceRange === price}
-                          onChange={() => { setSelectedPriceRange(price); setCurrentPage(1); }}
-                          className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
-                        />
-                        <span className="text-on-surface-variant group-hover:text-primary transition-colors">{price}</span>
-                      </label>
-                    ))}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-on-surface-variant">Sort by:</span>
+                  <select 
+                    value={sortOption}
+                    onChange={(e) => { setSortOption(e.target.value); setCurrentPage(1); }}
+                    className="bg-transparent border-none text-sm font-semibold text-primary focus:outline-none cursor-pointer"
+                  >
+                    <option>Newest Arrivals</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                  </select>
                 </div>
               </div>
-            </aside>
-          )}
 
-          {/* Design Grid */}
-          <div className="flex-1 w-full">
-            <div className="flex justify-between items-center mb-6">
-              <div className="flex items-center gap-3">
-                <p className="text-sm font-semibold text-on-surface-variant">Showing <span className="text-primary">{totalResults}</span> results</p>
-                <button 
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2 px-4 py-2 bg-surface-variant text-on-surface rounded-xl font-semibold text-sm hover:bg-outline-variant/30 transition-colors shrink-0 animate-fade-in"
-                >
-                  <span className="material-symbols-outlined text-[20px]">tune</span>
-                  <span>{showFilters ? 'Hide Filters' : 'Filters'}</span>
-                </button>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-on-surface-variant">Sort by:</span>
-                <select 
-                  value={sortOption}
-                  onChange={(e) => { setSortOption(e.target.value); setCurrentPage(1); }}
-                  className="bg-transparent border-none text-sm font-semibold text-primary focus:outline-none cursor-pointer"
-                >
-                  <option>Newest Arrivals</option>
-                  <option>Price: Low to High</option>
-                  <option>Price: High to Low</option>
-                </select>
-              </div>
+              {isLoading ? (
+                <div className="flex justify-center items-center py-20 w-full">
+                  <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
+                </div>
+              ) : designs.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {designs.map(design => (
+                    <DesignCard key={design.id} design={design} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-20 bg-white rounded-2xl border border-outline-variant border-dashed">
+                  <div className="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4 text-outline">
+                    <span className="material-symbols-outlined text-[32px]">search_off</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-on-surface mb-2">No designs found</h3>
+                  <p className="text-on-surface-variant mb-6">Try adjusting your filters or search query to find what you're looking for.</p>
+                  <button 
+                    onClick={handleClearAll}
+                    className="px-6 py-2 bg-primary-container text-white rounded-lg font-semibold hover:bg-primary transition-colors"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
+              
+              {/* Pagination */}
+              {designs.length > 0 && totalPages > 1 && (
+                <div className="mt-12 flex justify-center">
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                      className="w-10 h-10 rounded-lg border border-outline-variant flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50"
+                    >
+                      <span className="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <button 
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-10 h-10 rounded-lg font-bold flex items-center justify-center shadow-sm transition-colors ${
+                          currentPage === page ? 'bg-primary text-white' : 'border border-outline-variant text-on-surface hover:bg-surface-container'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                    <button 
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                      className="w-10 h-10 rounded-lg border border-outline-variant flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50"
+                    >
+                      <span className="material-symbols-outlined">chevron_right</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {isLoading ? (
-              <div className="flex justify-center items-center py-20 w-full">
-                <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
-              </div>
-            ) : designs.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {designs.map(design => (
-                  <DesignCard key={design.id} design={design} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20 bg-white rounded-2xl border border-outline-variant border-dashed">
-                <div className="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4 text-outline">
-                  <span className="material-symbols-outlined text-[32px]">search_off</span>
-                </div>
-                <h3 className="text-lg font-bold text-on-surface mb-2">No designs found</h3>
-                <p className="text-on-surface-variant mb-6">Try adjusting your filters or search query to find what you're looking for.</p>
-                <button 
-                  onClick={handleClearAll}
-                  className="px-6 py-2 bg-primary-container text-white rounded-lg font-semibold hover:bg-primary transition-colors"
-                >
-                  Clear all filters
-                </button>
-              </div>
-            )}
-            
-            {/* Pagination */}
-            {designs.length > 0 && totalPages > 1 && (
-              <div className="mt-12 flex justify-center">
-                <div className="flex gap-2">
-                  <button 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className="w-10 h-10 rounded-lg border border-outline-variant flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50"
-                  >
-                    <span className="material-symbols-outlined">chevron_left</span>
-                  </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <button 
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`w-10 h-10 rounded-lg font-bold flex items-center justify-center shadow-sm transition-colors ${
-                        currentPage === page ? 'bg-primary text-white' : 'border border-outline-variant text-on-surface hover:bg-surface-container'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                  <button 
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className="w-10 h-10 rounded-lg border border-outline-variant flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50"
-                  >
-                    <span className="material-symbols-outlined">chevron_right</span>
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
-
-        </div>
+        ) : (
+          <div className="text-center py-12 bg-white rounded-2xl border border-outline-variant border-dashed mt-6">
+            <span className="material-symbols-outlined text-[48px] text-outline mb-2">category</span>
+            <p className="text-sm font-semibold text-on-surface-variant">Please select one of the main categories above to browse designs.</p>
+          </div>
+        )}
       </div>
     </div>
   );
