@@ -24,18 +24,6 @@ export function Navbar() {
               Marketplace
               <div className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-200 ${(isActive('/') || isActive('/marketplace')) ? 'w-full' : 'w-0 group-hover:w-full'}`}></div>
             </Link>
-            <Link to="/#designers" className="text-sm font-medium py-4 text-on-surface-variant hover:text-primary relative group">
-              Designers
-              <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></div>
-            </Link>
-            <Link to="/#features" className="text-sm font-medium py-4 text-on-surface-variant hover:text-primary relative group">
-              About
-              <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></div>
-            </Link>
-            <Link to="/#pricing" className="text-sm font-medium py-4 text-on-surface-variant hover:text-primary relative group">
-              Pricing
-              <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></div>
-            </Link>
           </div>
         </div>
 
@@ -93,9 +81,7 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-outline-variant absolute top-16 left-0 w-full shadow-lg p-4 flex flex-col gap-4">
           <Link to="/" onClick={() => setMobileMenuOpen(false)} className={`text-sm font-medium ${(isActive('/') || isActive('/marketplace')) ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}>Marketplace</Link>
-          <Link to="/#designers" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-on-surface-variant hover:text-primary">Designers</Link>
-          <Link to="/#features" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-on-surface-variant hover:text-primary">About</Link>
-          <Link to="/#pricing" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-on-surface-variant hover:text-primary">Pricing</Link>
+          {/* No additional links */}
           
           {!isAuthenticated && (
             <div className="flex flex-col gap-2 mt-2 pt-4 border-t border-outline-variant">
