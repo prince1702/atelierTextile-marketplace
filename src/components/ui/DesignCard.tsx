@@ -24,7 +24,7 @@ export function DesignCard({ design }: DesignCardProps) {
 
   return (
     <div className="bg-white rounded-xl border border-outline-variant overflow-hidden card-lift group flex flex-col h-full">
-      <div className="relative h-56 overflow-hidden bg-surface-container cursor-pointer" onClick={() => navigate(`/design/${design.id}`)}>
+      <div className="relative h-56 overflow-hidden bg-surface-container cursor-pointer" onClick={() => window.open(`/design/${design.id}`, '_blank')}>
         <img 
           src={design.image} 
           alt={design.title} 
@@ -52,7 +52,7 @@ export function DesignCard({ design }: DesignCardProps) {
       
       <div className="p-5 flex-1 flex flex-col">
         <div className="flex justify-between items-start mb-1">
-          <Link to={`/design/${design.id}`} className="font-semibold text-on-surface text-base hover:text-primary transition-colors line-clamp-1">
+          <Link to={`/design/${design.id}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-on-surface text-base hover:text-primary transition-colors line-clamp-1">
             {design.title}
           </Link>
           <div className="flex items-center gap-1 bg-surface-container px-1.5 py-0.5 rounded text-xs font-semibold text-on-surface-variant shrink-0">
@@ -74,6 +74,8 @@ export function DesignCard({ design }: DesignCardProps) {
           </div>
           <Link 
             to={`/design/${design.id}`} 
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-primary text-on-primary text-sm font-semibold px-4 py-2 rounded-lg hover:bg-primary-container transition-colors shadow-sm"
           >
             View Details

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import type { Design } from '../../types';
 import { DesignCard } from '../../components/ui/DesignCard';
@@ -367,6 +368,7 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
 ];
 
 export function Marketplace() {
+  const navigate = useNavigate();
   const { showToast } = useNotification();
   const [activeCategory, setActiveCategory] = useState('All');
   const [activeSubcategory, setActiveSubcategory] = useState('All');
@@ -529,9 +531,7 @@ export function Marketplace() {
                 <button
                   key={sub.name}
                   onClick={() => { 
-                    setActiveCategory(sub.parentCategory); 
-                    setActiveSubcategory(sub.name); 
-                    setCurrentPage(1); 
+                    navigate(`/collection?category=${encodeURIComponent(sub.parentCategory)}&subcategory=${encodeURIComponent(sub.name)}`);
                   }}
                   className="flex flex-col items-center group focus:outline-none w-full"
                 >
@@ -561,7 +561,9 @@ export function Marketplace() {
                 return (
                   <button
                     key={sub.name}
-                    onClick={() => { setActiveSubcategory(sub.name); setCurrentPage(1); }}
+                    onClick={() => { 
+                      navigate(`/collection?category=${encodeURIComponent('Weaving Design')}&subcategory=${encodeURIComponent(sub.name)}`);
+                    }}
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -597,7 +599,9 @@ export function Marketplace() {
                 return (
                   <button
                     key={sub.name}
-                    onClick={() => { setActiveSubcategory(sub.name); setCurrentPage(1); }}
+                    onClick={() => { 
+                      navigate(`/collection?category=${encodeURIComponent('Embroidery Design')}&subcategory=${encodeURIComponent(sub.name)}`);
+                    }}
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -633,7 +637,9 @@ export function Marketplace() {
                 return (
                   <button
                     key={sub.name}
-                    onClick={() => { setActiveSubcategory(sub.name); setCurrentPage(1); }}
+                    onClick={() => { 
+                      navigate(`/collection?category=${encodeURIComponent('Digital Print Design')}&subcategory=${encodeURIComponent(sub.name)}`);
+                    }}
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -669,7 +675,9 @@ export function Marketplace() {
                 return (
                   <button
                     key={sub.name}
-                    onClick={() => { setActiveSubcategory(sub.name); setCurrentPage(1); }}
+                    onClick={() => { 
+                      navigate(`/collection?category=${encodeURIComponent('Position Print Design')}&subcategory=${encodeURIComponent(sub.name)}`);
+                    }}
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${

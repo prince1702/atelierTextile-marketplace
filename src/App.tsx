@@ -11,10 +11,9 @@ import { PortalLayout } from './components/layout/PortalLayout';
 // Public Pages
 import { Landing } from './pages/public/Landing';
 import { Marketplace } from './pages/public/Marketplace';
+import { CollectionPage } from './pages/public/CollectionPage';
 import { DesignDetail } from './pages/public/DesignDetail';
 import { CartPage } from './pages/public/CartPage';
-
-// Auth Pages
 import { Login } from './pages/auth/Login';
 import { Register } from './pages/auth/Register';
 import { ForgotPassword } from './pages/auth/ForgotPassword';
@@ -72,6 +71,7 @@ export default function App() {
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Marketplace />} />
                 <Route path="/marketplace" element={<Navigate to="/" replace />} />
+                <Route path="/collection" element={<CollectionPage />} />
                 <Route path="/design/:id" element={<DesignDetail />} />
                 <Route path="/cart" element={<CartPage />} />
               </Route>
