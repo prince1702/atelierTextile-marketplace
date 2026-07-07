@@ -324,7 +324,7 @@ export function CollectionPage() {
 
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 mt-10">
         {/* Saree Subcategories Visual Bar */}
-        {category === 'Weaving Design' && ALL_SAREE_SUBCATEGORIES_VALUES.includes(subcategory) && (
+        {category === 'Weaving Design' && subcategory === 'Saree Design' && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Saree Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
@@ -362,7 +362,7 @@ export function CollectionPage() {
         )}
 
         {/* Lehengha Subcategories Visual Bar */}
-        {category === 'Weaving Design' && ALL_LEHENGHA_SUBCATEGORIES_VALUES.includes(subcategory) && (
+        {category === 'Weaving Design' && subcategory === 'Lehengha Design' && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Lehengha Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
@@ -400,7 +400,7 @@ export function CollectionPage() {
         )}
 
         {/* Suit Subcategories Visual Bar */}
-        {category === 'Weaving Design' && ALL_SUIT_SUBCATEGORIES_VALUES.includes(subcategory) && (
+        {category === 'Weaving Design' && subcategory === 'Suit Design' && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Suit Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
@@ -438,7 +438,7 @@ export function CollectionPage() {
         )}
 
         {/* Dupatta Subcategories Visual Bar */}
-        {category === 'Weaving Design' && ALL_DUPATTA_SUBCATEGORIES_VALUES.includes(subcategory) && (
+        {category === 'Weaving Design' && subcategory === 'Dupatta Design' && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Dupatta Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
