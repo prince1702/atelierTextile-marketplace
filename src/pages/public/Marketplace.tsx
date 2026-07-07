@@ -14,24 +14,16 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
     image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
   },
   {
-    name: 'Kotalichi Design',
-    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+    name: 'Saree Design',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
   },
   {
-    name: '50 600 Design',
-    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+    name: 'Lace Design',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
   },
   {
-    name: 'Nylon Design',
-    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Satin Design',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Cotton Design',
-    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+    name: 'Bulk Package Design',
+    image: '/bulk_package_design.png',
   },
   {
     name: 'All Over Design',
@@ -52,10 +44,6 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'Lehengha Design',
     image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Lace Design',
-    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
   }
 ];
 
@@ -186,28 +174,18 @@ const POSITION_PRINT_SUBCATEGORIES_WITH_IMAGES = [
 
 const ALL_SUBCATEGORIES_WITH_IMAGES = [
   {
-    name: 'Kotalichi Design',
-    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+    name: 'Saree Design',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
     parentCategory: 'Weaving Design'
   },
   {
-    name: '50 600 Design',
-    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+    name: 'Lace Design',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
     parentCategory: 'Weaving Design'
   },
   {
-    name: 'Nylon Design',
-    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
-    parentCategory: 'Weaving Design'
-  },
-  {
-    name: 'Satin Design',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
-    parentCategory: 'Weaving Design'
-  },
-  {
-    name: 'Cotton Design',
-    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+    name: 'Bulk Package Design',
+    image: '/bulk_package_design.png',
     parentCategory: 'Weaving Design'
   },
   {
@@ -233,11 +211,6 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'Lehengha Design',
     image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
-    parentCategory: 'Weaving Design'
-  },
-  {
-    name: 'Lace Design',
-    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
     parentCategory: 'Weaving Design'
   },
   {
@@ -529,7 +502,7 @@ export function Marketplace() {
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-6 justify-center">
               {ALL_SUBCATEGORIES_WITH_IMAGES.map(sub => (
                 <button
-                  key={sub.name}
+                  key={`${sub.parentCategory}-${sub.name}`}
                   onClick={() => { 
                     navigate(`/collection?category=${encodeURIComponent(sub.parentCategory)}&subcategory=${encodeURIComponent(sub.name)}`);
                   }}
@@ -704,10 +677,12 @@ export function Marketplace() {
         )}
 
         {((activeCategory !== 'All' || searchTrigger.trim() !== '') && 
-          ((designs && designs.length > 0) || 
-           activeSubcategory !== 'All' || 
-           selectedFabric !== 'All' || 
-           selectedPriceRange !== 'All')) && (
+          (isLoading || 
+           !(designs.length === 0 && 
+             selectedFabric === 'All' && 
+             selectedPriceRange === 'All' && 
+             activeSubcategory === 'All' && 
+             searchTrigger.trim() === ''))) && (
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             
             {/* Advanced Filters Sidebar (Collapsible) */}

@@ -65,7 +65,61 @@ exports.getDesigns = async (req, res, next) => {
     }
 
     if (category) filter.category = category;
-    if (subcategory) filter.subcategory = subcategory;
+    if (subcategory) {
+      if (subcategory === 'Saree Design') {
+        filter.subcategory = { 
+          $in: [
+            'Saree Design', 
+            'Kota Lichi Design', 
+            '50 600 Design',
+            'Dolla-Nylon Design',
+            'Viscouse Design',
+            '(50 600) Satin Design',
+            'Nylon Satin Design',
+            'Cotton Design',
+            'Dharmavarm Design',
+            'Pattern Beam Design',
+            'Mix Design',
+            'Georgept (Crape) Design'
+          ] 
+        };
+      } else if (subcategory === 'Lehengha Design') {
+        filter.subcategory = {
+          $in: [
+            'Lehengha Design',
+            'Lehengha - 50 600 Design',
+            'Lehengha - Kota Lichi Design',
+            'Lehengha - Viscouse Design',
+            'Lehengha - Nylon Satin Design'
+          ]
+        };
+      } else if (subcategory === 'Suit Design') {
+        filter.subcategory = {
+          $in: [
+            'Suit Design',
+            'Suit - Kota Lichi Design',
+            'Suit - Viscouse Design',
+            'Suit - (50 600) Satin Design',
+            'Suit - Cotton Design'
+          ]
+        };
+      } else if (subcategory === 'Dupatta Design') {
+        filter.subcategory = {
+          $in: [
+            'Dupatta Design',
+            'Dupatta - Kota Lichi Design',
+            'Dupatta - 50 600 Design',
+            'Dupatta - Dolla-Nylon Design',
+            'Dupatta - Viscouse Design',
+            'Dupatta - (50 600) Satin Design',
+            'Dupatta - Nylon Satin Design',
+            'Dupatta - Cotton Design'
+          ]
+        };
+      } else {
+        filter.subcategory = subcategory;
+      }
+    }
     if (fabric) filter.fabric = fabric;
     if (badge) filter.badge = badge;
 

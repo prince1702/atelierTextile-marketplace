@@ -8,6 +8,217 @@ import { useNotification } from '../../contexts/NotificationContext';
 const FABRICS = ['All', 'Cotton Blend', 'Silk', 'Linen', 'Polyester Blend', 'Wool Blend', 'Cotton Sateen'];
 const PRICE_RANGES = ['All', 'Under $500', '$500 - $800', '$800 - $1000', 'Over $1000'];
 
+const ALL_SAREE_SUBCATEGORIES_VALUES = [
+  'Saree Design',
+  'Kota Lichi Design',
+  '50 600 Design',
+  'Dolla-Nylon Design',
+  'Viscouse Design',
+  '(50 600) Satin Design',
+  'Nylon Satin Design',
+  'Cotton Design',
+  'Dharmavarm Design',
+  'Pattern Beam Design',
+  'Mix Design',
+  'Georgept (Crape) Design'
+];
+
+const SAREE_SUBCATEGORIES = [
+  {
+    name: 'All Saree',
+    value: 'Saree Design',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kota Lichi Design',
+    value: 'Kota Lichi Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+  },
+  {
+    name: '50 600 Design',
+    value: '50 600 Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Dolla-Nylon Design',
+    value: 'Dolla-Nylon Design',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Viscouse Design',
+    value: 'Viscouse Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: '(50 600) Satin Design',
+    value: '(50 600) Satin Design',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Nylon Satin Design',
+    value: 'Nylon Satin Design',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Cotton Design',
+    value: 'Cotton Design',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Dharmavarm Design',
+    value: 'Dharmavarm Design',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Pattern Beam Design',
+    value: 'Pattern Beam Design',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Mix Design',
+    value: 'Mix Design',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Georgept (Crape) Design',
+    value: 'Georgept (Crape) Design',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
+  }
+];
+
+const ALL_LEHENGHA_SUBCATEGORIES_VALUES = [
+  'Lehengha Design',
+  'Lehengha - 50 600 Design',
+  'Lehengha - Kota Lichi Design',
+  'Lehengha - Viscouse Design',
+  'Lehengha - Nylon Satin Design'
+];
+
+const LEHENGHA_SUBCATEGORIES = [
+  {
+    name: 'All Lehengha',
+    value: 'Lehengha Design',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: '50 600 Design',
+    value: 'Lehengha - 50 600 Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kota Lichi Design',
+    value: 'Lehengha - Kota Lichi Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Viscouse Design',
+    value: 'Lehengha - Viscouse Design',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Nylon Satin Design',
+    value: 'Lehengha - Nylon Satin Design',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+  }
+];
+
+const ALL_SUIT_SUBCATEGORIES_VALUES = [
+  'Suit Design',
+  'Suit - Kota Lichi Design',
+  'Suit - Viscouse Design',
+  'Suit - (50 600) Satin Design',
+  'Suit - Cotton Design'
+];
+
+const SUIT_SUBCATEGORIES = [
+  {
+    name: 'All Suit',
+    value: 'Suit Design',
+    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kota Lichi Design',
+    value: 'Suit - Kota Lichi Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Viscouse Design',
+    value: 'Suit - Viscouse Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: '(50 600) Satin Design',
+    value: 'Suit - (50 600) Satin Design',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Cotton Design',
+    value: 'Suit - Cotton Design',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+  }
+];
+
+const ALL_DUPATTA_SUBCATEGORIES_VALUES = [
+  'Dupatta Design',
+  'Dupatta - Kota Lichi Design',
+  'Dupatta - 50 600 Design',
+  'Dupatta - Dolla-Nylon Design',
+  'Dupatta - Viscouse Design',
+  'Dupatta - (50 600) Satin Design',
+  'Dupatta - Nylon Satin Design',
+  'Dupatta - Cotton Design'
+];
+
+const DUPATTA_SUBCATEGORIES = [
+  {
+    name: 'All Dupatta',
+    value: 'Dupatta Design',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kota Lichi Design',
+    value: 'Dupatta - Kota Lichi Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+  },
+  {
+    name: '50 600 Design',
+    value: 'Dupatta - 50 600 Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Dolla-Nylon Design',
+    value: 'Dupatta - Dolla-Nylon Design',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Viscouse Design',
+    value: 'Dupatta - Viscouse Design',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: '(50 600) Satin Design',
+    value: 'Dupatta - (50 600) Satin Design',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Nylon Satin Design',
+    value: 'Dupatta - Nylon Satin Design',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Cotton Design',
+    value: 'Dupatta - Cotton Design',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+  }
+];
+
+const getSubcategoryDisplayName = (sub: string) => {
+  if (sub.startsWith('Lehengha - ')) return sub.replace('Lehengha - ', '');
+  if (sub.startsWith('Suit - ')) return sub.replace('Suit - ', '');
+  if (sub.startsWith('Dupatta - ')) return sub.replace('Dupatta - ', '');
+  return sub;
+};
+
 export function CollectionPage() {
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category') || 'All';
@@ -106,16 +317,161 @@ export function CollectionPage() {
             Back to Marketplace
           </Link>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            {subcategory !== 'All' ? subcategory : category}
+            {subcategory !== 'All' ? getSubcategoryDisplayName(subcategory) : category}
           </h1>
           <p className="text-primary-fixed-dim text-lg">
-            Showing designs under {category} {subcategory !== 'All' && `> ${subcategory}`}
+            Showing designs under {category} {subcategory !== 'All' && `> ${getSubcategoryDisplayName(subcategory)}`}
           </p>
         </div>
       </div>
 
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 mt-10">
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
+        {/* Saree Subcategories Visual Bar */}
+        {category === 'Weaving Design' && ALL_SAREE_SUBCATEGORIES_VALUES.includes(subcategory) && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
+            <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Saree Subcategories</h3>
+            <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+              {SAREE_SUBCATEGORIES.map(sub => {
+                const isActive = subcategory === sub.value;
+                return (
+                  <Link
+                    key={sub.value}
+                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
+                  >
+                    <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Lehengha Subcategories Visual Bar */}
+        {category === 'Weaving Design' && ALL_LEHENGHA_SUBCATEGORIES_VALUES.includes(subcategory) && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
+            <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Lehengha Subcategories</h3>
+            <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+              {LEHENGHA_SUBCATEGORIES.map(sub => {
+                const isActive = subcategory === sub.value;
+                return (
+                  <Link
+                    key={sub.value}
+                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
+                  >
+                    <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Suit Subcategories Visual Bar */}
+        {category === 'Weaving Design' && ALL_SUIT_SUBCATEGORIES_VALUES.includes(subcategory) && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
+            <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Suit Subcategories</h3>
+            <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+              {SUIT_SUBCATEGORIES.map(sub => {
+                const isActive = subcategory === sub.value;
+                return (
+                  <Link
+                    key={sub.value}
+                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
+                  >
+                    <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Dupatta Subcategories Visual Bar */}
+        {category === 'Weaving Design' && ALL_DUPATTA_SUBCATEGORIES_VALUES.includes(subcategory) && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
+            <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Dupatta Subcategories</h3>
+            <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+              {DUPATTA_SUBCATEGORIES.map(sub => {
+                const isActive = subcategory === sub.value;
+                return (
+                  <Link
+                    key={sub.value}
+                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
+                  >
+                    <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {(isLoading || !(designs.length === 0 && selectedFabric === 'All' && selectedPriceRange === 'All')) && (
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Advanced Filters Sidebar */}
           {showFilters && (
             <aside className="w-full lg:w-72 bg-white rounded-2xl border border-outline-variant p-6 shadow-sm shrink-0 lg:sticky lg:top-24">
@@ -253,6 +609,7 @@ export function CollectionPage() {
             )}
           </div>
         </div>
+        )}
       </div>
     </div>
   );

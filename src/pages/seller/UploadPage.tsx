@@ -12,7 +12,11 @@ export function UploadPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Weaving Design');
-  const [subcategory, setSubcategory] = useState('Kotalichi Design');
+  const [subcategory, setSubcategory] = useState('Saree Design');
+  const [sareeType, setSareeType] = useState('Saree Design');
+  const [lehenghaType, setLehenghaType] = useState('Lehengha Design');
+  const [suitType, setSuitType] = useState('Suit Design');
+  const [dupattaType, setDupattaType] = useState('Dupatta Design');
   const [fabric, setFabric] = useState('Cotton Blend');
   const [price, setPrice] = useState('');
   const [tags, setTags] = useState('');
@@ -25,7 +29,11 @@ export function UploadPage() {
   // Dynamically update subcategory when category changes
   useEffect(() => {
     if (category === 'Weaving Design') {
-      setSubcategory('Kotalichi Design');
+      setSubcategory('Saree Design');
+      setSareeType('Saree Design');
+      setLehenghaType('Lehengha Design');
+      setSuitType('Suit Design');
+      setDupattaType('Dupatta Design');
     } else if (category === 'Embroidery Design') {
       setSubcategory('Multi Design');
     } else if (category === 'Digital Print Design') {
@@ -41,17 +49,14 @@ export function UploadPage() {
     switch (category) {
       case 'Weaving Design':
         return [
-          'Kotalichi Design',
-          '50 600 Design',
-          'Nylon Design',
-          'Satin Design',
-          'Cotton Design',
+          'Saree Design',
+          'Lace Design',
+          'Bulk Package Design',
           'All Over Design',
           'Suit Design',
           'Dupatta Design',
           'Blouse Design',
-          'Lehengha Design',
-          'Lace Design'
+          'Lehengha Design'
         ];
       case 'Embroidery Design':
         return [
@@ -114,7 +119,20 @@ export function UploadPage() {
       formData.append('title', title);
       formData.append('description', description);
       formData.append('category', category);
-      formData.append('subcategory', subcategory);
+      
+      let finalSubcategory = subcategory;
+      if (category === 'Weaving Design') {
+        if (subcategory === 'Saree Design') {
+          finalSubcategory = sareeType;
+        } else if (subcategory === 'Lehengha Design') {
+          finalSubcategory = lehenghaType;
+        } else if (subcategory === 'Suit Design') {
+          finalSubcategory = suitType;
+        } else if (subcategory === 'Dupatta Design') {
+          finalSubcategory = dupattaType;
+        }
+      }
+      formData.append('subcategory', finalSubcategory);
       formData.append('fabric', fabric);
       formData.append('price', price);
       formData.append('tags', tags);
@@ -229,6 +247,88 @@ export function UploadPage() {
                 ))}
               </select>
             </div>
+
+            {/* Saree Type (Conditional) */}
+            {category === 'Weaving Design' && subcategory === 'Saree Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Saree Type *</label>
+                <select 
+                  value={sareeType} 
+                  onChange={(e) => setSareeType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Saree Design">General Saree Design</option>
+                  <option value="Kota Lichi Design">Kota Lichi Design</option>
+                  <option value="50 600 Design">50 600 Design</option>
+                  <option value="Dolla-Nylon Design">Dolla-Nylon Design</option>
+                  <option value="Viscouse Design">Viscouse Design</option>
+                  <option value="(50 600) Satin Design">(50 600) Satin Design</option>
+                  <option value="Nylon Satin Design">Nylon Satin Design</option>
+                  <option value="Cotton Design">Cotton Design</option>
+                  <option value="Dharmavarm Design">Dharmavarm Design</option>
+                  <option value="Pattern Beam Design">Pattern Beam Design</option>
+                  <option value="Mix Design">Mix Design</option>
+                  <option value="Georgept (Crape) Design">Georgept (Crape) Design</option>
+                </select>
+              </div>
+            )}
+
+            {/* Lehengha Type (Conditional) */}
+            {category === 'Weaving Design' && subcategory === 'Lehengha Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Lehengha Type *</label>
+                <select 
+                  value={lehenghaType} 
+                  onChange={(e) => setLehenghaType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Lehengha Design">General Lehengha Design</option>
+                  <option value="Lehengha - 50 600 Design">50 600 Design</option>
+                  <option value="Lehengha - Kota Lichi Design">Kota Lichi Design</option>
+                  <option value="Lehengha - Viscouse Design">Viscouse Design</option>
+                  <option value="Lehengha - Nylon Satin Design">Nylon Satin Design</option>
+                </select>
+              </div>
+            )}
+
+            {/* Suit Type (Conditional) */}
+            {category === 'Weaving Design' && subcategory === 'Suit Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Suit Type *</label>
+                <select 
+                  value={suitType} 
+                  onChange={(e) => setSuitType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Suit Design">General Suit Design</option>
+                  <option value="Suit - Kota Lichi Design">Kota Lichi Design</option>
+                  <option value="Suit - Viscouse Design">Viscouse Design</option>
+                  <option value="Suit - (50 600) Satin Design">(50 600) Satin Design</option>
+                  <option value="Suit - Cotton Design">Cotton Design</option>
+                </select>
+              </div>
+            )}
+
+            {/* Dupatta Type (Conditional) */}
+            {category === 'Weaving Design' && subcategory === 'Dupatta Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Dupatta Type *</label>
+                <select 
+                  value={dupattaType} 
+                  onChange={(e) => setDupattaType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Dupatta Design">General Dupatta Design</option>
+                  <option value="Dupatta - Kota Lichi Design">Kota Lichi Design</option>
+                  <option value="Dupatta - 50 600 Design">50 600 Design</option>
+                  <option value="Dupatta - Dolla-Nylon Design">Dolla-Nylon Design</option>
+                  <option value="Dupatta - Viscouse Design">Viscouse Design</option>
+                  <option value="Dupatta - (50 600) Satin Design">(50 600) Satin Design</option>
+                  <option value="Dupatta - Nylon Satin Design">Nylon Satin Design</option>
+                  <option value="Dupatta - Cotton Design">Cotton Design</option>
+                </select>
+              </div>
+            )}
 
             {/* Fabric */}
             <div className="space-y-1">
