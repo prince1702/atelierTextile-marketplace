@@ -42,6 +42,26 @@ const designSchema = new mongoose.Schema({
     enum: ['Cotton Blend', 'Silk', 'Linen', 'Polyester Blend', 'Wool Blend', 'Cotton Sateen'],
     required: [true, 'Fabric type is required'],
   },
+  designType: {
+    type: String,
+    default: '',
+  },
+  area: {
+    type: String,
+    default: '',
+  },
+  needle: {
+    type: String,
+    default: '',
+  },
+  designFormat: {
+    type: String,
+    default: '',
+  },
+  sareeConcept: {
+    type: String,
+    default: '',
+  },
   image: {
     type: String,
     default: '',

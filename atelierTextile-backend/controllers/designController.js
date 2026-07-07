@@ -34,6 +34,11 @@ exports.getDesigns = async (req, res, next) => {
       sort,
       page = 1,
       limit = 12,
+      designType,
+      area,
+      needle,
+      designFormat,
+      sareeConcept,
     } = req.query;
 
     let filterStatus = 'active';
@@ -122,6 +127,11 @@ exports.getDesigns = async (req, res, next) => {
     }
     if (fabric) filter.fabric = fabric;
     if (badge) filter.badge = badge;
+    if (designType) filter.designType = designType;
+    if (area) filter.area = area;
+    if (needle) filter.needle = needle;
+    if (designFormat) filter.designFormat = designFormat;
+    if (sareeConcept) filter.sareeConcept = sareeConcept;
 
     if (minPrice || maxPrice) {
       filter.price = {};

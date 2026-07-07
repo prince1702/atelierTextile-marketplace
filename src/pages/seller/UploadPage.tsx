@@ -18,6 +18,11 @@ export function UploadPage() {
   const [suitType, setSuitType] = useState('Suit Design');
   const [dupattaType, setDupattaType] = useState('Dupatta Design');
   const [fabric, setFabric] = useState('Cotton Blend');
+  const [designType, setDesignType] = useState('Flat/Multi Designs');
+  const [area, setArea] = useState('100 mm');
+  const [needle, setNeedle] = useState('1');
+  const [designFormat, setDesignFormat] = useState('EMB');
+  const [sareeConcept, setSareeConcept] = useState('Box Pallu');
   const [price, setPrice] = useState('');
   const [tags, setTags] = useState('');
   const [dimensions, setDimensions] = useState('150cm width, repeat 30cm');
@@ -140,6 +145,11 @@ export function UploadPage() {
       formData.append('colorways', colorways);
       formData.append('licenseType', licenseType);
       formData.append('image', imageFile);
+      formData.append('designType', designType);
+      formData.append('area', area);
+      formData.append('needle', needle);
+      formData.append('designFormat', designFormat);
+      formData.append('sareeConcept', sareeConcept);
 
       await api.designs.create(formData);
       showToast('Design uploaded successfully! It is pending admin review.', 'success');
@@ -344,6 +354,86 @@ export function UploadPage() {
                 <option>Polyester Blend</option>
                 <option>Wool Blend</option>
                 <option>Cotton Sateen</option>
+              </select>
+            </div>
+
+            {/* Design Type (Machine Type) */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design Type (Machine Type) *</label>
+              <select 
+                value={designType} 
+                onChange={(e) => setDesignType(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+              >
+                <option value="Flat/Multi Designs">Flat/Multi Designs</option>
+                <option value="Only Cording Designs">Only Cording Designs</option>
+                <option value="Only Sequin Designs">Only Sequin Designs</option>
+                <option value="Only Chain Stitch Designs">Only Chain Stitch Designs</option>
+                <option value="Multi+Cording Designs">Multi+Cording Designs</option>
+              </select>
+            </div>
+
+            {/* Area */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Area *</label>
+              <select 
+                value={area} 
+                onChange={(e) => setArea(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+              >
+                <option value="100 mm">100 mm</option>
+                <option value="125 mm">125 mm</option>
+                <option value="150 mm">150 mm</option>
+                <option value="175 mm">175 mm</option>
+                <option value="200 mm">200 mm</option>
+              </select>
+            </div>
+
+            {/* Needle */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Needle *</label>
+              <select 
+                value={needle} 
+                onChange={(e) => setNeedle(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+              >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+
+            {/* Design Format */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design Format *</label>
+              <select 
+                value={designFormat} 
+                onChange={(e) => setDesignFormat(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+              >
+                <option value="EMB">EMB</option>
+                <option value="DST">DST</option>
+                <option value="JEF">JEF</option>
+                <option value="PES">PES</option>
+                <option value="DHP">DHP</option>
+              </select>
+            </div>
+
+            {/* Saree Concept */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Saree Concept *</label>
+              <select 
+                value={sareeConcept} 
+                onChange={(e) => setSareeConcept(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+              >
+                <option value="Box Pallu">Box Pallu</option>
+                <option value="C Pallu">C Pallu</option>
+                <option value="Figure">Figure</option>
+                <option value="Ton to Ton">Ton to Ton</option>
+                <option value="Dhaga Test">Dhaga Test</option>
               </select>
             </div>
 

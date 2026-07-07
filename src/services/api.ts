@@ -104,6 +104,11 @@ export const api = {
       status?: string;
       page?: number;
       limit?: number;
+      designType?: string;
+      area?: string;
+      needle?: string;
+      designFormat?: string;
+      sareeConcept?: string;
     }): Promise<{ designs: Design[]; count: number; total: number; page: number; pages: number }> => {
       try {
         const response = await client.get('/designs', { params });

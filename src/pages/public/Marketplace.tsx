@@ -6,8 +6,11 @@ import { DesignCard } from '../../components/ui/DesignCard';
 import { useNotification } from '../../contexts/NotificationContext';
 
 const CATEGORIES = ['All', 'Weaving Design', 'Embroidery Design', 'Digital Print Design', 'Position Print Design'];
-const FABRICS = ['All', 'Cotton Blend', 'Silk', 'Linen', 'Polyester Blend', 'Wool Blend', 'Cotton Sateen'];
-const PRICE_RANGES = ['All', 'Under $500', '$500 - $800', '$800 - $1000', 'Over $1000'];
+const DESIGN_TYPES = ['All', 'Flat/Multi Designs', 'Only Cording Designs', 'Only Sequin Designs', 'Only Chain Stitch Designs', 'Multi+Cording Designs'];
+const AREAS = ['All', '100 mm', '125 mm', '150 mm', '175 mm', '200 mm'];
+const NEEDLES = ['All', '1', '2', '3', '4', '5'];
+const DESIGN_FORMATS = ['All', 'EMB', 'DST', 'JEF', 'PES', 'DHP'];
+const SAREE_CONCEPTS = ['All', 'Box Pallu', 'C Pallu', 'Figure', 'Ton to Ton', 'Dhaga Test'];
 const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'All',
@@ -348,8 +351,11 @@ export function Marketplace() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTrigger, setSearchTrigger] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedFabric, setSelectedFabric] = useState('All');
-  const [selectedPriceRange, setSelectedPriceRange] = useState('All');
+  const [selectedDesignType, setSelectedDesignType] = useState('All');
+  const [selectedArea, setSelectedArea] = useState('All');
+  const [selectedNeedle, setSelectedNeedle] = useState('All');
+  const [selectedDesignFormat, setSelectedDesignFormat] = useState('All');
+  const [selectedSareeConcept, setSelectedSareeConcept] = useState('All');
   const [sortOption, setSortOption] = useState('Newest Arrivals');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -369,30 +375,9 @@ export function Marketplace() {
     }
   };
 
-  // Map price labels to min/max
-  const getPriceBounds = (label: string) => {
-    let minPrice: number | undefined;
-    let maxPrice: number | undefined;
-
-    if (label === 'Under $500') {
-      maxPrice = 499;
-    } else if (label === '$500 - $800') {
-      minPrice = 500;
-      maxPrice = 800;
-    } else if (label === '$800 - $1000') {
-      minPrice = 801;
-      maxPrice = 1000;
-    } else if (label === 'Over $1000') {
-      minPrice = 1001;
-    }
-
-    return { minPrice, maxPrice };
-  };
-
   const fetchDesigns = async () => {
     setIsLoading(true);
     try {
-      const { minPrice, maxPrice } = getPriceBounds(selectedPriceRange);
       const params: any = {
         page: currentPage,
         limit: 9,
@@ -403,10 +388,12 @@ export function Marketplace() {
       if ((activeCategory === 'Weaving Design' || activeCategory === 'Embroidery Design' || activeCategory === 'Digital Print Design' || activeCategory === 'Position Print Design') && activeSubcategory !== 'All') {
         params.subcategory = activeSubcategory;
       }
-      if (selectedFabric !== 'All') params.fabric = selectedFabric;
+      if (selectedDesignType !== 'All') params.designType = selectedDesignType;
+      if (selectedArea !== 'All') params.area = selectedArea;
+      if (selectedNeedle !== 'All') params.needle = selectedNeedle;
+      if (selectedDesignFormat !== 'All') params.designFormat = selectedDesignFormat;
+      if (selectedSareeConcept !== 'All') params.sareeConcept = selectedSareeConcept;
       if (searchTrigger.trim()) params.search = searchTrigger;
-      if (minPrice !== undefined) params.minPrice = minPrice;
-      if (maxPrice !== undefined) params.maxPrice = maxPrice;
 
       const response = await api.designs.getAll(params);
       setDesigns(response.designs);
@@ -422,7 +409,7 @@ export function Marketplace() {
 
   useEffect(() => {
     fetchDesigns();
-  }, [activeCategory, activeSubcategory, selectedFabric, selectedPriceRange, sortOption, currentPage, searchTrigger]);
+  }, [activeCategory, activeSubcategory, selectedDesignType, selectedArea, selectedNeedle, selectedDesignFormat, selectedSareeConcept, sortOption, currentPage, searchTrigger]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -433,8 +420,11 @@ export function Marketplace() {
   const handleClearAll = () => {
     setActiveCategory('All');
     setActiveSubcategory('All');
-    setSelectedFabric('All');
-    setSelectedPriceRange('All');
+    setSelectedDesignType('All');
+    setSelectedArea('All');
+    setSelectedNeedle('All');
+    setSelectedDesignFormat('All');
+    setSelectedSareeConcept('All');
     setSearchQuery('');
     setSearchTrigger('');
     setSortOption('Newest Arrivals');
@@ -679,8 +669,11 @@ export function Marketplace() {
         {((activeCategory !== 'All' || searchTrigger.trim() !== '') && 
           (isLoading || 
            !(designs.length === 0 && 
-             selectedFabric === 'All' && 
-             selectedPriceRange === 'All' && 
+             selectedDesignType === 'All' && 
+             selectedArea === 'All' && 
+             selectedNeedle === 'All' && 
+             selectedDesignFormat === 'All' && 
+             selectedSareeConcept === 'All' && 
              activeSubcategory === 'All' && 
              searchTrigger.trim() === ''))) && (
           <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -695,18 +688,18 @@ export function Marketplace() {
 
                 <div className="space-y-6">
                   <div>
-                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Fabric Type</h4>
+                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Design Types (machine)</h4>
                     <div className="space-y-2">
-                      {FABRICS.map(fabric => (
-                        <label key={fabric} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                      {DESIGN_TYPES.map(type => (
+                        <label key={type} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
                           <input 
                             type="radio" 
-                            name="fabric"
-                            checked={selectedFabric === fabric}
-                            onChange={() => { setSelectedFabric(fabric); setCurrentPage(1); }}
+                            name="designType"
+                            checked={selectedDesignType === type}
+                            onChange={() => { setSelectedDesignType(type); setCurrentPage(1); }}
                             className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
                           />
-                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{fabric}</span>
+                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{type}</span>
                         </label>
                       ))}
                     </div>
@@ -715,18 +708,78 @@ export function Marketplace() {
                   <div className="w-full h-px bg-outline-variant/50"></div>
 
                   <div>
-                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Price Range</h4>
+                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Area</h4>
                     <div className="space-y-2">
-                      {PRICE_RANGES.map(price => (
-                        <label key={price} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                      {AREAS.map(ar => (
+                        <label key={ar} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
                           <input 
                             type="radio" 
-                            name="price" 
-                            checked={selectedPriceRange === price}
-                            onChange={() => { setSelectedPriceRange(price); setCurrentPage(1); }}
+                            name="area" 
+                            checked={selectedArea === ar}
+                            onChange={() => { setSelectedArea(ar); setCurrentPage(1); }}
                             className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
                           />
-                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{price}</span>
+                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{ar}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="w-full h-px bg-outline-variant/50"></div>
+
+                  <div>
+                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Needle</h4>
+                    <div className="space-y-2">
+                      {NEEDLES.map(n => (
+                        <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                          <input 
+                            type="radio" 
+                            name="needle" 
+                            checked={selectedNeedle === n}
+                            onChange={() => { setSelectedNeedle(n); setCurrentPage(1); }}
+                            className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
+                          />
+                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{n}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="w-full h-px bg-outline-variant/50"></div>
+
+                  <div>
+                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Design Format</h4>
+                    <div className="space-y-2">
+                      {DESIGN_FORMATS.map(f => (
+                        <label key={f} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                          <input 
+                            type="radio" 
+                            name="designFormat" 
+                            checked={selectedDesignFormat === f}
+                            onChange={() => { setSelectedDesignFormat(f); setCurrentPage(1); }}
+                            className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
+                          />
+                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{f}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="w-full h-px bg-outline-variant/50"></div>
+
+                  <div>
+                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Saree Concept</h4>
+                    <div className="space-y-2">
+                      {SAREE_CONCEPTS.map(sc => (
+                        <label key={sc} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                          <input 
+                            type="radio" 
+                            name="sareeConcept" 
+                            checked={selectedSareeConcept === sc}
+                            onChange={() => { setSelectedSareeConcept(sc); setCurrentPage(1); }}
+                            className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
+                          />
+                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{sc}</span>
                         </label>
                       ))}
                     </div>
