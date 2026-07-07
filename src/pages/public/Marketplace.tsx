@@ -355,6 +355,17 @@ export function Marketplace() {
   const designTypes = activeCategory === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = activeCategory === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
   const [activeSubcategory, setActiveSubcategory] = useState('All');
+  const [openFilters, setOpenFilters] = useState({
+    designType: true,
+    area: true,
+    needle: true,
+    designFormat: true,
+    sareeConcept: true,
+  });
+
+  const toggleFilter = (key: keyof typeof openFilters) => {
+    setOpenFilters(prev => ({ ...prev, [key]: !prev[key] }));
+  };
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTrigger, setSearchTrigger] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -687,110 +698,171 @@ export function Marketplace() {
             
             {/* Advanced Filters Sidebar (Collapsible) */}
             {showFilters && (
-              <aside className="w-full lg:w-72 bg-white rounded-2xl border border-outline-variant p-6 shadow-sm shrink-0 animate-fade-in lg:sticky lg:top-24">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="font-bold text-lg text-primary">Filters</h3>
-                  <button onClick={handleClearAll} className="text-sm font-semibold text-error hover:underline">Clear All</button>
+              <aside className="w-full lg:w-72 shrink-0 lg:sticky lg:top-24 space-y-4">
+                {/* Filters Header Box */}
+                <div className="flex justify-between items-center px-4 py-3 bg-white rounded-xl border border-outline-variant/60 shadow-sm">
+                  <h3 className="font-bold text-base text-primary">Filters</h3>
+                  <button onClick={handleClearAll} className="text-sm font-bold text-error hover:underline">Clear All</button>
                 </div>
 
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Design Types (machine)</h4>
-                    <div className="space-y-2">
-                      {designTypes.map(type => (
-                        <label key={type} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
-                          <input 
-                            type="radio" 
-                            name="designType"
-                            checked={selectedDesignType === type}
-                            onChange={() => { setSelectedDesignType(type); setCurrentPage(1); }}
-                            className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
-                          />
-                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{type}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                {/* 1. Design Types */}
+                <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                  <button 
+                    onClick={() => toggleFilter('designType')}
+                    className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                  >
+                    <span className="font-bold text-xs text-on-surface uppercase tracking-wider">Design Types (machines types)</span>
+                    <span className={`material-symbols-outlined text-on-surface-variant transition-transform duration-200 ${openFilters.designType ? 'rotate-180' : ''}`}>
+                      keyboard_arrow_down
+                    </span>
+                  </button>
+                  {openFilters.designType && (
+                    <>
+                      <div className="w-full h-px bg-outline-variant/50"></div>
+                      <div className="px-4 py-3.5 custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                        {designTypes.map(type => (
+                          <label key={type} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                            <input 
+                              type="radio" 
+                              name="designType"
+                              checked={selectedDesignType === type}
+                              onChange={() => { setSelectedDesignType(type); setCurrentPage(1); }}
+                              className="w-4 h-4 text-[#ffa500] border-gray-300 focus:ring-[#ffa500] accent-[#ffa500] cursor-pointer" 
+                            />
+                            <span className="text-[#ffa500] hover:text-[#e69500] transition-colors">{type}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
 
-                  <div className="w-full h-px bg-outline-variant/50"></div>
+                {/* 2. Area */}
+                <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                  <button 
+                    onClick={() => toggleFilter('area')}
+                    className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                  >
+                    <span className="font-bold text-xs text-on-surface uppercase tracking-wider">Area</span>
+                    <span className={`material-symbols-outlined text-on-surface-variant transition-transform duration-200 ${openFilters.area ? 'rotate-180' : ''}`}>
+                      keyboard_arrow_down
+                    </span>
+                  </button>
+                  {openFilters.area && (
+                    <>
+                      <div className="w-full h-px bg-outline-variant/50"></div>
+                      <div className="px-4 py-3.5 custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                        {areas.map(ar => (
+                          <label key={ar} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                            <input 
+                              type="radio" 
+                              name="area"
+                              checked={selectedArea === ar}
+                              onChange={() => { setSelectedArea(ar); setCurrentPage(1); }}
+                              className="w-4 h-4 text-[#ffa500] border-gray-300 focus:ring-[#ffa500] accent-[#ffa500] cursor-pointer" 
+                            />
+                            <span className="text-[#ffa500] hover:text-[#e69500] transition-colors">{ar}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
 
-                  <div>
-                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Area</h4>
-                    <div className="space-y-2">
-                      {areas.map(ar => (
-                        <label key={ar} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
-                          <input 
-                            type="radio" 
-                            name="area" 
-                            checked={selectedArea === ar}
-                            onChange={() => { setSelectedArea(ar); setCurrentPage(1); }}
-                            className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
-                          />
-                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{ar}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                {/* 3. Needle */}
+                <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                  <button 
+                    onClick={() => toggleFilter('needle')}
+                    className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                  >
+                    <span className="font-bold text-xs text-on-surface uppercase tracking-wider">Needle</span>
+                    <span className={`material-symbols-outlined text-on-surface-variant transition-transform duration-200 ${openFilters.needle ? 'rotate-180' : ''}`}>
+                      keyboard_arrow_down
+                    </span>
+                  </button>
+                  {openFilters.needle && (
+                    <>
+                      <div className="w-full h-px bg-outline-variant/50"></div>
+                      <div className="px-4 py-3.5 custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                        {NEEDLES.map(n => (
+                          <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                            <input 
+                              type="radio" 
+                              name="needle"
+                              checked={selectedNeedle === n}
+                              onChange={() => { setSelectedNeedle(n); setCurrentPage(1); }}
+                              className="w-4 h-4 text-[#ffa500] border-gray-300 focus:ring-[#ffa500] accent-[#ffa500] cursor-pointer" 
+                            />
+                            <span className="text-[#ffa500] hover:text-[#e69500] transition-colors">{n}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
 
-                  <div className="w-full h-px bg-outline-variant/50"></div>
+                {/* 4. Design Format */}
+                <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                  <button 
+                    onClick={() => toggleFilter('designFormat')}
+                    className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                  >
+                    <span className="font-bold text-xs text-on-surface uppercase tracking-wider">Design Format</span>
+                    <span className={`material-symbols-outlined text-on-surface-variant transition-transform duration-200 ${openFilters.designFormat ? 'rotate-180' : ''}`}>
+                      keyboard_arrow_down
+                    </span>
+                  </button>
+                  {openFilters.designFormat && (
+                    <>
+                      <div className="w-full h-px bg-outline-variant/50"></div>
+                      <div className="px-4 py-3.5 custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                        {DESIGN_FORMATS.map(f => (
+                          <label key={f} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                            <input 
+                              type="radio" 
+                              name="designFormat"
+                              checked={selectedDesignFormat === f}
+                              onChange={() => { setSelectedDesignFormat(f); setCurrentPage(1); }}
+                              className="w-4 h-4 text-[#ffa500] border-gray-300 focus:ring-[#ffa500] accent-[#ffa500] cursor-pointer" 
+                            />
+                            <span className="text-[#ffa500] hover:text-[#e69500] transition-colors">{f}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
 
-                  <div>
-                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Needle</h4>
-                    <div className="space-y-2">
-                      {NEEDLES.map(n => (
-                        <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
-                          <input 
-                            type="radio" 
-                            name="needle" 
-                            checked={selectedNeedle === n}
-                            onChange={() => { setSelectedNeedle(n); setCurrentPage(1); }}
-                            className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
-                          />
-                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{n}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="w-full h-px bg-outline-variant/50"></div>
-
-                  <div>
-                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Design Format</h4>
-                    <div className="space-y-2">
-                      {DESIGN_FORMATS.map(f => (
-                        <label key={f} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
-                          <input 
-                            type="radio" 
-                            name="designFormat" 
-                            checked={selectedDesignFormat === f}
-                            onChange={() => { setSelectedDesignFormat(f); setCurrentPage(1); }}
-                            className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
-                          />
-                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{f}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="w-full h-px bg-outline-variant/50"></div>
-
-                  <div>
-                    <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Saree Concept</h4>
-                    <div className="space-y-2">
-                      {SAREE_CONCEPTS.map(sc => (
-                        <label key={sc} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
-                          <input 
-                            type="radio" 
-                            name="sareeConcept" 
-                            checked={selectedSareeConcept === sc}
-                            onChange={() => { setSelectedSareeConcept(sc); setCurrentPage(1); }}
-                            className="w-4 h-4 text-primary border-outline-variant focus:ring-primary cursor-pointer" 
-                          />
-                          <span className="text-on-surface-variant group-hover:text-primary transition-colors">{sc}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                {/* 5. Saree Concept */}
+                <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                  <button 
+                    onClick={() => toggleFilter('sareeConcept')}
+                    className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                  >
+                    <span className="font-bold text-xs text-on-surface uppercase tracking-wider">Saree Concept</span>
+                    <span className={`material-symbols-outlined text-on-surface-variant transition-transform duration-200 ${openFilters.sareeConcept ? 'rotate-180' : ''}`}>
+                      keyboard_arrow_down
+                    </span>
+                  </button>
+                  {openFilters.sareeConcept && (
+                    <>
+                      <div className="w-full h-px bg-outline-variant/50"></div>
+                      <div className="px-4 py-3.5 custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                        {SAREE_CONCEPTS.map(sc => (
+                          <label key={sc} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
+                            <input 
+                              type="radio" 
+                              name="sareeConcept"
+                              checked={selectedSareeConcept === sc}
+                              onChange={() => { setSelectedSareeConcept(sc); setCurrentPage(1); }}
+                              className="w-4 h-4 text-[#ffa500] border-gray-300 focus:ring-[#ffa500] accent-[#ffa500] cursor-pointer" 
+                            />
+                            <span className="text-[#ffa500] hover:text-[#e69500] transition-colors">{sc}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               </aside>
             )}
