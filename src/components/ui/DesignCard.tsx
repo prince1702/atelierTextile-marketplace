@@ -24,7 +24,7 @@ export function DesignCard({ design }: DesignCardProps) {
 
   return (
     <div className="bg-white rounded-xl border border-outline-variant overflow-hidden card-lift group flex flex-col h-full">
-      <div className="relative h-56 overflow-hidden bg-surface-container cursor-pointer" onClick={() => window.open(`/design/${design.id}`, '_blank')}>
+      <Link to={`/design/${design.id}`} target="_blank" rel="noopener noreferrer" className="relative h-56 overflow-hidden bg-surface-container block">
         <img 
           src={design.image} 
           alt={design.title} 
@@ -40,6 +40,7 @@ export function DesignCard({ design }: DesignCardProps) {
         <button 
           onClick={(e) => {
             e.stopPropagation();
+            e.preventDefault();
             toggleWishlist(design);
           }}
           className="absolute top-3 right-3 z-10 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white text-on-surface-variant transition-colors shadow-sm"
@@ -48,7 +49,7 @@ export function DesignCard({ design }: DesignCardProps) {
             favorite
           </span>
         </button>
-      </div>
+      </Link>
       
       <div className="p-5 flex-1 flex flex-col">
         <div className="flex justify-between items-start mb-1">
