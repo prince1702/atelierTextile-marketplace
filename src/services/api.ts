@@ -3,7 +3,7 @@ import type { User, Design, Order, Ticket } from '../types';
 
 const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-  if (import.meta.env.PROD) return 'https://ateliertextile-backend.onrender.com';
+  if (import.meta.env.PROD) return 'https://ateliertextile-backend-production-2f5c.up.railway.app';
   if (typeof window !== 'undefined' && window.location) {
     const { hostname } = window.location;
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.') || hostname.startsWith('172.')) {
@@ -14,10 +14,6 @@ const getApiUrl = () => {
 };
 
 const API_URL = getApiUrl();
-
-const FRONTEND_MOCK_DESIGNS: Design[] = [];
-
-
 
 const client = axios.create({
   baseURL: `${API_URL}/api`,
