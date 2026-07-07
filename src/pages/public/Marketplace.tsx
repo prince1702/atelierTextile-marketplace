@@ -6,8 +6,12 @@ import { DesignCard } from '../../components/ui/DesignCard';
 import { useNotification } from '../../contexts/NotificationContext';
 
 const CATEGORIES = ['All', 'Weaving Design', 'Embroidery Design', 'Digital Print Design', 'Position Print Design'];
-const DESIGN_TYPES = ['All', 'Flat/Multi Designs', 'Only Cording Designs', 'Only Sequin Designs', 'Only Chain Stitch Designs', 'Multi+Cording Designs'];
-const AREAS = ['All', '100 mm', '125 mm', '150 mm', '175 mm', '200 mm'];
+const EMB_DESIGN_TYPES = ['All', 'Flat/Multi Designs', 'Only Cording Designs', 'Only Sequin Designs', 'Only Chain Stitch Designs', 'Multi+Cording Designs'];
+const WEAVING_DESIGN_TYPES = ['All', 'Multi+Sequin Designs', 'Multi+Chain Stitch Designs', 'Dual & Sandwich Sequin', '2/4/6 Sequin Design', 'Cording + Sequin Designs'];
+
+const EMB_AREAS = ['All', '100 mm', '125 mm', '150 mm', '175 mm', '200 mm'];
+const WEAVING_AREAS = ['All', '300 mm', '330 mm', '400 mm', '500 mm', '600 mm'];
+
 const NEEDLES = ['All', '1', '2', '3', '4', '5'];
 const DESIGN_FORMATS = ['All', 'EMB', 'DST', 'JEF', 'PES', 'DHP'];
 const SAREE_CONCEPTS = ['All', 'Box Pallu', 'C Pallu', 'Figure', 'Ton to Ton', 'Dhaga Test'];
@@ -347,6 +351,9 @@ export function Marketplace() {
   const navigate = useNavigate();
   const { showToast } = useNotification();
   const [activeCategory, setActiveCategory] = useState('All');
+
+  const designTypes = activeCategory === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
+  const areas = activeCategory === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
   const [activeSubcategory, setActiveSubcategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTrigger, setSearchTrigger] = useState('');
@@ -690,7 +697,7 @@ export function Marketplace() {
                   <div>
                     <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Design Types (machine)</h4>
                     <div className="space-y-2">
-                      {DESIGN_TYPES.map(type => (
+                      {designTypes.map(type => (
                         <label key={type} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
                           <input 
                             type="radio" 
@@ -710,7 +717,7 @@ export function Marketplace() {
                   <div>
                     <h4 className="font-semibold text-xs text-on-surface mb-3 uppercase tracking-wider">Area</h4>
                     <div className="space-y-2">
-                      {AREAS.map(ar => (
+                      {areas.map(ar => (
                         <label key={ar} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
                           <input 
                             type="radio" 

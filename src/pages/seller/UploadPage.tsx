@@ -39,14 +39,20 @@ export function UploadPage() {
       setLehenghaType('Lehengha Design');
       setSuitType('Suit Design');
       setDupattaType('Dupatta Design');
-    } else if (category === 'Embroidery Design') {
-      setSubcategory('Multi Design');
-    } else if (category === 'Digital Print Design') {
-      setSubcategory('Allover Design');
-    } else if (category === 'Position Print Design') {
-      setSubcategory('Saree Design');
+      setDesignType('Multi+Sequin Designs');
+      setArea('300 mm');
     } else {
-      setSubcategory('Other');
+      if (category === 'Embroidery Design') {
+        setSubcategory('Multi Design');
+      } else if (category === 'Digital Print Design') {
+        setSubcategory('Allover Design');
+      } else if (category === 'Position Print Design') {
+        setSubcategory('Saree Design');
+      } else {
+        setSubcategory('Other');
+      }
+      setDesignType('Flat/Multi Designs');
+      setArea('100 mm');
     }
   }, [category]);
 
@@ -365,11 +371,23 @@ export function UploadPage() {
                 onChange={(e) => setDesignType(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
               >
-                <option value="Flat/Multi Designs">Flat/Multi Designs</option>
-                <option value="Only Cording Designs">Only Cording Designs</option>
-                <option value="Only Sequin Designs">Only Sequin Designs</option>
-                <option value="Only Chain Stitch Designs">Only Chain Stitch Designs</option>
-                <option value="Multi+Cording Designs">Multi+Cording Designs</option>
+                {category === 'Weaving Design' ? (
+                  <>
+                    <option value="Multi+Sequin Designs">Multi+Sequin Designs</option>
+                    <option value="Multi+Chain Stitch Designs">Multi+Chain Stitch Designs</option>
+                    <option value="Dual & Sandwich Sequin">Dual & Sandwich Sequin</option>
+                    <option value="2/4/6 Sequin Design">2/4/6 Sequin Design</option>
+                    <option value="Cording + Sequin Designs">Cording + Sequin Designs</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="Flat/Multi Designs">Flat/Multi Designs</option>
+                    <option value="Only Cording Designs">Only Cording Designs</option>
+                    <option value="Only Sequin Designs">Only Sequin Designs</option>
+                    <option value="Only Chain Stitch Designs">Only Chain Stitch Designs</option>
+                    <option value="Multi+Cording Designs">Multi+Cording Designs</option>
+                  </>
+                )}
               </select>
             </div>
 
@@ -381,11 +399,23 @@ export function UploadPage() {
                 onChange={(e) => setArea(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
               >
-                <option value="100 mm">100 mm</option>
-                <option value="125 mm">125 mm</option>
-                <option value="150 mm">150 mm</option>
-                <option value="175 mm">175 mm</option>
-                <option value="200 mm">200 mm</option>
+                {category === 'Weaving Design' ? (
+                  <>
+                    <option value="300 mm">300 mm</option>
+                    <option value="330 mm">330 mm</option>
+                    <option value="400 mm">400 mm</option>
+                    <option value="500 mm">500 mm</option>
+                    <option value="600 mm">600 mm</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="100 mm">100 mm</option>
+                    <option value="125 mm">125 mm</option>
+                    <option value="150 mm">150 mm</option>
+                    <option value="175 mm">175 mm</option>
+                    <option value="200 mm">200 mm</option>
+                  </>
+                )}
               </select>
             </div>
 
