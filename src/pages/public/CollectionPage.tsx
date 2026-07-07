@@ -488,11 +488,7 @@ export function CollectionPage() {
           {/* Advanced Filters Sidebar */}
           {showFilters && (
             <aside className="w-full lg:w-72 shrink-0 lg:sticky lg:top-24 space-y-4">
-              {/* Filters Header Box */}
-              <div className="flex justify-between items-center px-4 py-3 bg-white rounded-xl border border-outline-variant/60 shadow-sm">
-                <h3 className="font-bold text-base text-primary">Filters</h3>
-                <button onClick={handleClearAll} className="text-sm font-bold text-error hover:underline">Clear All</button>
-              </div>
+
 
               {/* 1. Design Types */}
               <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
