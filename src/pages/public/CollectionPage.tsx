@@ -327,6 +327,8 @@ export function CollectionPage() {
                   <Link
                     key={sub.value}
                     to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
                   >
                     <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -363,6 +365,8 @@ export function CollectionPage() {
                   <Link
                     key={sub.value}
                     to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
                   >
                     <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -399,6 +403,8 @@ export function CollectionPage() {
                   <Link
                     key={sub.value}
                     to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
                   >
                     <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -435,6 +441,8 @@ export function CollectionPage() {
                   <Link
                     key={sub.value}
                     to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
                   >
                     <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
