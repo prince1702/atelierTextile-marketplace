@@ -6,6 +6,8 @@ buildCommand = "npm install"
 startCommand = "npm start"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
+healthcheckPath = "/api/health"
+healthcheckTimeout = 120
 
 [variables]
 NIXPACKS_NODE_VERSION = "20"
