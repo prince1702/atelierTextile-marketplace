@@ -40,29 +40,100 @@ export function CartPage() {
     }, 0);
   };
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handleCheckout = async () => {
     if (items.length === 0) return;
     setIsSubmitting(true);
     try {
-      // Place orders for all items
-      for (const item of items) {
+      // Prepare bulk order items
+      const orderItems = items.map(item => {
         const license = selectedLicenses[item.design.id] || 'Standard';
-        // Map frontend license label to backend enum value
         const backendLicense = 
           license === 'Exclusive Buyout' || license === 'Exclusive Global' 
             ? 'Exclusive Global' 
             : license === 'Extended' 
               ? 'Standard Regional' 
               : 'Open Regional';
-        await api.orders.create(item.design.id, backendLicense);
+        return {
+          designId: item.design.id,
+          licenseType: backendLicense
+        };
+      });
+
+      // Call API to create order
+      const response = await api.orders.create(undefined, undefined, orderItems);
+
+      // If Razorpay order is not returned, it means server is running in mock mode
+      if (!response.razorpayOrder) {
+        await clearCart();
+        showToast('Checkout successful! (Test/Mock Checkout)', 'success');
+        navigate('/customer/orders');
+        return;
       }
-      await clearCart();
-      showToast('Checkout successful! Thank you for your purchase.', 'success');
-      navigate('/customer/orders');
+
+      // Load Razorpay Script
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        showToast('Failed to load payment gateway. Please check your connection.', 'error');
+        return;
+      }
+
+      // Configure Razorpay checkout options
+      const options = {
+        key: response.razorpayKeyId,
+        amount: response.razorpayOrder.amount,
+        currency: response.razorpayOrder.currency,
+        name: 'AtelierTextile Marketplace',
+        description: `Purchase of ${items.length} design(s)`,
+        order_id: response.razorpayOrder.id,
+        handler: async function (res: any) {
+          try {
+            setIsSubmitting(true);
+            await api.orders.verifyPayment({
+              razorpay_payment_id: res.razorpay_payment_id,
+              razorpay_order_id: res.razorpay_order_id,
+              razorpay_signature: res.razorpay_signature,
+            });
+            await clearCart();
+            showToast('Payment successful! Your order has been placed.', 'success');
+            navigate('/customer/orders');
+          } catch (err: any) {
+            console.error(err);
+            showToast(err.response?.data?.error || 'Payment verification failed', 'error');
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+        prefill: {
+          name: '',
+          email: '',
+          contact: '',
+        },
+        theme: {
+          color: '#1E3A8A', // Sleek dark navy theme
+        },
+        modal: {
+          ondismiss: function () {
+            showToast('Payment cancelled.', 'info');
+            setIsSubmitting(false);
+          }
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
     } catch (error: any) {
       console.error(error);
-      showToast(error.response?.data?.error || 'Failed to place order', 'error');
-    } finally {
+      showToast(error.response?.data?.error || 'Failed to initiate checkout', 'error');
       setIsSubmitting(false);
     }
   };

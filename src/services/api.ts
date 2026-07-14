@@ -265,9 +265,29 @@ export const api = {
       const response = await client.get(`/orders/${id}`);
       return normalize<Order>(response.data.data);
     },
-    create: async (designId: string, licenseType: string): Promise<Order> => {
-      const response = await client.post('/orders', { designId, licenseType });
-      return normalize<Order>(response.data.data);
+    create: async (
+      designId?: string,
+      licenseType?: string,
+      items?: { designId: string; licenseType: string }[]
+    ): Promise<{
+      success: boolean;
+      data: any;
+      razorpayOrder?: any;
+      razorpayKeyId?: string;
+    }> => {
+      const response = await client.post('/orders', { designId, licenseType, items });
+      if (response.data.data) {
+        response.data.data = normalize<any>(response.data.data);
+      }
+      return response.data;
+    },
+    verifyPayment: async (paymentDetails: {
+      razorpay_payment_id: string;
+      razorpay_order_id: string;
+      razorpay_signature: string;
+    }): Promise<{ success: boolean; message?: string }> => {
+      const response = await client.post('/orders/verify', paymentDetails);
+      return response.data;
     },
     updateStatus: async (id: string, status: 'completed' | 'pending' | 'processing' | 'refunded'): Promise<Order> => {
       const response = await client.patch(`/orders/${id}/status`, { status });
