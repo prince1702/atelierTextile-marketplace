@@ -856,32 +856,32 @@ export function Marketplace() {
 
             {/* Design Grid */}
             <div className="flex-1 w-full">
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-3">
-                  <p className="text-sm font-semibold text-on-surface-variant">Showing <span className="text-primary">{totalResults}</span> results</p>
-                  {activeCategory === 'Weaving Design' && (
-                  <button 
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="flex items-center gap-2 px-4 py-2 bg-surface-variant text-on-surface rounded-xl font-semibold text-sm hover:bg-outline-variant/30 transition-colors shrink-0 animate-fade-in"
-                  >
-                    <span className="material-symbols-outlined text-[20px]">tune</span>
-                    <span>{showFilters ? 'Hide Filters' : 'Filters'}</span>
-                  </button>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-on-surface-variant">Sort by:</span>
-                  <select 
-                    value={sortOption}
-                    onChange={(e) => { setSortOption(e.target.value); setCurrentPage(1); }}
-                    className="bg-transparent border-none text-sm font-semibold text-primary focus:outline-none cursor-pointer"
-                  >
-                    <option>Newest Arrivals</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
-                  </select>
-                </div>
+            <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center mb-6">
+              <div className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto">
+                <p className="text-sm font-semibold text-on-surface-variant">Showing <span className="text-primary">{totalResults}</span> results</p>
+                {activeCategory === 'Weaving Design' && (
+                <button 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-surface-variant text-on-surface rounded-xl font-semibold text-xs sm:text-sm hover:bg-outline-variant/30 transition-colors shrink-0 animate-fade-in"
+                >
+                  <span className="material-symbols-outlined text-[18px] sm:text-[20px]">tune</span>
+                  <span>{showFilters ? 'Hide Filters' : 'Filters'}</span>
+                </button>
+                )}
               </div>
+              <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto border-t border-outline-variant/30 pt-3 sm:border-t-0 sm:pt-0">
+                <span className="text-sm text-on-surface-variant">Sort by:</span>
+                <select 
+                  value={sortOption}
+                  onChange={(e) => { setSortOption(e.target.value); setCurrentPage(1); }}
+                  className="bg-transparent border-none text-sm font-semibold text-primary focus:outline-none cursor-pointer"
+                >
+                  <option>Newest Arrivals</option>
+                  <option>Price: Low to High</option>
+                  <option>Price: High to Low</option>
+                </select>
+              </div>
+            </div>
 
               {isLoading ? (
                 <div className="flex justify-center items-center py-20 w-full">
