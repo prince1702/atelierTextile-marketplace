@@ -5,7 +5,7 @@ import type { Design } from '../../types';
 import { DesignCard } from '../../components/ui/DesignCard';
 import { useNotification } from '../../contexts/NotificationContext';
 
-const CATEGORIES = ['All', 'Weaving Design', 'Embroidery Design', 'Digital Print Design', 'Position Print Design'];
+const CATEGORIES = ['Weaving Design', 'Embroidery Design', 'Digital Print Design', 'Position Print Design'];
 const EMB_DESIGN_TYPES = ['All', 'Flat/Multi Designs', 'Only Cording Designs', 'Only Sequin Designs', 'Only Chain Stitch Designs', 'Multi+Cording Designs'];
 const WEAVING_DESIGN_TYPES = ['All', 'Multi+Sequin Designs', 'Multi+Chain Stitch Designs', 'Dual & Sandwich Sequin', '2/4/6 Sequin Design', 'Cording + Sequin Designs'];
 
@@ -350,7 +350,7 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
 export function Marketplace() {
   const navigate = useNavigate();
   const { showToast } = useNotification();
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [activeCategory, setActiveCategory] = useState('Weaving Design');
 
   const designTypes = activeCategory === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = activeCategory === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
