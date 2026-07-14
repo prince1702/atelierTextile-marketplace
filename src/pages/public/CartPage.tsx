@@ -133,10 +133,10 @@ export function CartPage() {
                       </div>
 
                       <div className="flex justify-between items-end mt-6 border-t border-outline-variant/30 pt-3">
-                        <span className="text-xs text-on-surface-variant">Base Price: ${basePrice}</span>
+                        <span className="text-xs text-on-surface-variant">Base Price: ₹{basePrice}</span>
                         <div className="text-right">
                           <p className="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">License Price</p>
-                          <p className="text-lg font-bold text-primary">${itemPrice.toLocaleString()}</p>
+                          <p className="text-lg font-bold text-primary">₹{itemPrice.toLocaleString()}</p>
                         </div>
                       </div>
                     </div>
@@ -152,7 +152,7 @@ export function CartPage() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-on-surface-variant">Items ({items.length})</span>
-                  <span className="font-semibold text-on-surface">${calculateTotal().toLocaleString()}</span>
+                  <span className="font-semibold text-on-surface">₹{calculateTotal().toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-on-surface-variant">Platform Fee</span>
@@ -160,12 +160,12 @@ export function CartPage() {
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-on-surface-variant">Tax</span>
-                  <span className="font-semibold text-on-surface">$0.00</span>
+                  <span className="font-semibold text-on-surface">₹0.00</span>
                 </div>
                 <div className="w-full h-px bg-outline-variant/50"></div>
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-on-surface">Total</span>
-                  <span className="font-bold text-2xl text-primary">${calculateTotal().toLocaleString()}</span>
+                  <span className="font-bold text-2xl text-primary">₹{calculateTotal().toLocaleString()}</span>
                 </div>
               </div>
 

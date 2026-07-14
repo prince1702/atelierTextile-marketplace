@@ -83,7 +83,7 @@ export function SalesPage() {
                     <td className="py-4 px-6 font-mono text-xs text-on-surface-variant">{sale.id}</td>
                     <td className="py-4 px-6 text-on-surface-variant">{sale.buyerName}</td>
                     <td className="py-4 px-6 font-medium text-on-surface-variant">{sale.licenseType}</td>
-                    <td className="py-4 px-6 font-bold text-primary">${sale.amount}</td>
+                    <td className="py-4 px-6 font-bold text-primary">₹{sale.amount}</td>
                     <td className="py-4 px-6 text-on-surface-variant">{sale.date}</td>
                     <td className="py-4 px-6 text-right">
                       <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusClass(sale.status)}`}>

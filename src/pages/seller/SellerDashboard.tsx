@@ -69,7 +69,7 @@ export function SellerDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard 
-          title="Total Earnings" value={`$${(sellerProfile?.totalRevenue || 0).toLocaleString()}`} icon="account_balance_wallet" trend="up" trendValue="Accumulated total"
+          title="Total Earnings" value={`₹${(sellerProfile?.totalRevenue || 0).toLocaleString()}`} icon="account_balance_wallet" trend="up" trendValue="Accumulated total"
           colorClass={{ bg: 'bg-primary-fixed', iconBg: 'bg-primary-fixed/50', iconText: 'text-primary' }}
         />
         <StatCard 
@@ -111,7 +111,7 @@ export function SellerDashboard() {
                     <tr key={order.id} className="hover:bg-surface-container-lowest">
                       <td className="py-3 px-5 font-medium text-on-surface font-mono text-xs">{order.id}</td>
                       <td className="py-3 px-5 text-on-surface-variant">{order.designTitle}</td>
-                      <td className="py-3 px-5 font-semibold text-primary-container">${order.amount}</td>
+                      <td className="py-3 px-5 font-semibold text-primary-container">₹{order.amount}</td>
                       <td className="py-3 px-5 text-on-surface-variant">{order.date}</td>
                     </tr>
                   ))}
@@ -136,7 +136,7 @@ export function SellerDashboard() {
                   <img src={design.image} alt={design.title} className="w-16 h-16 rounded-md object-cover bg-surface-container shrink-0" />
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-on-surface truncate group-hover:text-primary transition-colors">{design.title}</h4>
-                    <p className="text-xs text-on-surface-variant mt-1">{design.sales} sales • ${design.revenue.toLocaleString()} revenue</p>
+                    <p className="text-xs text-on-surface-variant mt-1">{design.sales} sales • ₹{design.revenue.toLocaleString()} revenue</p>
                   </div>
                   <div className="flex items-center gap-1 bg-surface-container px-2 py-1 rounded text-xs font-semibold text-on-surface">
                     <span className="material-symbols-outlined text-[14px] text-secondary-container filled">star</span>

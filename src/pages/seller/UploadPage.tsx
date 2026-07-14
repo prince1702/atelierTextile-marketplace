@@ -221,7 +221,7 @@ export function UploadPage() {
 
             {/* Price */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Price (USD) *</label>
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Price (INR) *</label>
               <input 
                 type="number" 
                 value={price} 

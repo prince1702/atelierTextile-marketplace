@@ -100,7 +100,7 @@ export function OrdersPage() {
                       {order.licenseType}
                     </td>
                     <td className="py-4 px-6 font-bold text-primary">
-                      ${order.amount}
+                      ₹{order.amount}
                     </td>
                     <td className="py-4 px-6">
                       <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusClass(order.status)}`}>

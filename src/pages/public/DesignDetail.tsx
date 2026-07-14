@@ -153,7 +153,7 @@ export function DesignDetail() {
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-1">
                         <span className={`font-bold ${selectedLicense === option.name ? 'text-primary' : 'text-on-surface'}`}>{option.name}</span>
-                        <span className="font-bold text-primary-container">${option.price.toLocaleString()}</span>
+                        <span className="font-bold text-primary-container">₹{option.price.toLocaleString()}</span>
                       </div>
                       <p className="text-xs text-on-surface-variant">{option.desc}</p>
                     </div>
@@ -164,7 +164,7 @@ export function DesignDetail() {
               <div className="mt-6 pt-6 border-t border-outline-variant/50">
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-on-surface-variant">Total Payment</span>
-                  <span className="text-3xl font-bold text-primary">${getPrice(design.price, selectedLicense).toLocaleString()}</span>
+                  <span className="text-3xl font-bold text-primary">₹{getPrice(design.price, selectedLicense).toLocaleString()}</span>
                 </div>
                 <button onClick={handleAddToCart} className="w-full py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-2 group">
                   <span className="material-symbols-outlined group-hover:scale-110 transition-transform">shopping_cart</span>

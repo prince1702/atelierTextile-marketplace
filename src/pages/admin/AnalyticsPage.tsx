@@ -43,7 +43,7 @@ export function AnalyticsPage() {
     labels: months,
     datasets: [
       {
-        label: 'Monthly Revenue ($)',
+        label: 'Monthly Revenue (₹)',
         data: stats?.monthlyRevenue || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         borderColor: '#1e3a8a',
         backgroundColor: 'rgba(30, 58, 138, 0.08)',
@@ -112,7 +112,7 @@ export function AnalyticsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
               <h4 className="text-xs text-on-surface-variant uppercase font-semibold tracking-wider">Total Revenue</h4>
-              <p className="text-3xl font-bold text-primary mt-2">${stats.totalRevenue.toLocaleString()}</p>
+              <p className="text-3xl font-bold text-primary mt-2">₹{stats.totalRevenue.toLocaleString()}</p>
             </div>
             <div className="bg-white border border-outline-variant rounded-xl p-5 shadow-sm">
               <h4 className="text-xs text-on-surface-variant uppercase font-semibold tracking-wider">Total Transactions</h4>
@@ -130,7 +130,7 @@ export function AnalyticsPage() {
             <div className="bg-white border border-outline-variant rounded-xl shadow-sm p-6 flex flex-col h-[320px]">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-sm font-bold text-primary">Revenue Trends (12 Months)</h3>
-                <span className="text-xs text-primary font-bold">USD ($)</span>
+                <span className="text-xs text-primary font-bold">INR (₹)</span>
               </div>
               <div className="flex-1 relative min-h-0">
                 <Line data={revenueData} options={chartOptions} />

@@ -69,7 +69,7 @@ export function DesignCard({ design }: DesignCardProps) {
         <div className="mt-auto pt-4 border-t border-outline-variant flex items-center justify-between">
           <div className="flex flex-col">
             <span className="text-[10px] uppercase font-bold text-outline tracking-wider">License from</span>
-            <span className="text-lg font-bold text-primary-container">${design.price}</span>
+            <span className="text-lg font-bold text-primary-container">₹{design.price}</span>
           </div>
           <Link 
             to={`/design/${design.id}`} 

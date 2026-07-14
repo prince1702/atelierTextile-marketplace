@@ -134,7 +134,7 @@ export function InventoryPage() {
                       {design.category}
                     </td>
                     <td className="py-4 px-6 font-bold text-primary">
-                      ${design.price}
+                      ₹{design.price}
                     </td>
                     <td className="py-4 px-6 text-right space-x-2">
                       {activeTab === 'pending' && (

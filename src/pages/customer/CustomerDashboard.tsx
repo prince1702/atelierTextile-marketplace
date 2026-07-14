@@ -108,7 +108,7 @@ export function CustomerDashboard() {
                     }`}>
                       {order.status}
                     </div>
-                    <p className="text-xs font-semibold text-on-surface">${order.amount}</p>
+                    <p className="text-xs font-semibold text-on-surface">₹{order.amount}</p>
                   </div>
                 </div>
               ))
@@ -134,7 +134,7 @@ export function CustomerDashboard() {
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-on-surface text-sm truncate group-hover:text-primary transition-colors">{design.title}</h4>
                       <p className="text-xs text-on-surface-variant mt-0.5">by {design.designerName}</p>
-                      <p className="text-xs font-semibold text-primary-container mt-1">${design.price}</p>
+                      <p className="text-xs font-semibold text-primary-container mt-1">₹{design.price}</p>
                     </div>
                     <button 
                       onClick={(e) => {

@@ -111,9 +111,9 @@ export function DesignsPage() {
                       </div>
                     </td>
                     <td className="py-4 px-6 text-on-surface-variant">{design.category}</td>
-                    <td className="py-4 px-6 font-semibold">${design.price}</td>
+                    <td className="py-4 px-6 font-semibold">₹{design.price}</td>
                     <td className="py-4 px-6 text-on-surface-variant">{design.sales}</td>
-                    <td className="py-4 px-6 font-bold text-primary">${design.revenue.toLocaleString()}</td>
+                    <td className="py-4 px-6 font-bold text-primary">₹{design.revenue.toLocaleString()}</td>
                     <td className="py-4 px-6">
                       <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusColor(design.status)}`}>
                         {design.status}

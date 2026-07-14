@@ -44,7 +44,7 @@ export function AdminDashboard() {
     labels: months,
     datasets: [
       {
-        label: 'Platform Revenue ($)',
+        label: 'Platform Revenue (₹)',
         data: stats?.monthlyRevenue || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         borderColor: '#1e3a8a',
         backgroundColor: 'rgba(30, 58, 138, 0.08)',
@@ -102,7 +102,7 @@ export function AdminDashboard() {
           colorClass={{ bg: 'bg-tertiary-fixed', iconBg: 'bg-tertiary-container/20', iconText: 'text-tertiary-container' }}
         />
         <StatCard 
-          title="Platform Revenue" value={`$${stats.totalRevenue.toLocaleString()}`} icon="payments" trend="up" trendValue="+22% vs last month"
+          title="Platform Revenue" value={`₹${stats.totalRevenue.toLocaleString()}`} icon="payments" trend="up" trendValue="+22% vs last month"
           colorClass={{ bg: 'bg-surface-variant', iconBg: 'bg-surface-variant', iconText: 'text-on-surface-variant' }}
         />
       </div>
