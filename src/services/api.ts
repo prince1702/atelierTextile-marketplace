@@ -24,11 +24,17 @@ const client = axios.create({
   },
 });
 
-// Attach JWT token if present in localStorage
+// Attach JWT token and fix Content-Type for FormData uploads
 client.interceptors.request.use((config) => {
   const token = localStorage.getItem('atelier_token');
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
+  }
+  // When sending FormData, remove Content-Type so the browser
+  // auto-generates multipart/form-data with the correct boundary.
+  // Without this, the global 'application/json' default breaks multer parsing.
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
   }
   return config;
 }, (error) => {
@@ -185,19 +191,13 @@ export const api = {
       return normalize<Design[]>(response.data.data);
     },
     create: async (formData: FormData): Promise<Design> => {
-      const response = await client.post('/designs', formData, {
-        headers: {
-          'Content-Type': undefined, // Let axios auto-set multipart/form-data with correct boundary
-        },
-      });
+      // Content-Type is handled automatically by the request interceptor
+      const response = await client.post('/designs', formData);
       return normalize<Design>(response.data.data);
     },
     update: async (id: string, formData: FormData): Promise<Design> => {
-      const response = await client.put(`/designs/${id}`, formData, {
-        headers: {
-          'Content-Type': undefined, // Let axios auto-set multipart/form-data with correct boundary
-        },
-      });
+      // Content-Type is handled automatically by the request interceptor
+      const response = await client.put(`/designs/${id}`, formData);
       return normalize<Design>(response.data.data);
     },
     delete: async (id: string): Promise<void> => {
