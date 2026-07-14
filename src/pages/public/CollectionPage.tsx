@@ -272,6 +272,13 @@ export function CollectionPage() {
   };
 
   const fetchDesigns = async () => {
+    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design'].includes(subcategory)) {
+      setDesigns([]);
+      setTotalPages(1);
+      setTotalResults(0);
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     try {
       const params: any = {
@@ -478,7 +485,7 @@ export function CollectionPage() {
           </div>
         )}
 
-        {(isLoading || !(designs.length === 0 && 
+        {!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design'].includes(subcategory) && (isLoading || !(designs.length === 0 && 
                          selectedDesignType === 'All' && 
                          selectedArea === 'All' && 
                          selectedNeedle === 'All' && 
