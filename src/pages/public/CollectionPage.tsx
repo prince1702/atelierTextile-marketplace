@@ -238,12 +238,15 @@ export function CollectionPage() {
 
   const { showToast } = useNotification();
   const [showFilters, setShowFilters] = useState(true);
-  const [openFilters, setOpenFilters] = useState({
-    designType: true,
-    area: true,
-    needle: true,
-    designFormat: true,
-    sareeConcept: true,
+  const [openFilters, setOpenFilters] = useState(() => {
+    const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1024 : true;
+    return {
+      designType: isDesktop,
+      area: isDesktop,
+      needle: isDesktop,
+      designFormat: isDesktop,
+      sareeConcept: isDesktop,
+    };
   });
 
   const toggleFilter = (key: keyof typeof openFilters) => {

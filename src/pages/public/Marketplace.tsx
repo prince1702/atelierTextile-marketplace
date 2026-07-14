@@ -355,12 +355,15 @@ export function Marketplace() {
   const designTypes = activeCategory === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = activeCategory === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
   const [activeSubcategory, setActiveSubcategory] = useState('All');
-  const [openFilters, setOpenFilters] = useState({
-    designType: true,
-    area: true,
-    needle: true,
-    designFormat: true,
-    sareeConcept: true,
+  const [openFilters, setOpenFilters] = useState(() => {
+    const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1024 : true;
+    return {
+      designType: isDesktop,
+      area: isDesktop,
+      needle: isDesktop,
+      designFormat: isDesktop,
+      sareeConcept: isDesktop,
+    };
   });
 
   const toggleFilter = (key: keyof typeof openFilters) => {
