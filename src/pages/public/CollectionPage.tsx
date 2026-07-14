@@ -310,7 +310,7 @@ export function CollectionPage() {
 
   useEffect(() => {
     fetchDesigns();
-  }, [category, subcategory, selectedDesignType, selectedArea, selectedNeedle, selectedDesignFormat, selectedSareeConcept, sortOption, currentPage]);
+  }, [category, subcategory, selectedDesignType, selectedArea, selectedNeedle, selectedDesignFormat, selectedSareeConcept, sortOption, currentPage, showAll]);
 
   const handleClearAll = () => {
     setSelectedDesignType('All');
