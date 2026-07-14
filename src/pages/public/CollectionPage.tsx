@@ -336,14 +336,29 @@ export function CollectionPage() {
             {subcategory !== 'All' ? getSubcategoryDisplayName(subcategory) : category}
           </h1>
           <p className="text-primary-fixed-dim text-lg">
-            Showing designs under {category} {subcategory !== 'All' && `> ${getSubcategoryDisplayName(subcategory)}`}
+            Showing designs under {category}{' '}
+            {subcategory !== 'All' && (
+              <>
+                &gt;{' '}
+                {showAll ? (
+                  <Link 
+                    to={`/collection?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`}
+                    className="underline hover:text-white font-semibold transition-colors"
+                  >
+                    {getSubcategoryDisplayName(subcategory)}
+                  </Link>
+                ) : (
+                  getSubcategoryDisplayName(subcategory)
+                )}
+              </>
+            )}
           </p>
         </div>
       </div>
 
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 mt-10">
         {/* Saree Subcategories Visual Bar */}
-        {category === 'Weaving Design' && subcategory === 'Saree Design' && (
+        {category === 'Weaving Design' && subcategory === 'Saree Design' && !showAll && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Saree Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
@@ -379,7 +394,7 @@ export function CollectionPage() {
         )}
 
         {/* Lehengha Subcategories Visual Bar */}
-        {category === 'Weaving Design' && subcategory === 'Lehengha Design' && (
+        {category === 'Weaving Design' && subcategory === 'Lehengha Design' && !showAll && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Lehengha Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
@@ -415,7 +430,7 @@ export function CollectionPage() {
         )}
 
         {/* Suit Subcategories Visual Bar */}
-        {category === 'Weaving Design' && subcategory === 'Suit Design' && (
+        {category === 'Weaving Design' && subcategory === 'Suit Design' && !showAll && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Suit Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
@@ -451,7 +466,7 @@ export function CollectionPage() {
         )}
 
         {/* Dupatta Subcategories Visual Bar */}
-        {category === 'Weaving Design' && subcategory === 'Dupatta Design' && (
+        {category === 'Weaving Design' && subcategory === 'Dupatta Design' && !showAll && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Dupatta Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
