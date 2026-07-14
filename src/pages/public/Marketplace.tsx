@@ -753,13 +753,13 @@ export function Marketplace() {
                   )}
                 </div>
 
-                {/* 3. Needle */}
+                {/* 3. Color */}
                 <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
                   <button 
                     onClick={() => toggleFilter('needle')}
                     className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
                   >
-                    <span className="font-bold text-xs text-primary uppercase tracking-wider">Needle</span>
+                    <span className="font-bold text-xs text-primary uppercase tracking-wider">Color</span>
                     <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.needle ? 'rotate-180' : ''}`}>
                       keyboard_arrow_down
                     </span>
@@ -768,7 +768,7 @@ export function Marketplace() {
                     <>
                       <div className="w-full h-px bg-outline-variant/50"></div>
                       <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                        {NEEDLES.map(n => (
+                        {['All', '2 fider', '3 fider', '4 fider'].map(n => (
                           <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
                             <input 
                               type="radio" 

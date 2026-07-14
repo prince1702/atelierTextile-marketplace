@@ -234,6 +234,7 @@ export function CollectionPage() {
 
   const designTypes = category === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = category === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
+  const needles = category === 'Weaving Design' ? ['All', '2 fider', '3 fider', '4 fider'] : ['All', '1', '2', '3', '4', '5'];
 
   const { showToast } = useNotification();
   const [showFilters, setShowFilters] = useState(true);
@@ -579,13 +580,15 @@ export function CollectionPage() {
                 )}
               </div>
 
-              {/* 3. Needle */}
+              {/* 3. Needle / Color */}
               <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
                 <button 
                   onClick={() => toggleFilter('needle')}
                   className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
                 >
-                  <span className="font-bold text-xs text-primary uppercase tracking-wider">Needle</span>
+                  <span className="font-bold text-xs text-primary uppercase tracking-wider">
+                    {category === 'Weaving Design' ? 'Color' : 'Needle'}
+                  </span>
                   <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.needle ? 'rotate-180' : ''}`}>
                     keyboard_arrow_down
                   </span>
@@ -594,7 +597,7 @@ export function CollectionPage() {
                   <>
                     <div className="w-full h-px bg-outline-variant/50"></div>
                     <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                      {NEEDLES.map(n => (
+                      {needles.map(n => (
                         <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
                           <input 
                             type="radio" 
