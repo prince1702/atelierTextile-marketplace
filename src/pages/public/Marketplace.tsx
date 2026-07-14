@@ -723,13 +723,13 @@ export function Marketplace() {
                   )}
                 </div>
 
-                {/* 2. Area */}
+                {/* 2. Reed & Pick */}
                 <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
                   <button 
                     onClick={() => toggleFilter('area')}
                     className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
                   >
-                    <span className="font-bold text-xs text-primary uppercase tracking-wider">Area</span>
+                    <span className="font-bold text-xs text-primary uppercase tracking-wider">Reed &amp; Pick</span>
                     <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.area ? 'rotate-180' : ''}`}>
                       keyboard_arrow_down
                     </span>
