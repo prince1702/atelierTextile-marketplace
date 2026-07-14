@@ -24,3 +24,5 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+      - key: MONGOMS_DISABLE_POSTINSTALL
+        value: "1"

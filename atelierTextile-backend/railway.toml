@@ -11,3 +11,4 @@ healthcheckTimeout = 120
 
 [variables]
 NIXPACKS_NODE_VERSION = "20"
+MONGOMS_DISABLE_POSTINSTALL = "1"
