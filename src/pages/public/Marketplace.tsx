@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import type { Design } from '../../types';
 import { DesignCard } from '../../components/ui/DesignCard';
@@ -509,11 +509,11 @@ export function Marketplace() {
             <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">All Categories</h3>
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-6 justify-center">
               {ALL_SUBCATEGORIES_WITH_IMAGES.map(sub => (
-                <button
+                <Link
                   key={`${sub.parentCategory}-${sub.name}`}
-                  onClick={() => { 
-                    navigate(`/collection?category=${encodeURIComponent(sub.parentCategory)}&subcategory=${encodeURIComponent(sub.name)}`);
-                  }}
+                  to={`/collection?category=${encodeURIComponent(sub.parentCategory)}&subcategory=${encodeURIComponent(sub.name)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex flex-col items-center group focus:outline-none w-full"
                 >
                   <div className="w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 border-on-surface/80 transition-all duration-300 group-hover:border-primary group-hover:scale-105 group-hover:shadow-md">
@@ -526,7 +526,7 @@ export function Marketplace() {
                   <span className="mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight text-on-surface-variant group-hover:text-primary">
                     {sub.name}
                   </span>
-                </button>
+                </Link>
               ))}
             </div>
           </div>
@@ -540,11 +540,11 @@ export function Marketplace() {
               {WEAVING_SUBCATEGORIES_WITH_IMAGES.map(sub => {
                 const isActive = activeSubcategory === sub.name;
                 return (
-                  <button
+                  <Link
                     key={sub.name}
-                    onClick={() => { 
-                      navigate(`/collection?category=${encodeURIComponent('Weaving Design')}&subcategory=${encodeURIComponent(sub.name)}`);
-                    }}
+                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.name)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -563,7 +563,7 @@ export function Marketplace() {
                     }`}>
                       {sub.name === 'All' ? 'All Weaving' : sub.name}
                     </span>
-                  </button>
+                  </Link>
                 );
               })}
             </div>
@@ -578,11 +578,11 @@ export function Marketplace() {
               {EMBROIDERY_SUBCATEGORIES_WITH_IMAGES.map(sub => {
                 const isActive = activeSubcategory === sub.name;
                 return (
-                  <button
+                  <Link
                     key={sub.name}
-                    onClick={() => { 
-                      navigate(`/collection?category=${encodeURIComponent('Embroidery Design')}&subcategory=${encodeURIComponent(sub.name)}`);
-                    }}
+                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.name)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -601,7 +601,7 @@ export function Marketplace() {
                     }`}>
                       {sub.name === 'All' ? 'All Embroidery' : sub.name}
                     </span>
-                  </button>
+                  </Link>
                 );
               })}
             </div>
@@ -616,11 +616,11 @@ export function Marketplace() {
               {DIGITAL_PRINT_SUBCATEGORIES_WITH_IMAGES.map(sub => {
                 const isActive = activeSubcategory === sub.name;
                 return (
-                  <button
+                  <Link
                     key={sub.name}
-                    onClick={() => { 
-                      navigate(`/collection?category=${encodeURIComponent('Digital Print Design')}&subcategory=${encodeURIComponent(sub.name)}`);
-                    }}
+                    to={`/collection?category=Digital%20Print%20Design&subcategory=${encodeURIComponent(sub.name)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -639,7 +639,7 @@ export function Marketplace() {
                     }`}>
                       {sub.name === 'All' ? 'All Digital Print' : sub.name}
                     </span>
-                  </button>
+                  </Link>
                 );
               })}
             </div>
@@ -654,11 +654,11 @@ export function Marketplace() {
               {POSITION_PRINT_SUBCATEGORIES_WITH_IMAGES.map(sub => {
                 const isActive = activeSubcategory === sub.name;
                 return (
-                  <button
+                  <Link
                     key={sub.name}
-                    onClick={() => { 
-                      navigate(`/collection?category=${encodeURIComponent('Position Print Design')}&subcategory=${encodeURIComponent(sub.name)}`);
-                    }}
+                    to={`/collection?category=Position%20Print%20Design&subcategory=${encodeURIComponent(sub.name)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -677,7 +677,7 @@ export function Marketplace() {
                     }`}>
                       {sub.name === 'All' ? 'All Position Print' : sub.name}
                     </span>
-                  </button>
+                  </Link>
                 );
               })}
             </div>
