@@ -522,7 +522,7 @@ export function Marketplace() {
                     />
                   </div>
                   <span className="mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight text-on-surface-variant group-hover:text-primary">
-                    {sub.name}
+                    {sub.name.replace(/\s*design\s*/gi, '')}
                   </span>
                 </Link>
               ))}
@@ -557,7 +557,7 @@ export function Marketplace() {
                     <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
-                      {sub.name === 'All' ? 'All Weaving' : sub.name}
+                      {sub.name === 'All' ? 'All Weaving' : sub.name.replace(/\s*design\s*/gi, '')}
                     </span>
                   </Link>
                 );
@@ -593,7 +593,7 @@ export function Marketplace() {
                     <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
-                      {sub.name === 'All' ? 'All Embroidery' : sub.name}
+                      {sub.name === 'All' ? 'All Embroidery' : sub.name.replace(/\s*design\s*/gi, '')}
                     </span>
                   </Link>
                 );
@@ -629,7 +629,7 @@ export function Marketplace() {
                     <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
-                      {sub.name === 'All' ? 'All Digital Print' : sub.name}
+                      {sub.name === 'All' ? 'All Digital Print' : sub.name.replace(/\s*design\s*/gi, '')}
                     </span>
                   </Link>
                 );
@@ -665,7 +665,7 @@ export function Marketplace() {
                     <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
-                      {sub.name === 'All' ? 'All Position Print' : sub.name}
+                      {sub.name === 'All' ? 'All Position Print' : sub.name.replace(/\s*design\s*/gi, '')}
                     </span>
                   </Link>
                 );

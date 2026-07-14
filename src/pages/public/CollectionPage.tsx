@@ -361,7 +361,7 @@ export function CollectionPage() {
                     <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
-                      {sub.name}
+                      {sub.name.replace(/\s*design\s*/gi, '')}
                     </span>
                   </Link>
                 );
@@ -397,7 +397,7 @@ export function CollectionPage() {
                     <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
-                      {sub.name}
+                      {sub.name.replace(/\s*design\s*/gi, '')}
                     </span>
                   </Link>
                 );
@@ -433,7 +433,7 @@ export function CollectionPage() {
                     <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
-                      {sub.name}
+                      {sub.name.replace(/\s*design\s*/gi, '')}
                     </span>
                   </Link>
                 );
@@ -469,7 +469,7 @@ export function CollectionPage() {
                     <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
-                      {sub.name}
+                      {sub.name.replace(/\s*design\s*/gi, '')}
                     </span>
                   </Link>
                 );
