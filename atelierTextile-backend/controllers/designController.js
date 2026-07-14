@@ -272,8 +272,10 @@ exports.createDesign = async (req, res, next) => {
       imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
     }
 
+    console.log('📥 createDesign req.body keys:', Object.keys(req.body), '| fabric:', req.body.fabric, '| file:', req.file?.originalname);
     const design = await Design.create({
       ...req.body,
+
       tags: req.body.tags
         ? typeof req.body.tags === 'string'
           ? req.body.tags.split(',').map((t) => t.trim())

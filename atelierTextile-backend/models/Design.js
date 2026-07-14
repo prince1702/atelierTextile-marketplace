@@ -39,8 +39,9 @@ const designSchema = new mongoose.Schema({
   },
   fabric: {
     type: String,
-    default: '',
+    default: '', // optional - not required
   },
+
   designType: {
     type: String,
     default: '',
