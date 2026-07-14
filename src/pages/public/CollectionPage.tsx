@@ -230,6 +230,7 @@ export function CollectionPage() {
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category') || 'All';
   const subcategory = searchParams.get('subcategory') || 'All';
+  const showAll = searchParams.get('showAll') === 'true';
 
   const designTypes = category === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = category === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
@@ -272,7 +273,7 @@ export function CollectionPage() {
   };
 
   const fetchDesigns = async () => {
-    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design'].includes(subcategory)) {
+    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design'].includes(subcategory) && !showAll) {
       setDesigns([]);
       setTotalPages(1);
       setTotalResults(0);
@@ -347,11 +348,11 @@ export function CollectionPage() {
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Saree Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
               {SAREE_SUBCATEGORIES.map(sub => {
-                const isActive = subcategory === sub.value;
+                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
                 return (
                   <Link
                     key={sub.value}
-                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
                     className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
                   >
                     <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -383,11 +384,11 @@ export function CollectionPage() {
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Lehengha Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
               {LEHENGHA_SUBCATEGORIES.map(sub => {
-                const isActive = subcategory === sub.value;
+                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
                 return (
                   <Link
                     key={sub.value}
-                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
                     className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
                   >
                     <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -419,11 +420,11 @@ export function CollectionPage() {
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Suit Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
               {SUIT_SUBCATEGORIES.map(sub => {
-                const isActive = subcategory === sub.value;
+                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
                 return (
                   <Link
                     key={sub.value}
-                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
                     className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
                   >
                     <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -455,11 +456,11 @@ export function CollectionPage() {
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Dupatta Subcategories</h3>
             <div className="flex flex-wrap justify-center gap-6 md:gap-8">
               {DUPATTA_SUBCATEGORIES.map(sub => {
-                const isActive = subcategory === sub.value;
+                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
                 return (
                   <Link
                     key={sub.value}
-                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}`}
+                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
                     className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
                   >
                     <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -485,7 +486,7 @@ export function CollectionPage() {
           </div>
         )}
 
-        {!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design'].includes(subcategory) && (isLoading || !(designs.length === 0 && 
+        {(!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design'].includes(subcategory) || showAll) && (isLoading || !(designs.length === 0 && 
                          selectedDesignType === 'All' && 
                          selectedArea === 'All' && 
                          selectedNeedle === 'All' && 
