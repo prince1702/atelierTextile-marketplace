@@ -504,7 +504,7 @@ export function CollectionPage() {
                 {openFilters.designType && (
                   <>
                     <div className="w-full h-px bg-outline-variant/50"></div>
-                    <div className="px-4 py-3.5 custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                    <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
                       {designTypes.map(type => (
                         <label key={type} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
                           <input 
@@ -536,7 +536,7 @@ export function CollectionPage() {
                 {openFilters.area && (
                   <>
                     <div className="w-full h-px bg-outline-variant/50"></div>
-                    <div className="px-4 py-3.5 custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                    <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
                       {areas.map(ar => (
                         <label key={ar} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
                           <input 
@@ -568,7 +568,7 @@ export function CollectionPage() {
                 {openFilters.needle && (
                   <>
                     <div className="w-full h-px bg-outline-variant/50"></div>
-                    <div className="px-4 py-3.5 custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                    <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
                       {NEEDLES.map(n => (
                         <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
                           <input 
@@ -600,7 +600,7 @@ export function CollectionPage() {
                 {openFilters.designFormat && (
                   <>
                     <div className="w-full h-px bg-outline-variant/50"></div>
-                    <div className="px-4 py-3.5 custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                    <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
                       {DESIGN_FORMATS.map(f => (
                         <label key={f} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
                           <input 
@@ -632,7 +632,7 @@ export function CollectionPage() {
                 {openFilters.sareeConcept && (
                   <>
                     <div className="w-full h-px bg-outline-variant/50"></div>
-                    <div className="px-4 py-3.5 custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                    <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
                       {SAREE_CONCEPTS.map(sc => (
                         <label key={sc} className="flex items-center gap-3 cursor-pointer group text-sm font-semibold">
                           <input 
