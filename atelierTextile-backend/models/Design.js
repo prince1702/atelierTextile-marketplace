@@ -37,6 +37,10 @@ const designSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  fabric: {
+    type: String,
+    default: '',
+  },
   designType: {
     type: String,
     default: '',
