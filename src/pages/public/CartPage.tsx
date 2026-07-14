@@ -89,7 +89,7 @@ export function CartPage() {
 
       // Configure Razorpay checkout options
       const options = {
-        key: response.razorpayKeyId,
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || response.razorpayKeyId,
         amount: response.razorpayOrder.amount,
         currency: response.razorpayOrder.currency,
         name: 'AtelierTextile Marketplace',

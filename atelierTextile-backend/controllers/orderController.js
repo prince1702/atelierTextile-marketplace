@@ -151,6 +151,13 @@ exports.createOrder = async (req, res, next) => {
       });
     }
 
+    if (Math.round(totalAmount * 100) < 100) {
+      return res.status(400).json({
+        success: false,
+        error: 'Amount must be at least 1 INR (100 paise)',
+      });
+    }
+
     let razorpayOrder = null;
     if (razorpay) {
       try {
