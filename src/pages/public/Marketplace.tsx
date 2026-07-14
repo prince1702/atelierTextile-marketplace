@@ -394,6 +394,13 @@ export function Marketplace() {
   };
 
   const fetchDesigns = async () => {
+    if (!searchTrigger.trim()) {
+      setDesigns([]);
+      setTotalPages(1);
+      setTotalResults(0);
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     try {
       const params: any = {
@@ -674,16 +681,7 @@ export function Marketplace() {
           </div>
         )}
 
-        {((activeCategory !== 'All' || searchTrigger.trim() !== '') && 
-          (isLoading || 
-           !(designs.length === 0 && 
-             selectedDesignType === 'All' && 
-             selectedArea === 'All' && 
-             selectedNeedle === 'All' && 
-             selectedDesignFormat === 'All' && 
-             selectedSareeConcept === 'All' && 
-             activeSubcategory === 'All' && 
-             searchTrigger.trim() === ''))) && (
+        {searchTrigger.trim() !== '' && (
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             
             {/* Advanced Filters Sidebar (Collapsible) — Only for Weaving Design */}
