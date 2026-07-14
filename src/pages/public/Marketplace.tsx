@@ -489,7 +489,7 @@ export function Marketplace() {
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 -mt-8 relative z-20 pb-24">
         {/* Category Pills */}
         <div className="bg-white rounded-2xl shadow-card p-4 flex items-center justify-between gap-4 overflow-hidden mb-10 border border-outline-variant">
-          <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-1 flex-1">
+          <div className="grid grid-cols-2 md:flex md:overflow-x-auto hide-scrollbar gap-2 pb-1 flex-1 w-full">
             {CATEGORIES.map(category => (
               <button
                 key={category}
@@ -498,7 +498,7 @@ export function Marketplace() {
                   setActiveSubcategory('All');
                   setCurrentPage(1); 
                 }}
-                className={`whitespace-nowrap px-5 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                className={`text-center px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors md:whitespace-nowrap ${
                   activeCategory === category 
                     ? 'bg-primary text-white shadow-sm' 
                     : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-primary'
