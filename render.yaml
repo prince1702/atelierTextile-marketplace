@@ -17,7 +17,7 @@ services:
       - key: JWT_EXPIRE
         value: 7d
       - key: FRONTEND_URL
-        value: https://textile-9y9widqmw-princesojitra17-8017s-projects.vercel.app
+        value: https://textile-woad.vercel.app
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
