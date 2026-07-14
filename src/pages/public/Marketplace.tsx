@@ -512,8 +512,6 @@ export function Marketplace() {
                 <Link
                   key={`${sub.parentCategory}-${sub.name}`}
                   to={`/collection?category=${encodeURIComponent(sub.parentCategory)}&subcategory=${encodeURIComponent(sub.name)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="flex flex-col items-center group focus:outline-none w-full"
                 >
                   <div className="w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 border-on-surface/80 transition-all duration-300 group-hover:border-primary group-hover:scale-105 group-hover:shadow-md">
@@ -543,8 +541,6 @@ export function Marketplace() {
                   <Link
                     key={sub.name}
                     to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.name)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -581,8 +577,6 @@ export function Marketplace() {
                   <Link
                     key={sub.name}
                     to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.name)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -619,8 +613,6 @@ export function Marketplace() {
                   <Link
                     key={sub.name}
                     to={`/collection?category=Digital%20Print%20Design&subcategory=${encodeURIComponent(sub.name)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
@@ -657,8 +649,6 @@ export function Marketplace() {
                   <Link
                     key={sub.name}
                     to={`/collection?category=Position%20Print%20Design&subcategory=${encodeURIComponent(sub.name)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="flex flex-col items-center group focus:outline-none w-full"
                   >
                     <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
