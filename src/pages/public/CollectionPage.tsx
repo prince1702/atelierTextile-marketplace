@@ -362,16 +362,16 @@ export function CollectionPage() {
         {category === 'Weaving Design' && subcategory === 'Saree Design' && !showAll && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Saree Subcategories</h3>
-            <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+            <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
               {SAREE_SUBCATEGORIES.map(sub => {
                 const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
                 return (
                   <Link
                     key={sub.value}
                     to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
+                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
                   >
-                    <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
                       isActive 
                         ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
                         : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
@@ -398,16 +398,16 @@ export function CollectionPage() {
         {category === 'Weaving Design' && subcategory === 'Lehengha Design' && !showAll && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Lehengha Subcategories</h3>
-            <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+            <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
               {LEHENGHA_SUBCATEGORIES.map(sub => {
                 const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
                 return (
                   <Link
                     key={sub.value}
                     to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
+                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
                   >
-                    <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
                       isActive 
                         ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
                         : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
@@ -434,16 +434,16 @@ export function CollectionPage() {
         {category === 'Weaving Design' && subcategory === 'Suit Design' && !showAll && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Suit Subcategories</h3>
-            <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+            <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
               {SUIT_SUBCATEGORIES.map(sub => {
                 const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
                 return (
                   <Link
                     key={sub.value}
                     to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
+                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
                   >
-                    <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
                       isActive 
                         ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
                         : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
@@ -470,16 +470,16 @@ export function CollectionPage() {
         {category === 'Weaving Design' && subcategory === 'Dupatta Design' && !showAll && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Dupatta Subcategories</h3>
-            <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+            <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
               {DUPATTA_SUBCATEGORIES.map(sub => {
                 const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
                 return (
                   <Link
                     key={sub.value}
                     to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-24 sm:w-28"
+                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
                   >
-                    <div className={`w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
                       isActive 
                         ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
                         : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
