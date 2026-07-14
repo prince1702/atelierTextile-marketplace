@@ -123,6 +123,7 @@ exports.getDesigns = async (req, res, next) => {
       } else {
         filter.subcategory = subcategory;
       }
+    }
     if (badge) filter.badge = badge;
     if (designType) filter.designType = designType;
     if (area) filter.area = area;
