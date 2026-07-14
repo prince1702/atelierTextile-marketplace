@@ -37,11 +37,6 @@ const designSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  fabric: {
-    type: String,
-    enum: ['Cotton Blend', 'Silk', 'Linen', 'Polyester Blend', 'Wool Blend', 'Cotton Sateen'],
-    required: [true, 'Fabric type is required'],
-  },
   designType: {
     type: String,
     default: '',

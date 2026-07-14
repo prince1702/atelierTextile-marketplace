@@ -17,7 +17,6 @@ export function UploadPage() {
   const [lehenghaType, setLehenghaType] = useState('Lehengha Design');
   const [suitType, setSuitType] = useState('Suit Design');
   const [dupattaType, setDupattaType] = useState('Dupatta Design');
-  const [fabric, setFabric] = useState('Cotton Blend');
   const [designType, setDesignType] = useState('Flat/Multi Designs');
   const [area, setArea] = useState('100 mm');
   const [needle, setNeedle] = useState('1');
@@ -144,7 +143,6 @@ export function UploadPage() {
         }
       }
       formData.append('subcategory', finalSubcategory);
-      formData.append('fabric', fabric);
       formData.append('price', price);
       formData.append('tags', tags);
       formData.append('dimensions', dimensions);
@@ -345,23 +343,6 @@ export function UploadPage() {
                 </select>
               </div>
             )}
-
-            {/* Fabric */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Recommended Fabric *</label>
-              <select 
-                value={fabric} 
-                onChange={(e) => setFabric(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-              >
-                <option>Cotton Blend</option>
-                <option>Silk</option>
-                <option>Linen</option>
-                <option>Polyester Blend</option>
-                <option>Wool Blend</option>
-                <option>Cotton Sateen</option>
-              </select>
-            </div>
 
             {/* Design Type (Machine Type) */}
             <div className="space-y-1">

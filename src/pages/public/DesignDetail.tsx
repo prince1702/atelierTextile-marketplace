@@ -183,7 +183,6 @@ export function DesignDetail() {
                   <p className="text-sm text-on-surface-variant leading-relaxed">{design.description}</p>
                 ) : (
                   <ul className="space-y-3 text-sm text-on-surface-variant">
-                    <li className="flex gap-4 border-b border-outline-variant/30 pb-2"><span className="w-24 font-semibold text-on-surface">Fabric</span> <span>{design.fabric}</span></li>
                     <li className="flex gap-4 border-b border-outline-variant/30 pb-2"><span className="w-24 font-semibold text-on-surface">Dimensions</span> <span>{design.dimensions}</span></li>
                     <li className="flex gap-4 border-b border-outline-variant/30 pb-2"><span className="w-24 font-semibold text-on-surface">Colors</span> <span>{design.colorways.join(', ')}</span></li>
                     <li className="flex gap-4 pb-2"><span className="w-24 font-semibold text-on-surface">Tags</span> <div className="flex flex-wrap gap-2">{design.tags.map(tag => <span key={tag} className="bg-surface-container px-2 py-0.5 rounded text-xs">{tag}</span>)}</div></li>

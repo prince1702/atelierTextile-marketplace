@@ -107,7 +107,6 @@ export function InventoryPage() {
                   <th className="py-4 px-6">Design Details</th>
                   <th className="py-4 px-6">Designer</th>
                   <th className="py-4 px-6">Category</th>
-                  <th className="py-4 px-6">Recommended Fabric</th>
                   <th className="py-4 px-6">Price</th>
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
@@ -133,9 +132,6 @@ export function InventoryPage() {
                     </td>
                     <td className="py-4 px-6 text-on-surface-variant">
                       {design.category}
-                    </td>
-                    <td className="py-4 px-6 text-on-surface-variant">
-                      {design.fabric}
                     </td>
                     <td className="py-4 px-6 font-bold text-primary">
                       ${design.price}

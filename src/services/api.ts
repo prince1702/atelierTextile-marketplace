@@ -15,6 +15,8 @@ const getApiUrl = () => {
 
 const API_URL = getApiUrl();
 
+const FRONTEND_MOCK_DESIGNS: Design[] = [];
+
 const client = axios.create({
   baseURL: `${API_URL}/api`,
   headers: {
@@ -91,7 +93,6 @@ export const api = {
     getAll: async (params?: {
       category?: string;
       subcategory?: string;
-      fabric?: string;
       minPrice?: number;
       maxPrice?: number;
       search?: string;
@@ -125,9 +126,6 @@ export const api = {
         }
         if (params?.subcategory && params.subcategory !== 'All') {
           filtered = filtered.filter(d => d.subcategory === params.subcategory);
-        }
-        if (params?.fabric && params.fabric !== 'All') {
-          filtered = filtered.filter(d => d.fabric === params.fabric);
         }
         if (params?.search) {
           const s = params.search.toLowerCase();

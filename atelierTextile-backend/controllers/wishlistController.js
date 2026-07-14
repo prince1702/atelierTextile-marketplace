@@ -8,7 +8,7 @@ exports.getWishlist = async (req, res, next) => {
   try {
     let wishlist = await Wishlist.findOne({ user: req.user.id }).populate(
       'designs',
-      'title price image designerName rating category badge badgeColor fabric'
+      'title price image designerName rating category badge badgeColor'
     );
 
     if (!wishlist) {
@@ -68,7 +68,7 @@ exports.toggleWishlist = async (req, res, next) => {
     // Populate for response
     wishlist = await Wishlist.findOne({ user: req.user.id }).populate(
       'designs',
-      'title price image designerName rating category badge badgeColor fabric'
+      'title price image designerName rating category badge badgeColor'
     );
 
     res.status(200).json({

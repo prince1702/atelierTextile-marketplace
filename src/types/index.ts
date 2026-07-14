@@ -21,7 +21,6 @@ export interface Design {
   price: number;
   category: 'Weaving Design' | 'Embroidery Design' | 'Digital Print Design' | 'Position Print Design';
   subcategory?: string;
-  fabric: 'Cotton Blend' | 'Silk' | 'Linen' | 'Polyester Blend' | 'Wool Blend' | 'Cotton Sateen';
   image: string;
   rating: number;
   reviews: number;
