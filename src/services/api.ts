@@ -187,7 +187,7 @@ export const api = {
     create: async (formData: FormData): Promise<Design> => {
       const response = await client.post('/designs', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': undefined, // Let axios auto-set multipart/form-data with correct boundary
         },
       });
       return normalize<Design>(response.data.data);
@@ -195,7 +195,7 @@ export const api = {
     update: async (id: string, formData: FormData): Promise<Design> => {
       const response = await client.put(`/designs/${id}`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': undefined, // Let axios auto-set multipart/form-data with correct boundary
         },
       });
       return normalize<Design>(response.data.data);
