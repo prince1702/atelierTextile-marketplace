@@ -888,7 +888,7 @@ export function Marketplace() {
                   <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
                 </div>
               ) : designs.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
                   {designs.map(design => (
                     <DesignCard key={design.id} design={design} />
                   ))}
