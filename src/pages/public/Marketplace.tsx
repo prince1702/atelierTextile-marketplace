@@ -37,7 +37,7 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Saree Design',
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    image: '/saree_weaving_design.jpg',
   },
   {
     name: 'Lace Design',
@@ -65,7 +65,7 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Lehengha Design',
-    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+    image: '/lehengha_weaving_design.jpg',
   }
 ];
 

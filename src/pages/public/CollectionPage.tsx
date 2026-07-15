@@ -49,7 +49,7 @@ const SAREE_SUBCATEGORIES = [
   {
     name: 'All Saree',
     value: 'Saree Design',
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    image: '/saree_weaving_design.jpg',
   },
   {
     name: 'Kota Lichi Design',
@@ -120,7 +120,7 @@ const LEHENGHA_SUBCATEGORIES = [
   {
     name: 'All Lehengha',
     value: 'Lehengha Design',
-    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+    image: '/lehengha_weaving_design.jpg',
   },
   {
     name: '50 600 Design',
