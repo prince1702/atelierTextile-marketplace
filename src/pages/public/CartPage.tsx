@@ -15,7 +15,7 @@ export function CartPage() {
   const [selectedLicenses, setSelectedLicenses] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
     items.forEach(item => {
-      init[item.design.id] = item.licenseType || 'Standard';
+      init[item.design.id] = item.licenseType || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
     });
     return init;
   });
@@ -28,14 +28,14 @@ export function CartPage() {
   };
 
   const getPrice = (price: number, license: string) => {
-    if (license === 'Extended') return price * 2.5;
+    if (license === 'Extended' || license === 'PDC') return price * 2.5;
     if (license === 'Exclusive Buyout' || license === 'Exclusive Global') return price * 8;
     return price;
   };
 
   const calculateTotal = () => {
     return items.reduce((sum, item) => {
-      const license = selectedLicenses[item.design.id] || 'Standard';
+      const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
       return sum + getPrice(item.design.price, license);
     }, 0);
   };
@@ -56,11 +56,11 @@ export function CartPage() {
     try {
       // Prepare bulk order items
       const orderItems = items.map(item => {
-        const license = selectedLicenses[item.design.id] || 'Standard';
+        const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
         const backendLicense = 
           license === 'Exclusive Buyout' || license === 'Exclusive Global' 
             ? 'Exclusive Global' 
-            : license === 'Extended' 
+            : (license === 'Extended' || license === 'PDC')
               ? 'Standard Regional' 
               : 'Open Regional';
         return {
@@ -190,15 +190,24 @@ export function CartPage() {
 
                         {/* License Select dropdown */}
                         <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-4">
-                          <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">License:</label>
+                          <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">License / Format:</label>
                           <select 
                             value={license} 
                             onChange={(e) => handleLicenseChange(item.design.id, e.target.value)}
                             className="border border-outline-variant bg-surface-container-low rounded-lg px-3 py-1.5 text-xs font-semibold text-on-surface focus:outline-none focus:border-primary cursor-pointer w-full sm:w-fit"
                           >
-                            <option value="Standard">Standard License (Digital/Print)</option>
-                            <option value="Extended">Extended License (Commercial)</option>
-                            <option value="Exclusive Buyout">Exclusive Buyout (Full Ownership)</option>
+                            {item.design.category === 'Weaving Design' ? (
+                              <>
+                                <option value="BMP">BMP Format</option>
+                                <option value="PDC">PDC Format</option>
+                              </>
+                            ) : (
+                              <>
+                                <option value="Standard">Standard License (Digital/Print)</option>
+                                <option value="Extended">Extended License (Commercial)</option>
+                                <option value="Exclusive Buyout">Exclusive Buyout (Full Ownership)</option>
+                              </>
+                            )}
                           </select>
                         </div>
                       </div>

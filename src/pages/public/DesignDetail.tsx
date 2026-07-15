@@ -26,6 +26,11 @@ export function DesignDetail() {
       try {
         const data = await api.designs.getById(id);
         setDesign(data);
+        if (data.category === 'Weaving Design') {
+          setSelectedLicense('BMP');
+        } else {
+          setSelectedLicense('Standard');
+        }
       } catch (err: any) {
         console.error(err);
         setError('Design not found or failed to load');
@@ -49,7 +54,7 @@ export function DesignDetail() {
   };
 
   const getPrice = (price: number, license: string) => {
-    if (license === 'Extended') return price * 2.5;
+    if (license === 'Extended' || license === 'PDC') return price * 2.5;
     if (license === 'Exclusive Buyout') return price * 8;
     return price;
   };
@@ -75,7 +80,10 @@ export function DesignDetail() {
     );
   }
 
-  const licenseOptions = [
+  const licenseOptions = design.category === 'Weaving Design' ? [
+    { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' },
+    { name: 'PDC', price: design.price * 2.5, desc: 'PDC format. Extended production license.' }
+  ] : [
     { name: 'Standard', price: design.price, desc: 'Up to 500 units. Digital + Print.' },
     { name: 'Extended', price: design.price * 2.5, desc: 'Up to 5,000 units. Unlimited web.' },
     { name: 'Exclusive Buyout', price: design.price * 8, desc: 'Full IP transfer. Design removed from store.' }
