@@ -402,7 +402,7 @@ export function CollectionPage() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
-                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name.replace(/\s*design\s*/gi, '')}
@@ -438,7 +438,7 @@ export function CollectionPage() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
-                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name.replace(/\s*design\s*/gi, '')}
@@ -474,7 +474,7 @@ export function CollectionPage() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
-                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name.replace(/\s*design\s*/gi, '')}
@@ -510,7 +510,7 @@ export function CollectionPage() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
-                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name.replace(/\s*design\s*/gi, '')}

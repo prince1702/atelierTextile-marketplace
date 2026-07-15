@@ -519,7 +519,7 @@ export function Marketplace() {
                   setActiveSubcategory('All');
                   setCurrentPage(1); 
                 }}
-                className={`text-center px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors md:whitespace-nowrap ${
+                className={`text-center px-4 py-2.5 rounded-xl text-sm sm:text-base font-bold transition-colors md:whitespace-nowrap ${
                   activeCategory === category 
                     ? 'bg-primary text-white shadow-sm' 
                     : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-primary'
@@ -549,7 +549,7 @@ export function Marketplace() {
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   </div>
-                  <span className="mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight text-on-surface-variant group-hover:text-primary">
+                  <span className="mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight text-on-surface-variant group-hover:text-primary">
                     {sub.name.replace(/\s*design\s*/gi, '')}
                   </span>
                 </Link>
@@ -582,7 +582,7 @@ export function Marketplace() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
-                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name === 'All' ? 'All Weaving' : sub.name.replace(/\s*design\s*/gi, '')}
@@ -618,7 +618,7 @@ export function Marketplace() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
-                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name === 'All' ? 'All Embroidery' : sub.name.replace(/\s*design\s*/gi, '')}
@@ -654,7 +654,7 @@ export function Marketplace() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
-                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name === 'All' ? 'All Digital Print' : sub.name.replace(/\s*design\s*/gi, '')}
@@ -690,7 +690,7 @@ export function Marketplace() {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
-                    <span className={`mt-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
                       isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
                     }`}>
                       {sub.name === 'All' ? 'All Position Print' : sub.name.replace(/\s*design\s*/gi, '')}
