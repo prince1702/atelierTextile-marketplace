@@ -370,7 +370,8 @@ const ALL_SEQUIN_SUBCATEGORIES_VALUES = [
   'Sequin Design',
   'Dual-Sq',
   'Bhugali-Sq',
-  'Garment & Servani'
+  'Garment & Servani',
+  'Gala-Top & Tabla'
 ];
 
 const SEQUIN_SUBCATEGORIES = [
@@ -393,6 +394,11 @@ const SEQUIN_SUBCATEGORIES = [
     name: 'Garment & Servani',
     value: 'Garment & Servani',
     image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Gala-Top & Tabla',
+    value: 'Gala-Top & Tabla',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
   }
 ];
 

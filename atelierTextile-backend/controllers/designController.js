@@ -152,7 +152,8 @@ exports.getDesigns = async (req, res, next) => {
             'Sequin Design',
             'Dual-Sq',
             'Bhugali-Sq',
-            'Garment & Servani'
+            'Garment & Servani',
+            'Gala-Top & Tabla'
           ]
         };
       } else {

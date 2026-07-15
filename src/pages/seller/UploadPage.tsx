@@ -409,6 +409,7 @@ export function UploadPage() {
                   <option value="Dual-Sq">Dual-Sq</option>
                   <option value="Bhugali-Sq">Bhugali-Sq</option>
                   <option value="Garment & Servani">Garment & Servani</option>
+                  <option value="Gala-Top & Tabla">Gala-Top & Tabla</option>
                 </select>
               </div>
             )}
