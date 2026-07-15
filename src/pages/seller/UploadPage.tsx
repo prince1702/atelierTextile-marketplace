@@ -72,7 +72,8 @@ export function UploadPage() {
           'Suit Design',
           'Dupatta Design',
           'Blouse Design',
-          'Lehengha Design'
+          'Lehengha Design',
+          'Other'
         ];
       case 'Embroidery Design':
         return [
@@ -83,7 +84,8 @@ export function UploadPage() {
           'Beads Design',
           'Folder Design',
           'LTC Design',
-          'Free Download'
+          'Free Download',
+          'Other'
         ];
       case 'Digital Print Design':
         return [
@@ -99,7 +101,7 @@ export function UploadPage() {
           'Kaftan Design',
           'Pakistani Suit',
           'Lehenga Design',
-          'Other Design'
+          'Other'
         ];
       case 'Position Print Design':
         return [
@@ -107,7 +109,8 @@ export function UploadPage() {
           'Dupatta Design',
           'Allover Design',
           'Blouse Design',
-          'Kali + Lehenga Design'
+          'Kali + Lehenga Design',
+          'Other'
         ];
       default:
         return ['Other'];

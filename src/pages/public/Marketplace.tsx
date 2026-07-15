@@ -66,6 +66,10 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'Lehengha Design',
     image: '/lehengha_weaving_design.jpg',
+  },
+  {
+    name: 'Other',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
   }
 ];
 
@@ -105,6 +109,10 @@ const EMBROIDERY_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'Free Download',
     image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Other',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
   }
 ];
 
@@ -162,7 +170,7 @@ const DIGITAL_PRINT_SUBCATEGORIES_WITH_IMAGES = [
     image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
   },
   {
-    name: 'Other Design',
+    name: 'Other',
     image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
   }
 ];
@@ -191,6 +199,10 @@ const POSITION_PRINT_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'Kali + Lehenga Design',
     image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Other',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
   }
 ];
 
@@ -358,6 +370,26 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'Kali + Lehenga Design',
     image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+    parentCategory: 'Position Print Design'
+  },
+  {
+    name: 'Other',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
+  },
+  {
+    name: 'Other',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    parentCategory: 'Embroidery Design'
+  },
+  {
+    name: 'Other',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+    parentCategory: 'Digital Print Design'
+  },
+  {
+    name: 'Other',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
     parentCategory: 'Position Print Design'
   }
 ];
