@@ -39,7 +39,7 @@ export function UploadPage() {
       setSuitType('Suit Design');
       setDupattaType('Dupatta Design');
       setDesignType('2 fider design');
-      setArea('300 mm');
+      setArea('88 to 96');
     } else {
       if (category === 'Embroidery Design') {
         setSubcategory('Multi Design');
@@ -375,7 +375,9 @@ export function UploadPage() {
 
             {/* Area */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Area *</label>
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                {category === 'Weaving Design' ? 'Reed *' : 'Area *'}
+              </label>
               <select 
                 value={area} 
                 onChange={(e) => setArea(e.target.value)}
@@ -383,11 +385,11 @@ export function UploadPage() {
               >
                 {category === 'Weaving Design' ? (
                   <>
-                    <option value="300 mm">300 mm</option>
-                    <option value="330 mm">330 mm</option>
-                    <option value="400 mm">400 mm</option>
-                    <option value="500 mm">500 mm</option>
-                    <option value="600 mm">600 mm</option>
+                    <option value="88 to 96">88 to 96</option>
+                    <option value="100 to 110">100 to 110</option>
+                    <option value="112 to 124">112 to 124</option>
+                    <option value="188 to 200">188 to 200</option>
+                    <option value="216 to 240">216 to 240</option>
                   </>
                 ) : (
                   <>
