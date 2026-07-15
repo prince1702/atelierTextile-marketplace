@@ -422,8 +422,8 @@ export function UploadPage() {
                 {category === 'Weaving Design' ? (
                   <>
                     <option value="36 to 42">36 to 42</option>
-                    <option value="23 to 48">23 to 48</option>
-                    <option value="50 to 80">50 to 80</option>
+                    <option value="43 to 48">43 to 48</option>
+                    <option value="50 to 60">50 to 60</option>
                     <option value="61 to 70">61 to 70</option>
                     <option value="71 to 80">71 to 80</option>
                     <option value="80 to 90">80 to 90</option>
