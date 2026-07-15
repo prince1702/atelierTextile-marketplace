@@ -17,9 +17,9 @@ export function UploadPage() {
   const [lehenghaType, setLehenghaType] = useState('Lehengha Design');
   const [suitType, setSuitType] = useState('Suit Design');
   const [dupattaType, setDupattaType] = useState('Dupatta Design');
-  const [designType, setDesignType] = useState('Flat/Multi Designs');
-  const [area, setArea] = useState('100 mm');
-  const [needle, setNeedle] = useState('1');
+  const [designType, setDesignType] = useState('2 fider design');
+  const [area, setArea] = useState('88 to 96');
+  const [needle, setNeedle] = useState('36 to 42');
   const [designFormat, setDesignFormat] = useState('EMB');
   const [sareeConcept, setSareeConcept] = useState('Box Pallu');
   const [price, setPrice] = useState('');
@@ -40,6 +40,7 @@ export function UploadPage() {
       setDupattaType('Dupatta Design');
       setDesignType('2 fider design');
       setArea('88 to 96');
+      setNeedle('36 to 42');
     } else {
       if (category === 'Embroidery Design') {
         setSubcategory('Multi Design');
@@ -52,6 +53,7 @@ export function UploadPage() {
       }
       setDesignType('Flat/Multi Designs');
       setArea('100 mm');
+      setNeedle('1');
     }
   }, [category]);
 
@@ -403,19 +405,34 @@ export function UploadPage() {
               </select>
             </div>
 
-            {/* Needle */}
+            {/* Needle / Pick */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Needle *</label>
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                {category === 'Weaving Design' ? 'Pick *' : 'Needle *'}
+              </label>
               <select 
                 value={needle} 
                 onChange={(e) => setNeedle(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
               >
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
+                {category === 'Weaving Design' ? (
+                  <>
+                    <option value="36 to 42">36 to 42</option>
+                    <option value="23 to 48">23 to 48</option>
+                    <option value="50 to 80">50 to 80</option>
+                    <option value="61 to 70">61 to 70</option>
+                    <option value="71 to 80">71 to 80</option>
+                    <option value="80 to 90">80 to 90</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </>
+                )}
               </select>
             </div>
 

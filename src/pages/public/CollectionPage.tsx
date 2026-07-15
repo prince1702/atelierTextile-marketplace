@@ -234,7 +234,7 @@ export function CollectionPage() {
 
   const designTypes = category === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = category === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
-  const needles = category === 'Weaving Design' ? ['All', '2 fider', '3 fider', '4 fider'] : ['All', '1', '2', '3', '4', '5'];
+  const needles = category === 'Weaving Design' ? ['All', '36 to 42', '23 to 48', '50 to 80', '61 to 70', '71 to 80', '80 to 90'] : ['All', '1', '2', '3', '4', '5'];
 
   const { showToast } = useNotification();
   const [showFilters, setShowFilters] = useState(true);
@@ -590,7 +590,7 @@ export function CollectionPage() {
                   className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
                 >
                   <span className="font-bold text-xs text-primary uppercase tracking-wider">
-                    {category === 'Weaving Design' ? 'Color' : 'Needle'}
+                    {category === 'Weaving Design' ? 'Pick' : 'Needle'}
                   </span>
                   <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.needle ? 'rotate-180' : ''}`}>
                     keyboard_arrow_down

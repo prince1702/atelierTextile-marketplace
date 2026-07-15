@@ -354,6 +354,7 @@ export function Marketplace() {
 
   const designTypes = activeCategory === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = activeCategory === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
+  const needles = activeCategory === 'Weaving Design' ? ['All', '36 to 42', '23 to 48', '50 to 80', '61 to 70', '71 to 80', '80 to 90'] : ['All', '1', '2', '3', '4', '5'];
   const [activeSubcategory, setActiveSubcategory] = useState('All');
   const [openFilters, setOpenFilters] = useState(() => {
     const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1024 : true;
@@ -762,7 +763,7 @@ export function Marketplace() {
                     onClick={() => toggleFilter('needle')}
                     className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
                   >
-                    <span className="font-bold text-xs text-primary uppercase tracking-wider">Color</span>
+                    <span className="font-bold text-xs text-primary uppercase tracking-wider">{activeCategory === 'Weaving Design' ? 'Pick' : 'Color'}</span>
                     <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.needle ? 'rotate-180' : ''}`}>
                       keyboard_arrow_down
                     </span>
@@ -771,7 +772,7 @@ export function Marketplace() {
                     <>
                       <div className="w-full h-px bg-outline-variant/50"></div>
                       <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                        {['All', '2 fider', '3 fider', '4 fider'].map(n => (
+                        {needles.map(n => (
                           <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
                             <input 
                               type="radio" 
