@@ -156,7 +156,7 @@ const SUIT_SUBCATEGORIES = [
   {
     name: 'All Suit',
     value: 'Suit Design',
-    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&h=200&fit=crop',
+    image: '/suit_weaving_design.jpg',
   },
   {
     name: 'Kota Lichi Design',
