@@ -41,7 +41,7 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Lace Design',
-    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
+    image: '/lace_weaving_design.jpg',
   },
   {
     name: 'Bulk Package Design',
@@ -49,7 +49,7 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'All Over Design',
-    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+    image: '/all_over_weaving_design.jpg',
   },
   {
     name: 'Suit Design',
@@ -57,11 +57,11 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Dupatta Design',
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    image: '/dupatta_weaving_design.jpg',
   },
   {
     name: 'Blouse Design',
-    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
+    image: '/blouse_weaving_design.jpg',
   },
   {
     name: 'Lehengha Design',

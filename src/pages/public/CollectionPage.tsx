@@ -195,7 +195,7 @@ const DUPATTA_SUBCATEGORIES = [
   {
     name: 'All Dupatta',
     value: 'Dupatta Design',
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    image: '/dupatta_weaving_design.jpg',
   },
   {
     name: 'Kota Lichi Design',
