@@ -371,6 +371,23 @@ export function UploadPage() {
                   <option value="Saree Daman">Saree Daman</option>
                   <option value="C Pallu - Box Pallu">C Pallu - Box Pallu</option>
                   <option value="Gala-Nack-Single Head">Gala-Nack-Single Head</option>
+                  <option value="Kurti-Gala">Kurti-Gala</option>
+                  <option value="Buta">Buta</option>
+                  <option value="Buti">Buti</option>
+                  <option value="Sut Daman & Dupta">Sut Daman & Dupta</option>
+                  <option value="Lace">Lace</option>
+                  <option value="Figar">Figar</option>
+                  <option value="Garment-Servani">Garment-Servani</option>
+                  <option value="Penal-Pta">Penal-Pta</option>
+                  <option value="Choli-Kli">Choli-Kli</option>
+                  <option value="Blouse">Blouse</option>
+                  <option value="Rajasthani-Kli">Rajasthani-Kli</option>
+                  <option value="Lengha-Kli">Lengha-Kli</option>
+                  <option value="Patli Daman">Patli Daman</option>
+                  <option value="Cross Stitch">Cross Stitch</option>
+                  <option value="Kasmiri Design">Kasmiri Design</option>
+                  <option value="Jal">Jal</option>
+                  <option value="Gamthi Design">Gamthi Design</option>
                 </select>
               </div>
             )}

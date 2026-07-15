@@ -238,7 +238,24 @@ const ALL_MULTI_SUBCATEGORIES_VALUES = [
   'Multi Design',
   'Saree Daman',
   'C Pallu - Box Pallu',
-  'Gala-Nack-Single Head'
+  'Gala-Nack-Single Head',
+  'Kurti-Gala',
+  'Buta',
+  'Buti',
+  'Sut Daman & Dupta',
+  'Lace',
+  'Figar',
+  'Garment-Servani',
+  'Penal-Pta',
+  'Choli-Kli',
+  'Blouse',
+  'Rajasthani-Kli',
+  'Lengha-Kli',
+  'Patli Daman',
+  'Cross Stitch',
+  'Kasmiri Design',
+  'Jal',
+  'Gamthi Design'
 ];
 
 const MULTI_SUBCATEGORIES = [
@@ -261,6 +278,91 @@ const MULTI_SUBCATEGORIES = [
     name: 'Gala-Nack-Single Head',
     value: 'Gala-Nack-Single Head',
     image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kurti-Gala',
+    value: 'Kurti-Gala',
+    image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Buta',
+    value: 'Buta',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Buti',
+    value: 'Buti',
+    image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Sut Daman & Dupta',
+    value: 'Sut Daman & Dupta',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Lace',
+    value: 'Lace',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Figar',
+    value: 'Figar',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Garment-Servani',
+    value: 'Garment-Servani',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Penal-Pta',
+    value: 'Penal-Pta',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Choli-Kli',
+    value: 'Choli-Kli',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Blouse',
+    value: 'Blouse',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Rajasthani-Kli',
+    value: 'Rajasthani-Kli',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Lengha-Kli',
+    value: 'Lengha-Kli',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Patli Daman',
+    value: 'Patli Daman',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Cross Stitch',
+    value: 'Cross Stitch',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kasmiri Design',
+    value: 'Kasmiri Design',
+    image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Jal',
+    value: 'Jal',
+    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Gamthi Design',
+    value: 'Gamthi Design',
+    image: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=200&h=200&fit=crop',
   }
 ];
 

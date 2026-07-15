@@ -126,7 +126,24 @@ exports.getDesigns = async (req, res, next) => {
             'Multi Design',
             'Saree Daman',
             'C Pallu - Box Pallu',
-            'Gala-Nack-Single Head'
+            'Gala-Nack-Single Head',
+            'Kurti-Gala',
+            'Buta',
+            'Buti',
+            'Sut Daman & Dupta',
+            'Lace',
+            'Figar',
+            'Garment-Servani',
+            'Penal-Pta',
+            'Choli-Kli',
+            'Blouse',
+            'Rajasthani-Kli',
+            'Lengha-Kli',
+            'Patli Daman',
+            'Cross Stitch',
+            'Kasmiri Design',
+            'Jal',
+            'Gamthi Design'
           ]
         };
       } else {
