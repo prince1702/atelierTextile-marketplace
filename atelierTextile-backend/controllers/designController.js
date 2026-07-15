@@ -153,7 +153,17 @@ exports.getDesigns = async (req, res, next) => {
             'Dual-Sq',
             'Bhugali-Sq',
             'Garment & Servani',
-            'Gala-Top & Tabla'
+            'Gala-Top & Tabla',
+            'Daman',
+            'Sut-Daman & Dupta',
+            'Choli & Blouse',
+            'Buta',
+            'Buti Small',
+            'Kli-Lengha',
+            'C Pallu',
+            'Lace',
+            'Figar Design',
+            'No Panching'
           ]
         };
       } else {

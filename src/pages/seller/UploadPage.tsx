@@ -410,6 +410,16 @@ export function UploadPage() {
                   <option value="Bhugali-Sq">Bhugali-Sq</option>
                   <option value="Garment & Servani">Garment & Servani</option>
                   <option value="Gala-Top & Tabla">Gala-Top & Tabla</option>
+                  <option value="Daman">Daman</option>
+                  <option value="Sut-Daman & Dupta">Sut-Daman & Dupta</option>
+                  <option value="Choli & Blouse">Choli & Blouse</option>
+                  <option value="Buta">Buta</option>
+                  <option value="Buti Small">Buti Small</option>
+                  <option value="Kli-Lengha">Kli-Lengha</option>
+                  <option value="C Pallu">C Pallu</option>
+                  <option value="Lace">Lace</option>
+                  <option value="Figar Design">Figar Design</option>
+                  <option value="No Panching">No Panching</option>
                 </select>
               </div>
             )}

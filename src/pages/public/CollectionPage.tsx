@@ -371,7 +371,17 @@ const ALL_SEQUIN_SUBCATEGORIES_VALUES = [
   'Dual-Sq',
   'Bhugali-Sq',
   'Garment & Servani',
-  'Gala-Top & Tabla'
+  'Gala-Top & Tabla',
+  'Daman',
+  'Sut-Daman & Dupta',
+  'Choli & Blouse',
+  'Buta',
+  'Buti Small',
+  'Kli-Lengha',
+  'C Pallu',
+  'Lace',
+  'Figar Design',
+  'No Panching'
 ];
 
 const SEQUIN_SUBCATEGORIES = [
@@ -399,6 +409,56 @@ const SEQUIN_SUBCATEGORIES = [
     name: 'Gala-Top & Tabla',
     value: 'Gala-Top & Tabla',
     image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Daman',
+    value: 'Daman',
+    image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Sut-Daman & Dupta',
+    value: 'Sut-Daman & Dupta',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Choli & Blouse',
+    value: 'Choli & Blouse',
+    image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Buta',
+    value: 'Buta',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Buti Small',
+    value: 'Buti Small',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kli-Lengha',
+    value: 'Kli-Lengha',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'C Pallu',
+    value: 'C Pallu',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Lace',
+    value: 'Lace',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Figar Design',
+    value: 'Figar Design',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'No Panching',
+    value: 'No Panching',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
   }
 ];
 
