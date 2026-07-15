@@ -20,8 +20,8 @@ export function UploadPage() {
   const [designType, setDesignType] = useState('2 fider design');
   const [area, setArea] = useState('88 to 96');
   const [needle, setNeedle] = useState('36 to 42');
-  const [designFormat, setDesignFormat] = useState('EMB');
-  const [sareeConcept, setSareeConcept] = useState('Box Pallu');
+  const [designFormat, setDesignFormat] = useState('BMP');
+  const [sareeConcept, setSareeConcept] = useState('jumbo design');
   const [price, setPrice] = useState('');
   const [tags, setTags] = useState('');
   const [dimensions, setDimensions] = useState('150cm width, repeat 30cm');
@@ -41,6 +41,8 @@ export function UploadPage() {
       setDesignType('2 fider design');
       setArea('88 to 96');
       setNeedle('36 to 42');
+      setDesignFormat('BMP');
+      setSareeConcept('jumbo design');
     } else {
       if (category === 'Embroidery Design') {
         setSubcategory('Multi Design');
@@ -54,6 +56,8 @@ export function UploadPage() {
       setDesignType('Flat/Multi Designs');
       setArea('100 mm');
       setNeedle('1');
+      setDesignFormat('EMB');
+      setSareeConcept('Box Pallu');
     }
   }, [category]);
 
@@ -444,27 +448,56 @@ export function UploadPage() {
                 onChange={(e) => setDesignFormat(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
               >
-                <option value="EMB">EMB</option>
-                <option value="DST">DST</option>
-                <option value="JEF">JEF</option>
-                <option value="PES">PES</option>
-                <option value="DHP">DHP</option>
+                {category === 'Weaving Design' ? (
+                  <>
+                    <option value="BMP">BMP</option>
+                    <option value="PDC">PDC</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="EMB">EMB</option>
+                    <option value="DST">DST</option>
+                    <option value="JEF">JEF</option>
+                    <option value="PES">PES</option>
+                    <option value="DHP">DHP</option>
+                  </>
+                )}
               </select>
             </div>
 
-            {/* Saree Concept */}
+            {/* Saree Concept / Design Concept */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Saree Concept *</label>
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                {category === 'Weaving Design' ? 'Design Concept *' : 'Saree Concept *'}
+              </label>
               <select 
                 value={sareeConcept} 
                 onChange={(e) => setSareeConcept(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
               >
-                <option value="Box Pallu">Box Pallu</option>
-                <option value="C Pallu">C Pallu</option>
-                <option value="Figure">Figure</option>
-                <option value="Ton to Ton">Ton to Ton</option>
-                <option value="Dhaga Test">Dhaga Test</option>
+                {category === 'Weaving Design' ? (
+                  <>
+                    <option value="jumbo design">jumbo design</option>
+                    <option value="box pallu">box pallu</option>
+                    <option value="c-pallu">c-pallu</option>
+                    <option value="pushmeena">pushmeena</option>
+                    <option value="satin">satin</option>
+                    <option value="peithani">peithani</option>
+                    <option value="butt + butti + leriya">butt + butti + leriya</option>
+                    <option value="cotton">cotton</option>
+                    <option value="georget">georget</option>
+                    <option value="topdyed">topdyed</option>
+                    <option value="nylon">nylon</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="Box Pallu">Box Pallu</option>
+                    <option value="C Pallu">C Pallu</option>
+                    <option value="Figure">Figure</option>
+                    <option value="Ton to Ton">Ton to Ton</option>
+                    <option value="Dhaga Test">Dhaga Test</option>
+                  </>
+                )}
               </select>
             </div>
 

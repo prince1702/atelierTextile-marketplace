@@ -15,6 +15,21 @@ const WEAVING_AREAS = ['All', '88 to 96', '100 to 110', '112 to 124', '188 to 20
 const NEEDLES = ['All', '1', '2', '3', '4', '5'];
 const DESIGN_FORMATS = ['All', 'EMB', 'DST', 'JEF', 'PES', 'DHP'];
 const SAREE_CONCEPTS = ['All', 'Box Pallu', 'C Pallu', 'Figure', 'Ton to Ton', 'Dhaga Test'];
+const WEAVING_FORMATS = ['All', 'BMP', 'PDC'];
+const WEAVING_CONCEPTS = [
+  'All',
+  'jumbo design',
+  'box pallu',
+  'c-pallu',
+  'pushmeena',
+  'satin',
+  'peithani',
+  'butt + butti + leriya',
+  'cotton',
+  'georget',
+  'topdyed',
+  'nylon'
+];
 const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'All',
@@ -355,6 +370,8 @@ export function Marketplace() {
   const designTypes = activeCategory === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = activeCategory === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
   const needles = activeCategory === 'Weaving Design' ? ['All', '36 to 42', '23 to 48', '50 to 80', '61 to 70', '71 to 80', '80 to 90'] : ['All', '1', '2', '3', '4', '5'];
+  const formats = activeCategory === 'Weaving Design' ? WEAVING_FORMATS : DESIGN_FORMATS;
+  const concepts = activeCategory === 'Weaving Design' ? WEAVING_CONCEPTS : SAREE_CONCEPTS;
   const [activeSubcategory, setActiveSubcategory] = useState('All');
   const [openFilters, setOpenFilters] = useState(() => {
     const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1024 : true;
@@ -804,7 +821,7 @@ export function Marketplace() {
                     <>
                       <div className="w-full h-px bg-outline-variant/50"></div>
                       <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                        {DESIGN_FORMATS.map(f => (
+                        {formats.map(f => (
                           <label key={f} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
                             <input 
                               type="radio" 
@@ -827,7 +844,9 @@ export function Marketplace() {
                     onClick={() => toggleFilter('sareeConcept')}
                     className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
                   >
-                    <span className="font-bold text-xs text-primary uppercase tracking-wider">Saree Concept</span>
+                    <span className="font-bold text-xs text-primary uppercase tracking-wider">
+                      {activeCategory === 'Weaving Design' ? 'Design Concept' : 'Saree Concept'}
+                    </span>
                     <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.sareeConcept ? 'rotate-180' : ''}`}>
                       keyboard_arrow_down
                     </span>
@@ -836,7 +855,7 @@ export function Marketplace() {
                     <>
                       <div className="w-full h-px bg-outline-variant/50"></div>
                       <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                        {SAREE_CONCEPTS.map(sc => (
+                        {concepts.map(sc => (
                           <label key={sc} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
                             <input 
                               type="radio" 
