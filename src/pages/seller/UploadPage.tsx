@@ -38,7 +38,7 @@ export function UploadPage() {
       setLehenghaType('Lehengha Design');
       setSuitType('Suit Design');
       setDupattaType('Dupatta Design');
-      setDesignType('Multi+Sequin Designs');
+      setDesignType('2 fider design');
       setArea('300 mm');
     } else {
       if (category === 'Embroidery Design') {
@@ -354,11 +354,12 @@ export function UploadPage() {
               >
                 {category === 'Weaving Design' ? (
                   <>
-                    <option value="Multi+Sequin Designs">Multi+Sequin Designs</option>
-                    <option value="Multi+Chain Stitch Designs">Multi+Chain Stitch Designs</option>
-                    <option value="Dual & Sandwich Sequin">Dual & Sandwich Sequin</option>
-                    <option value="2/4/6 Sequin Design">2/4/6 Sequin Design</option>
-                    <option value="Cording + Sequin Designs">Cording + Sequin Designs</option>
+                    <option value="2 fider design">2 fider design</option>
+                    <option value="3 fider design">3 fider design</option>
+                    <option value="4 fider design">4 fider design</option>
+                    <option value="2688 design">2688 design</option>
+                    <option value="5376 design(jumbo)">5376 design(jumbo)</option>
+                    <option value="power loom design">power loom design</option>
                   </>
                 ) : (
                   <>
