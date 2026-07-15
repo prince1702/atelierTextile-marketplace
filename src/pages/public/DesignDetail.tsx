@@ -191,6 +191,16 @@ export function DesignDetail() {
                   <div className="space-y-6">
                     <p className="text-sm text-on-surface-variant leading-relaxed">{design.description}</p>
                     <div className="pt-4 border-t border-outline-variant/30 space-y-3 text-sm">
+                      {/* Design Code */}
+                      <div className="flex justify-between py-2.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[18px] text-primary">qr_code</span>
+                          Design Code
+                        </span>
+                        <span className="text-on-surface font-medium select-all">#DT-{design.id.slice(-8).toUpperCase()}</span>
+                      </div>
+
+                      {/* Design Type */}
                       <div className="flex justify-between py-2.5 border-b border-outline-variant/30">
                         <span className="font-semibold text-on-surface-variant flex items-center gap-1.5">
                           <span className="material-symbols-outlined text-[18px] text-primary">settings</span>
@@ -198,13 +208,54 @@ export function DesignDetail() {
                         </span>
                         <span className="text-on-surface font-medium">{design.designType || 'N/A'}</span>
                       </div>
-                      <div className="flex justify-between py-2.5">
+
+                      {/* Design Format */}
+                      <div className="flex justify-between py-2.5 border-b border-outline-variant/30">
                         <span className="font-semibold text-on-surface-variant flex items-center gap-1.5">
                           <span className="material-symbols-outlined text-[18px] text-primary">description</span>
                           Design Format
                         </span>
                         <span className="text-on-surface font-medium uppercase">{design.designFormat || 'N/A'}</span>
                       </div>
+
+                      {/* Design Concept / Saree Concept */}
+                      <div className="flex justify-between py-2.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[18px] text-primary">palette</span>
+                          {design.category === 'Weaving Design' ? 'Design Concept' : 'Saree Concept'}
+                        </span>
+                        <span className="text-on-surface font-medium">{design.sareeConcept || 'N/A'}</span>
+                      </div>
+
+                      {/* Reed or Area */}
+                      <div className="flex justify-between py-2.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[18px] text-primary">straighten</span>
+                          {design.category === 'Weaving Design' ? 'Reed' : 'Area'}
+                        </span>
+                        <span className="text-on-surface font-medium">{design.area || 'N/A'}</span>
+                      </div>
+
+                      {/* Color or Pick */}
+                      {design.category === 'Weaving Design' ? (
+                        <div className="flex justify-between py-2.5">
+                          <span className="font-semibold text-on-surface-variant flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-[18px] text-primary">texture</span>
+                            Pick
+                          </span>
+                          <span className="text-on-surface font-medium">{design.needle || 'N/A'}</span>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between py-2.5">
+                          <span className="font-semibold text-on-surface-variant flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-[18px] text-primary">format_paint</span>
+                            Color
+                          </span>
+                          <span className="text-on-surface font-medium">
+                            {design.colorways && design.colorways.length > 0 ? design.colorways.join(', ') : 'N/A'}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
