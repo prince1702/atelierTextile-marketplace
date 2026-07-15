@@ -558,6 +558,186 @@ const CORDING_SUBCATEGORIES = [
   }
 ];
 
+const ALL_CHAIN_SUBCATEGORIES_VALUES = [
+  'Chain Design',
+  'Pallu-Scat',
+  'Patli & Kli',
+  'Gala & Nack',
+  'Garment & Jal',
+  'Penal-Patta',
+  'Figar Design',
+  'Buta',
+  'C Pallu',
+  'Blouse',
+  'No Panching'
+];
+
+const CHAIN_SUBCATEGORIES = [
+  {
+    name: 'All Chain',
+    value: 'Chain Design',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Pallu-Scat',
+    value: 'Pallu-Scat',
+    image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Patli & Kli',
+    value: 'Patli & Kli',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Gala & Nack',
+    value: 'Gala & Nack',
+    image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Garment & Jal',
+    value: 'Garment & Jal',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Penal-Patta',
+    value: 'Penal-Patta',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Figar Design',
+    value: 'Figar Design',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Buta',
+    value: 'Buta',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'C Pallu',
+    value: 'C Pallu',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Blouse',
+    value: 'Blouse',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'No Panching',
+    value: 'No Panching',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  }
+];
+
+const ALL_BEADS_SUBCATEGORIES_VALUES = [
+  'Beads Design',
+  'Kli Beads Design',
+  'C-Pallu Beads Design',
+  'Daman Beads Design',
+  'Gala beads Design'
+];
+
+const BEADS_SUBCATEGORIES = [
+  {
+    name: 'All Beads',
+    value: 'Beads Design',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Kli Beads Design',
+    value: 'Kli Beads Design',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'C-Pallu Beads Design',
+    value: 'C-Pallu Beads Design',
+    image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Daman Beads Design',
+    value: 'Daman Beads Design',
+    image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Gala beads Design',
+    value: 'Gala beads Design',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+  }
+];
+
+const ALL_LTC_SUBCATEGORIES_VALUES = [
+  'LTC Design',
+  'Sequience',
+  'Daman',
+  'Patli',
+  'C Pallu',
+  'Figar Design',
+  'Garment & Jal',
+  'Buta',
+  'Sut',
+  'Cording Design',
+  'Gala-Neck'
+];
+
+const LTC_SUBCATEGORIES = [
+  {
+    name: 'All LTC',
+    value: 'LTC Design',
+    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Sequience',
+    value: 'Sequience',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Daman',
+    value: 'Daman',
+    image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Patli',
+    value: 'Patli',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'C Pallu',
+    value: 'C Pallu',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Figar Design',
+    value: 'Figar Design',
+    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Garment & Jal',
+    value: 'Garment & Jal',
+    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Buta',
+    value: 'Buta',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Sut',
+    value: 'Sut',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Cording Design',
+    value: 'Cording Design',
+    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Gala-Neck',
+    value: 'Gala-Neck',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  }
+];
+
 const getSubcategoryDisplayName = (sub: string) => {
   if (sub.startsWith('Lehengha - ')) return sub.replace('Lehengha - ', '');
   if (sub.startsWith('Suit - ')) return sub.replace('Suit - ', '');
@@ -618,7 +798,7 @@ export function CollectionPage() {
   };
 
   const fetchDesigns = async () => {
-    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design', 'Cording Design'].includes(subcategory) && !showAll) {
+    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design', 'Cording Design', 'Chain Design', 'Beads Design', 'LTC Design'].includes(subcategory) && !showAll) {
       setDesigns([]);
       setTotalPages(1);
       setTotalResults(0);
@@ -954,7 +1134,115 @@ export function CollectionPage() {
           </div>
         )}
 
-        {(!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design', 'Cording Design'].includes(subcategory) || showAll) && (isLoading || !(designs.length === 0 && 
+        {/* Chain Subcategories Visual Bar */}
+        {category === 'Embroidery Design' && subcategory === 'Chain Design' && !showAll && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
+            <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Chain Subcategories</h3>
+            <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
+              {CHAIN_SUBCATEGORIES.map(sub => {
+                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
+                return (
+                  <Link
+                    key={sub.value}
+                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
+                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
+                  >
+                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name.replace(/\s*design\s*/gi, '')}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Beads Subcategories Visual Bar */}
+        {category === 'Embroidery Design' && subcategory === 'Beads Design' && !showAll && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
+            <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Beads Subcategories</h3>
+            <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
+              {BEADS_SUBCATEGORIES.map(sub => {
+                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
+                return (
+                  <Link
+                    key={sub.value}
+                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
+                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
+                  >
+                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name.replace(/\s*design\s*/gi, '')}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* LTC Subcategories Visual Bar */}
+        {category === 'Embroidery Design' && subcategory === 'LTC Design' && !showAll && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
+            <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">LTC Subcategories</h3>
+            <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
+              {LTC_SUBCATEGORIES.map(sub => {
+                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
+                return (
+                  <Link
+                    key={sub.value}
+                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
+                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
+                  >
+                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name.replace(/\s*design\s*/gi, '')}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {(!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design', 'Cording Design', 'Chain Design', 'Beads Design', 'LTC Design'].includes(subcategory) || showAll) && (isLoading || !(designs.length === 0 && 
                          selectedDesignType === 'All' && 
                          selectedArea === 'All' && 
                          selectedNeedle === 'All' && 

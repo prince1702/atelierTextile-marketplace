@@ -20,6 +20,9 @@ export function UploadPage() {
   const [multiType, setMultiType] = useState('Multi Design');
   const [sequinType, setSequinType] = useState('Sequin Design');
   const [cordingType, setCordingType] = useState('Cording Design');
+  const [chainType, setChainType] = useState('Chain Design');
+  const [beadsType, setBeadsType] = useState('Beads Design');
+  const [ltcType, setLtcType] = useState('LTC Design');
   const [designType, setDesignType] = useState('2 fider design');
   const [area, setArea] = useState('88 to 96');
   const [needle, setNeedle] = useState('36 to 42');
@@ -52,6 +55,9 @@ export function UploadPage() {
         setMultiType('Multi Design');
         setSequinType('Sequin Design');
         setCordingType('Cording Design');
+        setChainType('Chain Design');
+        setBeadsType('Beads Design');
+        setLtcType('LTC Design');
       } else if (category === 'Digital Print Design') {
         setSubcategory('Allover Design');
       } else if (category === 'Position Print Design') {
@@ -163,6 +169,12 @@ export function UploadPage() {
           finalSubcategory = sequinType;
         } else if (subcategory === 'Cording Design') {
           finalSubcategory = cordingType;
+        } else if (subcategory === 'Chain Design') {
+          finalSubcategory = chainType;
+        } else if (subcategory === 'Beads Design') {
+          finalSubcategory = beadsType;
+        } else if (subcategory === 'LTC Design') {
+          finalSubcategory = ltcType;
         }
       }
       formData.append('subcategory', finalSubcategory);
@@ -452,6 +464,72 @@ export function UploadPage() {
                   <option value="Dupta-Only">Dupta-Only</option>
                   <option value="Buti">Buti</option>
                   <option value="No Panching">No Panching</option>
+                </select>
+              </div>
+            )}
+
+            {/* Chain Design Type (Conditional) */}
+            {category === 'Embroidery Design' && subcategory === 'Chain Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Chain Design Type *</label>
+                <select 
+                  value={chainType} 
+                  onChange={(e) => setChainType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Chain Design">General Chain Design</option>
+                  <option value="Pallu-Scat">Pallu-Scat</option>
+                  <option value="Patli & Kli">Patli & Kli</option>
+                  <option value="Gala & Nack">Gala & Nack</option>
+                  <option value="Garment & Jal">Garment & Jal</option>
+                  <option value="Penal-Patta">Penal-Patta</option>
+                  <option value="Figar Design">Figar Design</option>
+                  <option value="Buta">Buta</option>
+                  <option value="C Pallu">C Pallu</option>
+                  <option value="Blouse">Blouse</option>
+                  <option value="No Panching">No Panching</option>
+                </select>
+              </div>
+            )}
+
+            {/* Beads Design Type (Conditional) */}
+            {category === 'Embroidery Design' && subcategory === 'Beads Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Beads Design Type *</label>
+                <select 
+                  value={beadsType} 
+                  onChange={(e) => setBeadsType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Beads Design">General Beads Design</option>
+                  <option value="Kli Beads Design">Kli Beads Design</option>
+                  <option value="C-Pallu Beads Design">C-Pallu Beads Design</option>
+                  <option value="Daman Beads Design">Daman Beads Design</option>
+                  <option value="Gala beads Design">Gala beads Design</option>
+                </select>
+              </div>
+            )}
+
+            {/* LTC Design Type (Conditional) */}
+            {category === 'Embroidery Design' && subcategory === 'LTC Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">LTC Design Type *</label>
+                <select 
+                  value={ltcType} 
+                  onChange={(e) => setLtcType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="LTC Design">General LTC Design</option>
+                  <option value="Sequience">Sequience</option>
+                  <option value="Daman">Daman</option>
+                  <option value="Patli">Patli</option>
+                  <option value="C Pallu">C Pallu</option>
+                  <option value="Figar Design">Figar Design</option>
+                  <option value="Garment & Jal">Garment & Jal</option>
+                  <option value="Buta">Buta</option>
+                  <option value="Sut">Sut</option>
+                  <option value="Cording Design">Cording Design</option>
+                  <option value="Gala-Neck">Gala-Neck</option>
                 </select>
               </div>
             )}

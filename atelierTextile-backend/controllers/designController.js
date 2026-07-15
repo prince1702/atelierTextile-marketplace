@@ -186,6 +186,48 @@ exports.getDesigns = async (req, res, next) => {
             'No Panching'
           ]
         };
+      } else if (subcategory === 'Chain Design') {
+        filter.subcategory = {
+          $in: [
+            'Chain Design',
+            'Pallu-Scat',
+            'Patli & Kli',
+            'Gala & Nack',
+            'Garment & Jal',
+            'Penal-Patta',
+            'Figar Design',
+            'Buta',
+            'C Pallu',
+            'Blouse',
+            'No Panching'
+          ]
+        };
+      } else if (subcategory === 'Beads Design') {
+        filter.subcategory = {
+          $in: [
+            'Beads Design',
+            'Kli Beads Design',
+            'C-Pallu Beads Design',
+            'Daman Beads Design',
+            'Gala beads Design'
+          ]
+        };
+      } else if (subcategory === 'LTC Design') {
+        filter.subcategory = {
+          $in: [
+            'LTC Design',
+            'Sequience',
+            'Daman',
+            'Patli',
+            'C Pallu',
+            'Figar Design',
+            'Garment & Jal',
+            'Buta',
+            'Sut',
+            'Cording Design',
+            'Gala-Neck'
+          ]
+        };
       } else {
         filter.subcategory = subcategory;
       }
