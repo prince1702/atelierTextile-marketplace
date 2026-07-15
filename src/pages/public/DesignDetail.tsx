@@ -104,12 +104,12 @@ export function DesignDetail() {
 
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 pt-8 animate-fade-in animate-sans">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          
+
           {/* Left: Image Gallery */}
           <div className="lg:col-span-7 space-y-4">
             <div className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group">
               <img src={design.image} alt={design.title} className="w-full h-[600px] object-cover cursor-zoom-in" />
-              <button 
+              <button
                 onClick={() => toggleWishlist(design)}
                 className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-modal z-10"
               >
@@ -168,7 +168,7 @@ export function DesignDetail() {
                   </label>
                 ))}
               </div>
-              
+
               <div className="mt-6 pt-6 border-t border-outline-variant/50">
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-on-surface-variant">Total Payment</span>
@@ -188,7 +188,25 @@ export function DesignDetail() {
               </div>
               <div className="p-6">
                 {activeTab === 'details' ? (
-                  <p className="text-sm text-on-surface-variant leading-relaxed">{design.description}</p>
+                  <div className="space-y-6">
+                    <p className="text-sm text-on-surface-variant leading-relaxed">{design.description}</p>
+                    <div className="pt-4 border-t border-outline-variant/30 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20">
+                      <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-primary text-[20px] bg-primary-fixed/20 p-1.5 rounded-lg">settings</span>
+                        <div>
+                          <p className="text-[11px] text-on-surface-variant font-bold uppercase tracking-wider">Design Type</p>
+                          <p className="text-on-surface font-medium mt-0.5">{design.designType || 'N/A'}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-primary text-[20px] bg-primary-fixed/20 p-1.5 rounded-lg">description</span>
+                        <div>
+                          <p className="text-[11px] text-on-surface-variant font-bold uppercase tracking-wider">Design Format</p>
+                          <p className="text-on-surface font-medium uppercase mt-0.5">{design.designFormat || 'N/A'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
