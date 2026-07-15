@@ -35,6 +35,11 @@ export interface Design {
   status: 'active' | 'pending' | 'rejected';
   sales: number;
   revenue: number;
+  designType?: string;
+  area?: string;
+  needle?: string;
+  designFormat?: string;
+  sareeConcept?: string;
 }
 
 export interface Order {
