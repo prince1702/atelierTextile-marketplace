@@ -190,20 +190,20 @@ export function DesignDetail() {
                 {activeTab === 'details' ? (
                   <div className="space-y-6">
                     <p className="text-sm text-on-surface-variant leading-relaxed">{design.description}</p>
-                    <div className="pt-4 border-t border-outline-variant/30 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20">
-                      <div className="flex items-center gap-3">
-                        <span className="material-symbols-outlined text-primary text-[20px] bg-primary-fixed/20 p-1.5 rounded-lg">settings</span>
-                        <div>
-                          <p className="text-[11px] text-on-surface-variant font-bold uppercase tracking-wider">Design Type</p>
-                          <p className="text-on-surface font-medium mt-0.5">{design.designType || 'N/A'}</p>
-                        </div>
+                    <div className="pt-4 border-t border-outline-variant/30 space-y-3 text-sm">
+                      <div className="flex justify-between py-2.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[18px] text-primary">settings</span>
+                          Design Type
+                        </span>
+                        <span className="text-on-surface font-medium">{design.designType || 'N/A'}</span>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="material-symbols-outlined text-primary text-[20px] bg-primary-fixed/20 p-1.5 rounded-lg">description</span>
-                        <div>
-                          <p className="text-[11px] text-on-surface-variant font-bold uppercase tracking-wider">Design Format</p>
-                          <p className="text-on-surface font-medium uppercase mt-0.5">{design.designFormat || 'N/A'}</p>
-                        </div>
+                      <div className="flex justify-between py-2.5">
+                        <span className="font-semibold text-on-surface-variant flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[18px] text-primary">description</span>
+                          Design Format
+                        </span>
+                        <span className="text-on-surface font-medium uppercase">{design.designFormat || 'N/A'}</span>
                       </div>
                     </div>
                   </div>
