@@ -120,6 +120,15 @@ exports.getDesigns = async (req, res, next) => {
             'Dupatta - Cotton Design'
           ]
         };
+      } else if (subcategory === 'Multi Design') {
+        filter.subcategory = {
+          $in: [
+            'Multi Design',
+            'Saree Daman',
+            'C Pallu - Box Pallu',
+            'Gala-Nack-Single Head'
+          ]
+        };
       } else {
         filter.subcategory = subcategory;
       }

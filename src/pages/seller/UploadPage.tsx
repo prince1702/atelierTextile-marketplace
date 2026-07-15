@@ -17,6 +17,7 @@ export function UploadPage() {
   const [lehenghaType, setLehenghaType] = useState('Lehengha Design');
   const [suitType, setSuitType] = useState('Suit Design');
   const [dupattaType, setDupattaType] = useState('Dupatta Design');
+  const [multiType, setMultiType] = useState('Multi Design');
   const [designType, setDesignType] = useState('2 fider design');
   const [area, setArea] = useState('88 to 96');
   const [needle, setNeedle] = useState('36 to 42');
@@ -46,6 +47,7 @@ export function UploadPage() {
     } else {
       if (category === 'Embroidery Design') {
         setSubcategory('Multi Design');
+        setMultiType('Multi Design');
       } else if (category === 'Digital Print Design') {
         setSubcategory('Allover Design');
       } else if (category === 'Position Print Design') {
@@ -149,6 +151,10 @@ export function UploadPage() {
           finalSubcategory = suitType;
         } else if (subcategory === 'Dupatta Design') {
           finalSubcategory = dupattaType;
+        }
+      } else if (category === 'Embroidery Design') {
+        if (subcategory === 'Multi Design') {
+          finalSubcategory = multiType;
         }
       }
       formData.append('subcategory', finalSubcategory);
@@ -349,6 +355,22 @@ export function UploadPage() {
                   <option value="Dupatta - (50 600) Satin Design">(50 600) Satin Design</option>
                   <option value="Dupatta - Nylon Satin Design">Nylon Satin Design</option>
                   <option value="Dupatta - Cotton Design">Cotton Design</option>
+                </select>
+              </div>
+            )}
+            {/* Multi Design Type (Conditional) */}
+            {category === 'Embroidery Design' && subcategory === 'Multi Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Multi Design Type *</label>
+                <select 
+                  value={multiType} 
+                  onChange={(e) => setMultiType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Multi Design">General Multi Design</option>
+                  <option value="Saree Daman">Saree Daman</option>
+                  <option value="C Pallu - Box Pallu">C Pallu - Box Pallu</option>
+                  <option value="Gala-Nack-Single Head">Gala-Nack-Single Head</option>
                 </select>
               </div>
             )}
