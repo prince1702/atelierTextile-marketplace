@@ -19,6 +19,7 @@ export function UploadPage() {
   const [dupattaType, setDupattaType] = useState('Dupatta Design');
   const [multiType, setMultiType] = useState('Multi Design');
   const [sequinType, setSequinType] = useState('Sequin Design');
+  const [cordingType, setCordingType] = useState('Cording Design');
   const [designType, setDesignType] = useState('2 fider design');
   const [area, setArea] = useState('88 to 96');
   const [needle, setNeedle] = useState('36 to 42');
@@ -50,6 +51,7 @@ export function UploadPage() {
         setSubcategory('Multi Design');
         setMultiType('Multi Design');
         setSequinType('Sequin Design');
+        setCordingType('Cording Design');
       } else if (category === 'Digital Print Design') {
         setSubcategory('Allover Design');
       } else if (category === 'Position Print Design') {
@@ -159,6 +161,8 @@ export function UploadPage() {
           finalSubcategory = multiType;
         } else if (subcategory === 'Sequin Design') {
           finalSubcategory = sequinType;
+        } else if (subcategory === 'Cording Design') {
+          finalSubcategory = cordingType;
         }
       }
       formData.append('subcategory', finalSubcategory);
@@ -423,6 +427,35 @@ export function UploadPage() {
                 </select>
               </div>
             )}
+
+            {/* Cording Design Type (Conditional) */}
+            {category === 'Embroidery Design' && subcategory === 'Cording Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Cording Design Type *</label>
+                <select 
+                  value={cordingType} 
+                  onChange={(e) => setCordingType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Cording Design">General Cording Design</option>
+                  <option value="Lengha-Kli">Lengha-Kli</option>
+                  <option value="Choli">Choli</option>
+                  <option value="Gala & Servani">Gala & Servani</option>
+                  <option value="Garment & Jal">Garment & Jal</option>
+                  <option value="Daman">Daman</option>
+                  <option value="Lace">Lace</option>
+                  <option value="C Pallu">C Pallu</option>
+                  <option value="Dual-Cording Sq">Dual-Cording Sq</option>
+                  <option value="Figar Design">Figar Design</option>
+                  <option value="Buta">Buta</option>
+                  <option value="Blouse">Blouse</option>
+                  <option value="Dupta-Only">Dupta-Only</option>
+                  <option value="Buti">Buti</option>
+                  <option value="No Panching">No Panching</option>
+                </select>
+              </div>
+            )}
+
 
             {/* Design Type (Machine Type) */}
             <div className="space-y-1">

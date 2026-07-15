@@ -166,6 +166,26 @@ exports.getDesigns = async (req, res, next) => {
             'No Panching'
           ]
         };
+      } else if (subcategory === 'Cording Design') {
+        filter.subcategory = {
+          $in: [
+            'Cording Design',
+            'Lengha-Kli',
+            'Choli',
+            'Gala & Servani',
+            'Garment & Jal',
+            'Daman',
+            'Lace',
+            'C Pallu',
+            'Dual-Cording Sq',
+            'Figar Design',
+            'Buta',
+            'Blouse',
+            'Dupta-Only',
+            'Buti',
+            'No Panching'
+          ]
+        };
       } else {
         filter.subcategory = subcategory;
       }
