@@ -18,6 +18,7 @@ export function UploadPage() {
   const [suitType, setSuitType] = useState('Suit Design');
   const [dupattaType, setDupattaType] = useState('Dupatta Design');
   const [multiType, setMultiType] = useState('Multi Design');
+  const [sequinType, setSequinType] = useState('Sequin Design');
   const [designType, setDesignType] = useState('2 fider design');
   const [area, setArea] = useState('88 to 96');
   const [needle, setNeedle] = useState('36 to 42');
@@ -48,6 +49,7 @@ export function UploadPage() {
       if (category === 'Embroidery Design') {
         setSubcategory('Multi Design');
         setMultiType('Multi Design');
+        setSequinType('Sequin Design');
       } else if (category === 'Digital Print Design') {
         setSubcategory('Allover Design');
       } else if (category === 'Position Print Design') {
@@ -155,6 +157,8 @@ export function UploadPage() {
       } else if (category === 'Embroidery Design') {
         if (subcategory === 'Multi Design') {
           finalSubcategory = multiType;
+        } else if (subcategory === 'Sequin Design') {
+          finalSubcategory = sequinType;
         }
       }
       formData.append('subcategory', finalSubcategory);
@@ -388,6 +392,23 @@ export function UploadPage() {
                   <option value="Kasmiri Design">Kasmiri Design</option>
                   <option value="Jal">Jal</option>
                   <option value="Gamthi Design">Gamthi Design</option>
+                </select>
+              </div>
+            )}
+
+            {/* Sequin Design Type (Conditional) */}
+            {category === 'Embroidery Design' && subcategory === 'Sequin Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Sequin Design Type *</label>
+                <select 
+                  value={sequinType} 
+                  onChange={(e) => setSequinType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Sequin Design">General Sequin Design</option>
+                  <option value="Dual-Sq">Dual-Sq</option>
+                  <option value="Bhugali-Sq">Bhugali-Sq</option>
+                  <option value="Garment & Servani">Garment & Servani</option>
                 </select>
               </div>
             )}

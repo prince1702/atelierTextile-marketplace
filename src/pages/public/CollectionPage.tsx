@@ -366,6 +366,36 @@ const MULTI_SUBCATEGORIES = [
   }
 ];
 
+const ALL_SEQUIN_SUBCATEGORIES_VALUES = [
+  'Sequin Design',
+  'Dual-Sq',
+  'Bhugali-Sq',
+  'Garment & Servani'
+];
+
+const SEQUIN_SUBCATEGORIES = [
+  {
+    name: 'All Sequin',
+    value: 'Sequin Design',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Dual-Sq',
+    value: 'Dual-Sq',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Bhugali-Sq',
+    value: 'Bhugali-Sq',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Garment & Servani',
+    value: 'Garment & Servani',
+    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+  }
+];
+
 const getSubcategoryDisplayName = (sub: string) => {
   if (sub.startsWith('Lehengha - ')) return sub.replace('Lehengha - ', '');
   if (sub.startsWith('Suit - ')) return sub.replace('Suit - ', '');
@@ -426,7 +456,7 @@ export function CollectionPage() {
   };
 
   const fetchDesigns = async () => {
-    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design'].includes(subcategory) && !showAll) {
+    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design'].includes(subcategory) && !showAll) {
       setDesigns([]);
       setTotalPages(1);
       setTotalResults(0);
@@ -690,7 +720,43 @@ export function CollectionPage() {
           </div>
         )}
 
-        {(!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design'].includes(subcategory) || showAll) && (isLoading || !(designs.length === 0 && 
+        {/* Sequin Subcategories Visual Bar */}
+        {category === 'Embroidery Design' && subcategory === 'Sequin Design' && !showAll && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
+            <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Sequin Subcategories</h3>
+            <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
+              {SEQUIN_SUBCATEGORIES.map(sub => {
+                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
+                return (
+                  <Link
+                    key={sub.value}
+                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
+                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
+                  >
+                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
+                      isActive 
+                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+                    }`}>
+                      <img 
+                        src={sub.image} 
+                        alt={sub.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                    }`}>
+                      {sub.name.replace(/\s*design\s*/gi, '')}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {(!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design'].includes(subcategory) || showAll) && (isLoading || !(designs.length === 0 && 
                          selectedDesignType === 'All' && 
                          selectedArea === 'All' && 
                          selectedNeedle === 'All' && 

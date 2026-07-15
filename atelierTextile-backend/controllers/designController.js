@@ -146,6 +146,15 @@ exports.getDesigns = async (req, res, next) => {
             'Gamthi Design'
           ]
         };
+      } else if (subcategory === 'Sequin Design') {
+        filter.subcategory = {
+          $in: [
+            'Sequin Design',
+            'Dual-Sq',
+            'Bhugali-Sq',
+            'Garment & Servani'
+          ]
+        };
       } else {
         filter.subcategory = subcategory;
       }
