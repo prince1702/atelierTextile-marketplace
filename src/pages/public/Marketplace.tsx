@@ -423,7 +423,27 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
     image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
     parentCategory: 'Position Print Design'
   }
-];
+const getEmbroiderySubcategoryStyle = (name: string) => {
+  switch (name) {
+    case 'Multi Design':
+      return 'bg-[#E0E7FF] text-[#3730A3]'; // Indigo
+    case 'Sequin Design':
+      return 'bg-[#FCE7F3] text-[#9D174D]'; // Pink
+    case 'Cording Design':
+      return 'bg-[#FFE4E6] text-[#9F1239]'; // Rose
+    case 'Chain Design':
+      return 'bg-[#D1FAE5] text-[#065F46]'; // Emerald
+    case 'Beads Design':
+      return 'bg-[#F3E8FF] text-[#6B21A8]'; // Purple
+    case 'Folder Design':
+      return 'bg-[#E0F2FE] text-[#0369A1]'; // Sky Blue
+    case 'Free Download':
+      return 'bg-[#CCFBF1] text-[#0F766E]'; // Teal
+    case 'Other':
+    default:
+      return 'bg-[#FFEDD5] text-[#C2410C]'; // Orange/Amber
+  }
+};
 
 export function Marketplace() {
   const navigate = useNavigate();
@@ -600,7 +620,8 @@ export function Marketplace() {
             <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">All Categories</h3>
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-6 justify-center">
               {ALL_SUBCATEGORIES_WITH_IMAGES.map(sub => {
-                const isPlainColor = sub.name === 'Multi Design' || sub.name === 'Cording Design';
+                const isPlainColor = sub.parentCategory === 'Embroidery Design';
+                const colorClass = isPlainColor ? getEmbroiderySubcategoryStyle(sub.name) : '';
                 return (
                   <Link
                     key={`${sub.parentCategory}-${sub.name}`}
@@ -609,9 +630,7 @@ export function Marketplace() {
                   >
                     <div className="w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 border-on-surface/80 transition-all duration-300 group-hover:border-primary group-hover:scale-105 group-hover:shadow-md">
                       {isPlainColor ? (
-                        <div className={`w-full h-full flex items-center justify-center p-2 text-center transition-colors duration-300 ${
-                          sub.name === 'Multi Design' ? 'bg-[#E0E7FF] text-[#3730A3]' : 'bg-[#FFE4E6] text-[#9F1239]'
-                        }`}>
+                        <div className={`w-full h-full flex items-center justify-center p-2 text-center transition-colors duration-300 ${colorClass}`}>
                           <span className="text-[12px] sm:text-[14px] font-extrabold tracking-normal leading-snug uppercase select-none px-1.5 text-center">
                             {sub.name.replace(/\s*design\s*/gi, '')}
                           </span>
@@ -679,7 +698,8 @@ export function Marketplace() {
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-6 justify-center">
               {EMBROIDERY_SUBCATEGORIES_WITH_IMAGES.map(sub => {
                 const isActive = activeSubcategory === sub.name;
-                const isPlainColor = sub.name === 'Multi Design' || sub.name === 'Cording Design';
+                const isPlainColor = sub.name !== 'All';
+                const colorClass = isPlainColor ? getEmbroiderySubcategoryStyle(sub.name) : '';
                 return (
                   <Link
                     key={sub.name}
@@ -692,9 +712,7 @@ export function Marketplace() {
                         : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
                     }`}>
                       {isPlainColor ? (
-                        <div className={`w-full h-full flex items-center justify-center p-2 text-center transition-colors duration-300 ${
-                          sub.name === 'Multi Design' ? 'bg-[#E0E7FF] text-[#3730A3]' : 'bg-[#FFE4E6] text-[#9F1239]'
-                        }`}>
+                        <div className={`w-full h-full flex items-center justify-center p-2 text-center transition-colors duration-300 ${colorClass}`}>
                           <span className="text-[12px] sm:text-[14px] font-extrabold tracking-normal leading-snug uppercase select-none px-1.5 text-center">
                             {sub.name.replace(/\s*design\s*/gi, '')}
                           </span>
