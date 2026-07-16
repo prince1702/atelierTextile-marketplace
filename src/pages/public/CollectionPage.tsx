@@ -12,8 +12,32 @@ const EMB_AREAS = ['All', '100 mm', '125 mm', '150 mm', '175 mm', '200 mm', '225
 const WEAVING_AREAS = ['All', '88 to 96', '100 to 110', '112 to 124', '188 to 200', '216 to 240'];
 
 const NEEDLES = ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-const DESIGN_FORMATS = ['All', 'EMB', 'DST', 'JEF', 'PES', 'DHP'];
-const SAREE_CONCEPTS = ['All', 'Box Pallu', 'C Pallu', 'Figure', 'Ton to Ton', 'Dhaga Test'];
+const DESIGN_FORMATS = ['All', 'EMB', 'DST', 'JEF', 'PES', 'DHP', 'VIP', 'PEC', 'VP3', 'XXX', 'HUS', 'SEW'];
+const SAREE_CONCEPTS = [
+  'All', 
+  'Box Pallu', 
+  'C Pallu', 
+  'Figure', 
+  'Ton to Ton', 
+  'Dhaga Test',
+  'Cut-Peast',
+  'Diamond test',
+  'Single jari',
+  'Cut Work',
+  'Form',
+  'Patli Pallu',
+  'Half-Half',
+  'Jaal',
+  'Kalkatti Test',
+  'Marun Test',
+  'Panel',
+  'Butta Saree',
+  'Daman',
+  'Kashmiri Test',
+  'Packing',
+  'South Test',
+  'Lace Butta'
+];
 const WEAVING_FORMATS = ['All', 'BMP', 'PDC'];
 const WEAVING_CONCEPTS = [
   'All',

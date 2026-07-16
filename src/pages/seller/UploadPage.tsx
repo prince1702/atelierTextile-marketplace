@@ -659,6 +659,12 @@ export function UploadPage() {
                     <option value="JEF">JEF</option>
                     <option value="PES">PES</option>
                     <option value="DHP">DHP</option>
+                    <option value="VIP">VIP</option>
+                    <option value="PEC">PEC</option>
+                    <option value="VP3">VP3</option>
+                    <option value="XXX">XXX</option>
+                    <option value="HUS">HUS</option>
+                    <option value="SEW">SEW</option>
                   </>
                 )}
               </select>
@@ -695,6 +701,23 @@ export function UploadPage() {
                     <option value="Figure">Figure</option>
                     <option value="Ton to Ton">Ton to Ton</option>
                     <option value="Dhaga Test">Dhaga Test</option>
+                    <option value="Cut-Peast">Cut-Peast</option>
+                    <option value="Diamond test">Diamond test</option>
+                    <option value="Single jari">Single jari</option>
+                    <option value="Cut Work">Cut Work</option>
+                    <option value="Form">Form</option>
+                    <option value="Patli Pallu">Patli Pallu</option>
+                    <option value="Half-Half">Half-Half</option>
+                    <option value="Jaal">Jaal</option>
+                    <option value="Kalkatti Test">Kalkatti Test</option>
+                    <option value="Marun Test">Marun Test</option>
+                    <option value="Panel">Panel</option>
+                    <option value="Butta Saree">Butta Saree</option>
+                    <option value="Daman">Daman</option>
+                    <option value="Kashmiri Test">Kashmiri Test</option>
+                    <option value="Packing">Packing</option>
+                    <option value="South Test">South Test</option>
+                    <option value="Lace Butta">Lace Butta</option>
                   </>
                 )}
               </select>
