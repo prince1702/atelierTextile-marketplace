@@ -5,7 +5,21 @@ import type { Design } from '../../types';
 import { DesignCard } from '../../components/ui/DesignCard';
 import { useNotification } from '../../contexts/NotificationContext';
 
-const EMB_DESIGN_TYPES = ['All', 'Flat/Multi Designs', 'Only Cording Designs', 'Only Sequin Designs', 'Only Chain Stitch Designs', 'Multi+Cording Designs'];
+const EMB_DESIGN_TYPES = [
+  'All', 
+  'Flat/Multi Designs', 
+  'Only Cording Designs', 
+  'Only Sequin Designs', 
+  'Only Chain Stitch Designs', 
+  'Multi+Cording Designs',
+  'Beads and Sequin Designs',
+  'Multi+Cording+Sequin Designs',
+  'Multi+Sequin Designs',
+  'Multi+Chain Stitch Designs',
+  'Dual & Sandwich Sequin',
+  '2/4/6 Sequin Design',
+  'Cording + Sequin Designs'
+];
 const WEAVING_DESIGN_TYPES = ['All', '2 fider design', '3 fider design', '4 fider design', '2688 design', '5376 design(jumbo)', 'power loom design'];
 
 const EMB_AREAS = ['All', '100 mm', '125 mm', '150 mm', '175 mm', '200 mm', '225 mm', '250 mm', '300 mm', '330 mm', '400 mm', '500 mm', '600 mm'];

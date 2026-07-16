@@ -559,6 +559,13 @@ export function UploadPage() {
                     <option value="Only Sequin Designs">Only Sequin Designs</option>
                     <option value="Only Chain Stitch Designs">Only Chain Stitch Designs</option>
                     <option value="Multi+Cording Designs">Multi+Cording Designs</option>
+                    <option value="Beads and Sequin Designs">Beads and Sequin Designs</option>
+                    <option value="Multi+Cording+Sequin Designs">Multi+Cording+Sequin Designs</option>
+                    <option value="Multi+Sequin Designs">Multi+Sequin Designs</option>
+                    <option value="Multi+Chain Stitch Designs">Multi+Chain Stitch Designs</option>
+                    <option value="Dual & Sandwich Sequin">Dual & Sandwich Sequin</option>
+                    <option value="2/4/6 Sequin Design">2/4/6 Sequin Design</option>
+                    <option value="Cording + Sequin Designs">Cording + Sequin Designs</option>
                   </>
                 )}
               </select>
