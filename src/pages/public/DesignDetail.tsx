@@ -189,103 +189,85 @@ export function DesignDetail() {
               <div className="p-6">
                 {activeTab === 'details' ? (
                   <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-1 text-[14px] md:text-[15px]">
-                      {/* Row 1: Design Code & Category */}
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 border-b border-outline-variant/30">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">qr_code</span>
-                          Design Code
-                        </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-all select-all">#DT-{design.id.slice(-8).toUpperCase()}</span>
-                      </div>
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 border-b border-outline-variant/30">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">category</span>
-                          Category
-                        </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-words">{design.category}</span>
+                    <div className="flex flex-col text-[15px] md:text-[16px]">
+                      {/* Row 1: Design Code */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant">Design Code</span>
+                        <span className="text-on-surface font-semibold text-right break-all select-all">#DT-{design.id.slice(-8).toUpperCase()}</span>
                       </div>
 
-                      {/* Row 2: Subcategory & Design Type */}
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 border-b border-outline-variant/30">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">layers</span>
-                          Subcategory
-                        </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-words">{design.subcategory || 'N/A'}</span>
-                      </div>
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 border-b border-outline-variant/30">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">settings</span>
-                          Design Type
-                        </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-words">{design.designType || 'N/A'}</span>
+                      {/* Row 2: Category */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant">Category</span>
+                        <span className="text-on-surface font-semibold text-right break-words">{design.category}</span>
                       </div>
 
-                      {/* Row 3: Area/Reed & Needle/Pick */}
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 border-b border-outline-variant/30">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">straighten</span>
+                      {/* Row 3: Subcategory */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant">Subcategory</span>
+                        <span className="text-on-surface font-semibold text-right break-words">{design.subcategory || 'N/A'}</span>
+                      </div>
+
+                      {/* Row 4: Design Type */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant">Design Type</span>
+                        <span className="text-on-surface font-semibold text-right break-words">{design.designType || 'N/A'}</span>
+                      </div>
+
+                      {/* Row 5: Area / Reed */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant">
                           {design.category === 'Weaving Design' ? 'Reed' : 'Area'}
                         </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-words">{design.area || 'N/A'}</span>
+                        <span className="text-on-surface font-semibold text-right break-words">{design.area || 'N/A'}</span>
                       </div>
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 border-b border-outline-variant/30">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">texture</span>
+
+                      {/* Row 6: Needle / Pick */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant">
                           {design.category === 'Weaving Design' ? 'Pick' : 'Needle'}
                         </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-words">{design.needle || 'N/A'}</span>
+                        <span className="text-on-surface font-semibold text-right break-words">{design.needle || 'N/A'}</span>
                       </div>
 
-                      {/* Row 4: Format & Concept */}
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 border-b border-outline-variant/30">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">description</span>
-                          Design Format
-                        </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-words uppercase">{design.designFormat || 'N/A'}</span>
+                      {/* Row 7: Design Format */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant">Design Format</span>
+                        <span className="text-on-surface font-semibold text-right break-words uppercase">{design.designFormat || 'N/A'}</span>
                       </div>
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 border-b border-outline-variant/30">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">palette</span>
+
+                      {/* Row 8: Design Concept / Saree Concept */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant">
                           {design.category === 'Weaving Design' ? 'Design Concept' : 'Saree Concept'}
                         </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-words">{design.sareeConcept || 'N/A'}</span>
+                        <span className="text-on-surface font-semibold text-right break-words">{design.sareeConcept || 'N/A'}</span>
                       </div>
 
-                      {/* Row 5: Dimensions & Colors */}
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 border-b border-outline-variant/30 md:border-b-0">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">aspect_ratio</span>
-                          Dimensions
-                        </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-words">{design.dimensions || 'N/A'}</span>
+                      {/* Row 9: Dimensions */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant">Dimensions</span>
+                        <span className="text-on-surface font-semibold text-right break-words">{design.dimensions || 'N/A'}</span>
                       </div>
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 border-b border-outline-variant/30 md:border-b-0">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">format_paint</span>
-                          Colors
-                        </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-words">
+
+                      {/* Row 10: Colors */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                        <span className="font-semibold text-on-surface-variant">Colors</span>
+                        <span className="text-on-surface font-semibold text-right break-words">
                           {design.colorways && design.colorways.length > 0 ? design.colorways.join(', ') : 'N/A'}
                         </span>
                       </div>
 
-                      {/* Row 6: Default License Scope */}
-                      <div className="grid grid-cols-12 items-start gap-2 py-3 col-span-1 md:col-span-2">
-                        <span className="col-span-5 font-semibold text-on-surface-variant flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[20px] text-primary">assignment</span>
-                          Default License Scope
-                        </span>
-                        <span className="col-span-7 text-on-surface font-semibold text-right break-words">{design.licenseType || 'N/A'}</span>
+                      {/* Row 11: Default License Scope */}
+                      <div className="grid grid-cols-2 items-start gap-4 py-3.5">
+                        <span className="font-semibold text-on-surface-variant">Default License Scope</span>
+                        <span className="text-on-surface font-semibold text-right break-words">{design.licenseType || 'N/A'}</span>
                       </div>
                     </div>
 
                     {/* Tags */}
                     <div className="mt-4 pt-4 border-t border-outline-variant/30">
-                      <span className="font-bold text-on-surface-variant flex items-center gap-2 mb-2.5 text-[14px] md:text-[15px]">
-                        <span className="material-symbols-outlined text-[20px] text-primary">sell</span>
+                      <span className="font-bold text-on-surface-variant mb-2.5 text-[15px] md:text-[16px] block">
                         Tags
                       </span>
                       <div className="flex flex-wrap gap-2">
