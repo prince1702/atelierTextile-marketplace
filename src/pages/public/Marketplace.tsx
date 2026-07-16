@@ -476,6 +476,23 @@ const getDigitalPrintSubcategoryStyle = (name: string) => {
       return 'bg-[#FFF1F2] text-[#E11D48]'; // Soft Red
   }
 };
+const getPositionPrintSubcategoryStyle = (name: string) => {
+  switch (name) {
+    case 'Saree Design':
+      return 'bg-[#FFE4E6] text-[#9F1239]'; // Rose
+    case 'Dupatta Design':
+      return 'bg-[#E0E7FF] text-[#3730A3]'; // Indigo
+    case 'Allover Design':
+      return 'bg-[#D1FAE5] text-[#065F46]'; // Emerald
+    case 'Blouse Design':
+      return 'bg-[#FEF3C7] text-[#92400E]'; // Amber
+    case 'Kali + Lehenga Design':
+      return 'bg-[#F3E8FF] text-[#6B21A8]'; // Purple
+    case 'Other':
+    default:
+      return 'bg-[#E2E8F0] text-[#334155]'; // Slate Dark
+  }
+};
 
 export function Marketplace() {
   const navigate = useNavigate();
@@ -654,10 +671,13 @@ export function Marketplace() {
               {ALL_SUBCATEGORIES_WITH_IMAGES.map(sub => {
                 const isEmbroidery = sub.parentCategory === 'Embroidery Design';
                 const isDigitalPrint = sub.parentCategory === 'Digital Print Design';
-                const isPlainColor = isEmbroidery || isDigitalPrint;
+                const isPositionPrint = sub.parentCategory === 'Position Print Design';
+                const isPlainColor = isEmbroidery || isDigitalPrint || isPositionPrint;
                 const colorClass = isEmbroidery 
                   ? getEmbroiderySubcategoryStyle(sub.name) 
-                  : (isDigitalPrint ? getDigitalPrintSubcategoryStyle(sub.name) : '');
+                  : (isDigitalPrint 
+                    ? getDigitalPrintSubcategoryStyle(sub.name) 
+                    : (isPositionPrint ? getPositionPrintSubcategoryStyle(sub.name) : ''));
                 return (
                   <Link
                     key={`${sub.parentCategory}-${sub.name}`}
@@ -830,6 +850,8 @@ export function Marketplace() {
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-6 justify-center">
               {POSITION_PRINT_SUBCATEGORIES_WITH_IMAGES.map(sub => {
                 const isActive = activeSubcategory === sub.name;
+                const isPlainColor = sub.name !== 'All';
+                const colorClass = isPlainColor ? getPositionPrintSubcategoryStyle(sub.name) : '';
                 return (
                   <Link
                     key={sub.name}
@@ -841,17 +863,27 @@ export function Marketplace() {
                         ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
                         : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
                     }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
+                      {isPlainColor ? (
+                        <div className={`w-full h-full flex items-center justify-center p-2 text-center transition-colors duration-300 ${colorClass}`}>
+                          <span className="text-[12px] sm:text-[14px] font-extrabold tracking-normal leading-snug uppercase select-none px-1.5 text-center">
+                            {sub.name.replace(/\s*design\s*/gi, '')}
+                          </span>
+                        </div>
+                      ) : (
+                        <img 
+                          src={sub.image} 
+                          alt={sub.name} 
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                      )}
                     </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name === 'All' ? 'All Position Print' : sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
+                    {!isPlainColor && (
+                      <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                        isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                      }`}>
+                        {sub.name === 'All' ? 'All Position Print' : sub.name.replace(/\s*design\s*/gi, '')}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
