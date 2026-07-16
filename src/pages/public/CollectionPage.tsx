@@ -11,7 +11,7 @@ const WEAVING_DESIGN_TYPES = ['All', '2 fider design', '3 fider design', '4 fide
 const EMB_AREAS = ['All', '100 mm', '125 mm', '150 mm', '175 mm', '200 mm'];
 const WEAVING_AREAS = ['All', '88 to 96', '100 to 110', '112 to 124', '188 to 200', '216 to 240'];
 
-const NEEDLES = ['All', '1', '2', '3', '4', '5'];
+const NEEDLES = ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 const DESIGN_FORMATS = ['All', 'EMB', 'DST', 'JEF', 'PES', 'DHP'];
 const SAREE_CONCEPTS = ['All', 'Box Pallu', 'C Pallu', 'Figure', 'Ton to Ton', 'Dhaga Test'];
 const WEAVING_FORMATS = ['All', 'BMP', 'PDC'];
@@ -753,7 +753,7 @@ export function CollectionPage() {
 
   const designTypes = category === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = category === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
-  const needles = category === 'Weaving Design' ? ['All', '36 to 42', '43 to 48', '50 to 60', '61 to 70', '71 to 80', '80 to 90'] : ['All', '1', '2', '3', '4', '5'];
+  const needles = category === 'Weaving Design' ? ['All', '36 to 42', '43 to 48', '50 to 60', '61 to 70', '71 to 80', '80 to 90'] : ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
   const formats = category === 'Weaving Design' ? WEAVING_FORMATS : DESIGN_FORMATS;
   const concepts = category === 'Weaving Design' ? WEAVING_CONCEPTS : SAREE_CONCEPTS;
 
