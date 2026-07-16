@@ -599,24 +599,39 @@ export function Marketplace() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-10 border border-outline-variant animate-fade-in">
             <h3 className="text-xl font-bold text-on-surface text-center mb-8 uppercase tracking-wide">All Categories</h3>
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-6 justify-center">
-              {ALL_SUBCATEGORIES_WITH_IMAGES.map(sub => (
-                <Link
-                  key={`${sub.parentCategory}-${sub.name}`}
-                  to={`/collection?category=${encodeURIComponent(sub.parentCategory)}&subcategory=${encodeURIComponent(sub.name)}`}
-                  className="flex flex-col items-center group focus:outline-none w-full"
-                >
-                  <div className="w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 border-on-surface/80 transition-all duration-300 group-hover:border-primary group-hover:scale-105 group-hover:shadow-md">
-                    <img 
-                      src={sub.image} 
-                      alt={sub.name} 
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                  </div>
-                  <span className="mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight text-on-surface-variant group-hover:text-primary">
-                    {sub.name.replace(/\s*design\s*/gi, '')}
-                  </span>
-                </Link>
-              ))}
+              {ALL_SUBCATEGORIES_WITH_IMAGES.map(sub => {
+                const isPlainColor = sub.name === 'Multi Design' || sub.name === 'Cording Design';
+                return (
+                  <Link
+                    key={`${sub.parentCategory}-${sub.name}`}
+                    to={`/collection?category=${encodeURIComponent(sub.parentCategory)}&subcategory=${encodeURIComponent(sub.name)}`}
+                    className="flex flex-col items-center group focus:outline-none w-full"
+                  >
+                    <div className="w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 border-on-surface/80 transition-all duration-300 group-hover:border-primary group-hover:scale-105 group-hover:shadow-md">
+                      {isPlainColor ? (
+                        <div className={`w-full h-full flex items-center justify-center p-2 text-center transition-colors duration-300 ${
+                          sub.name === 'Multi Design' ? 'bg-[#E0E7FF] text-[#3730A3]' : 'bg-[#FFE4E6] text-[#9F1239]'
+                        }`}>
+                          <span className="text-[12px] sm:text-[14px] font-extrabold tracking-normal leading-snug uppercase select-none px-1.5 text-center">
+                            {sub.name.replace(/\s*design\s*/gi, '')}
+                          </span>
+                        </div>
+                      ) : (
+                        <img 
+                          src={sub.image} 
+                          alt={sub.name} 
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                      )}
+                    </div>
+                    {!isPlainColor && (
+                      <span className="mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight text-on-surface-variant group-hover:text-primary">
+                        {sub.name.replace(/\s*design\s*/gi, '')}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}
@@ -664,6 +679,7 @@ export function Marketplace() {
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-6 justify-center">
               {EMBROIDERY_SUBCATEGORIES_WITH_IMAGES.map(sub => {
                 const isActive = activeSubcategory === sub.name;
+                const isPlainColor = sub.name === 'Multi Design' || sub.name === 'Cording Design';
                 return (
                   <Link
                     key={sub.name}
@@ -675,17 +691,29 @@ export function Marketplace() {
                         ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
                         : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
                     }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
+                      {isPlainColor ? (
+                        <div className={`w-full h-full flex items-center justify-center p-2 text-center transition-colors duration-300 ${
+                          sub.name === 'Multi Design' ? 'bg-[#E0E7FF] text-[#3730A3]' : 'bg-[#FFE4E6] text-[#9F1239]'
+                        }`}>
+                          <span className="text-[12px] sm:text-[14px] font-extrabold tracking-normal leading-snug uppercase select-none px-1.5 text-center">
+                            {sub.name.replace(/\s*design\s*/gi, '')}
+                          </span>
+                        </div>
+                      ) : (
+                        <img 
+                          src={sub.image} 
+                          alt={sub.name} 
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                      )}
                     </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name === 'All' ? 'All Embroidery' : sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
+                    {!isPlainColor && (
+                      <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+                        isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+                      }`}>
+                        {sub.name === 'All' ? 'All Embroidery' : sub.name.replace(/\s*design\s*/gi, '')}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
