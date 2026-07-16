@@ -704,77 +704,7 @@ const BEADS_SUBCATEGORIES = [
   }
 ];
 
-const ALL_LTC_SUBCATEGORIES_VALUES = [
-  'LTC Design',
-  'Sequience',
-  'Daman',
-  'Patli',
-  'C Pallu',
-  'Figar Design',
-  'Garment & Jal',
-  'Buta',
-  'Sut',
-  'Cording Design',
-  'Gala-Neck'
-];
 
-const LTC_SUBCATEGORIES = [
-  {
-    name: 'All LTC',
-    value: 'LTC Design',
-    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Sequience',
-    value: 'Sequience',
-    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Daman',
-    value: 'Daman',
-    image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Patli',
-    value: 'Patli',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'C Pallu',
-    value: 'C Pallu',
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Figar Design',
-    value: 'Figar Design',
-    image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Garment & Jal',
-    value: 'Garment & Jal',
-    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Buta',
-    value: 'Buta',
-    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Sut',
-    value: 'Sut',
-    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Cording Design',
-    value: 'Cording Design',
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
-  },
-  {
-    name: 'Gala-Neck',
-    value: 'Gala-Neck',
-    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
-  }
-];
 
 const getSubcategoryDisplayName = (sub: string) => {
   if (sub.startsWith('Lehengha - ')) return sub.replace('Lehengha - ', '');
@@ -900,7 +830,7 @@ export function CollectionPage() {
   };
 
   const fetchDesigns = async () => {
-    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design', 'Cording Design', 'Chain Design', 'Beads Design', 'LTC Design'].includes(subcategory) && !showAll) {
+    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design', 'Cording Design', 'Chain Design', 'Beads Design'].includes(subcategory) && !showAll) {
       setDesigns([]);
       setTotalPages(1);
       setTotalResults(0);
@@ -1074,17 +1004,9 @@ export function CollectionPage() {
           </div>
         )}
 
-        {/* LTC Subcategories Visual Bar */}
-        {category === 'Embroidery Design' && subcategory === 'LTC Design' && !showAll && (
-          <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
-            <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">LTC Subcategories</h3>
-            <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {LTC_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Embroidery Design', subcategory, showAll))}
-            </div>
-          </div>
-        )}
 
-        {(!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design', 'Cording Design', 'Chain Design', 'Beads Design', 'LTC Design'].includes(subcategory) || showAll) && (isLoading || !(designs.length === 0 && 
+
+        {(!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design', 'Cording Design', 'Chain Design', 'Beads Design'].includes(subcategory) || showAll) && (isLoading || !(designs.length === 0 && 
                          selectedDesignType === 'All' && 
                          selectedArea === 'All' && 
                          selectedNeedle === 'All' && 

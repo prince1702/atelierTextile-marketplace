@@ -95,7 +95,6 @@ export function UploadPage() {
           'Chain Design',
           'Beads Design',
           'Folder Design',
-          'LTC Design',
           'Free Download',
           'Other'
         ];
@@ -173,8 +172,6 @@ export function UploadPage() {
           finalSubcategory = chainType;
         } else if (subcategory === 'Beads Design') {
           finalSubcategory = beadsType;
-        } else if (subcategory === 'LTC Design') {
-          finalSubcategory = ltcType;
         }
       }
       formData.append('subcategory', finalSubcategory);
@@ -510,29 +507,7 @@ export function UploadPage() {
               </div>
             )}
 
-            {/* LTC Design Type (Conditional) */}
-            {category === 'Embroidery Design' && subcategory === 'LTC Design' && (
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">LTC Design Type *</label>
-                <select 
-                  value={ltcType} 
-                  onChange={(e) => setLtcType(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-                >
-                  <option value="LTC Design">General LTC Design</option>
-                  <option value="Sequience">Sequience</option>
-                  <option value="Daman">Daman</option>
-                  <option value="Patli">Patli</option>
-                  <option value="C Pallu">C Pallu</option>
-                  <option value="Figar Design">Figar Design</option>
-                  <option value="Garment & Jal">Garment & Jal</option>
-                  <option value="Buta">Buta</option>
-                  <option value="Sut">Sut</option>
-                  <option value="Cording Design">Cording Design</option>
-                  <option value="Gala-Neck">Gala-Neck</option>
-                </select>
-              </div>
-            )}
+
 
 
             {/* Design Type (Machine Type) */}

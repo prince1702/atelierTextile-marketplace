@@ -140,10 +140,7 @@ const EMBROIDERY_SUBCATEGORIES_WITH_IMAGES = [
     name: 'Folder Design',
     image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
   },
-  {
-    name: 'LTC Design',
-    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
-  },
+
   {
     name: 'Free Download',
     image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
@@ -315,11 +312,7 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
     image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
     parentCategory: 'Embroidery Design'
   },
-  {
-    name: 'LTC Design',
-    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?w=200&h=200&fit=crop',
-    parentCategory: 'Embroidery Design'
-  },
+
   {
     name: 'Free Download',
     image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
