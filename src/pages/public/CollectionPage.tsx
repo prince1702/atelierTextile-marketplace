@@ -783,6 +783,70 @@ const getSubcategoryDisplayName = (sub: string) => {
   return sub;
 };
 
+const renderSubcategoryLink = (
+  sub: { name: string; value: string; image: string },
+  index: number,
+  currentCategory: string,
+  currentSubcategory: string,
+  showAll: boolean
+) => {
+  const isActive = sub.name.startsWith('All') 
+    ? (currentSubcategory === sub.value && showAll) 
+    : (currentSubcategory === sub.value);
+  const isAll = sub.name.startsWith('All');
+
+  const colors = [
+    'bg-[#E0E7FF] text-[#3730A3] border-[#C7D2FE]',
+    'bg-[#FFE4E6] text-[#9F1239] border-[#FECDD3]',
+    'bg-[#D1FAE5] text-[#065F46] border-[#A7F3D0]',
+    'bg-[#FEF3C7] text-[#92400E] border-[#FDE68A]',
+    'bg-[#F3E8FF] text-[#6B21A8] border-[#E9D5FF]',
+    'bg-[#E0F2FE] text-[#0369A1] border-[#BAE6FD]',
+    'bg-[#CCFBF1] text-[#0F766E] border-[#99F6E4]',
+    'bg-[#FCE7F3] text-[#9D174D] border-[#FBCFE8]',
+    'bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]',
+    'bg-[#FFEDD5] text-[#C2410C] border-[#FED7AA]',
+    'bg-[#F5F5F5] text-[#171717] border-[#E5E5E5]',
+  ];
+  const colorClass = colors[index % colors.length];
+  const displayName = sub.name.replace(/\s*design\s*/gi, '');
+
+  return (
+    <Link
+      key={sub.value}
+      to={`/collection?category=${encodeURIComponent(currentCategory)}&subcategory=${encodeURIComponent(sub.value)}${isAll ? '&showAll=true' : ''}`}
+      className="flex flex-col items-center group focus:outline-none w-full md:w-28"
+    >
+      <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
+        isActive 
+          ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
+          : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
+      }`}>
+        {isAll ? (
+          <img 
+            src={sub.image} 
+            alt={sub.name} 
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          />
+        ) : (
+          <div className={`w-full h-full flex items-center justify-center p-2 text-center transition-colors duration-300 ${colorClass}`}>
+            <span className="text-[10px] sm:text-xs font-black tracking-wider leading-tight uppercase select-none">
+              {displayName}
+            </span>
+          </div>
+        )}
+      </div>
+      {isAll && (
+        <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
+          isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
+        }`}>
+          {displayName}
+        </span>
+      )}
+    </Link>
+  );
+};
+
 export function CollectionPage() {
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category') || 'All';
@@ -925,33 +989,7 @@ export function CollectionPage() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Saree Subcategories</h3>
             <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {SAREE_SUBCATEGORIES.map(sub => {
-                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
-                return (
-                  <Link
-                    key={sub.value}
-                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
-                  >
-                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
-                      isActive 
-                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
-                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
-                    }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
-                  </Link>
-                );
-              })}
+              {SAREE_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Weaving Design', subcategory, showAll))}
             </div>
           </div>
         )}
@@ -961,33 +999,7 @@ export function CollectionPage() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Lehengha Subcategories</h3>
             <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {LEHENGHA_SUBCATEGORIES.map(sub => {
-                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
-                return (
-                  <Link
-                    key={sub.value}
-                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
-                  >
-                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
-                      isActive 
-                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
-                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
-                    }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
-                  </Link>
-                );
-              })}
+              {LEHENGHA_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Weaving Design', subcategory, showAll))}
             </div>
           </div>
         )}
@@ -997,33 +1009,7 @@ export function CollectionPage() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Suit Subcategories</h3>
             <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {SUIT_SUBCATEGORIES.map(sub => {
-                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
-                return (
-                  <Link
-                    key={sub.value}
-                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
-                  >
-                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
-                      isActive 
-                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
-                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
-                    }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
-                  </Link>
-                );
-              })}
+              {SUIT_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Weaving Design', subcategory, showAll))}
             </div>
           </div>
         )}
@@ -1033,33 +1019,7 @@ export function CollectionPage() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Dupatta Subcategories</h3>
             <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {DUPATTA_SUBCATEGORIES.map(sub => {
-                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
-                return (
-                  <Link
-                    key={sub.value}
-                    to={`/collection?category=Weaving%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
-                  >
-                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
-                      isActive 
-                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
-                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
-                    }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
-                  </Link>
-                );
-              })}
+              {DUPATTA_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Weaving Design', subcategory, showAll))}
             </div>
           </div>
         )}
@@ -1069,33 +1029,7 @@ export function CollectionPage() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Multi Subcategories</h3>
             <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {MULTI_SUBCATEGORIES.map(sub => {
-                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
-                return (
-                  <Link
-                    key={sub.value}
-                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
-                  >
-                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
-                      isActive 
-                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
-                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
-                    }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
-                  </Link>
-                );
-              })}
+              {MULTI_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Embroidery Design', subcategory, showAll))}
             </div>
           </div>
         )}
@@ -1105,33 +1039,7 @@ export function CollectionPage() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Sequin Subcategories</h3>
             <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {SEQUIN_SUBCATEGORIES.map(sub => {
-                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
-                return (
-                  <Link
-                    key={sub.value}
-                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
-                  >
-                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
-                      isActive 
-                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
-                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
-                    }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
-                  </Link>
-                );
-              })}
+              {SEQUIN_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Embroidery Design', subcategory, showAll))}
             </div>
           </div>
         )}
@@ -1141,33 +1049,7 @@ export function CollectionPage() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Cording Subcategories</h3>
             <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {CORDING_SUBCATEGORIES.map(sub => {
-                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
-                return (
-                  <Link
-                    key={sub.value}
-                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
-                  >
-                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
-                      isActive 
-                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
-                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
-                    }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
-                  </Link>
-                );
-              })}
+              {CORDING_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Embroidery Design', subcategory, showAll))}
             </div>
           </div>
         )}
@@ -1177,33 +1059,7 @@ export function CollectionPage() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Chain Subcategories</h3>
             <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {CHAIN_SUBCATEGORIES.map(sub => {
-                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
-                return (
-                  <Link
-                    key={sub.value}
-                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
-                  >
-                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
-                      isActive 
-                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
-                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
-                    }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
-                  </Link>
-                );
-              })}
+              {CHAIN_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Embroidery Design', subcategory, showAll))}
             </div>
           </div>
         )}
@@ -1213,33 +1069,7 @@ export function CollectionPage() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Beads Subcategories</h3>
             <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {BEADS_SUBCATEGORIES.map(sub => {
-                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
-                return (
-                  <Link
-                    key={sub.value}
-                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
-                  >
-                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
-                      isActive 
-                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
-                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
-                    }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
-                  </Link>
-                );
-              })}
+              {BEADS_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Embroidery Design', subcategory, showAll))}
             </div>
           </div>
         )}
@@ -1249,33 +1079,7 @@ export function CollectionPage() {
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
             <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">LTC Subcategories</h3>
             <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
-              {LTC_SUBCATEGORIES.map(sub => {
-                const isActive = sub.name.startsWith('All') ? (subcategory === sub.value && showAll) : (subcategory === sub.value);
-                return (
-                  <Link
-                    key={sub.value}
-                    to={`/collection?category=Embroidery%20Design&subcategory=${encodeURIComponent(sub.value)}${sub.name.startsWith('All') ? '&showAll=true' : ''}`}
-                    className="flex flex-col items-center group focus:outline-none w-full md:w-28"
-                  >
-                    <div className={`w-full max-w-[96px] sm:max-w-[112px] aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 mx-auto ${
-                      isActive 
-                        ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-md' 
-                        : 'border-on-surface/80 group-hover:border-primary group-hover:scale-102'
-                    }`}>
-                      <img 
-                        src={sub.image} 
-                        alt={sub.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-center max-w-full transition-colors leading-tight ${
-                      isActive ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'
-                    }`}>
-                      {sub.name.replace(/\s*design\s*/gi, '')}
-                    </span>
-                  </Link>
-                );
-              })}
+              {LTC_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Embroidery Design', subcategory, showAll))}
             </div>
           </div>
         )}
