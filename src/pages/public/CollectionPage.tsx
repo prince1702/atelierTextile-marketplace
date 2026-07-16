@@ -830,7 +830,7 @@ const renderSubcategoryLink = (
           />
         ) : (
           <div className={`w-full h-full flex items-center justify-center p-2 text-center transition-colors duration-300 ${colorClass}`}>
-            <span className="text-[10px] sm:text-xs font-black tracking-wider leading-tight uppercase select-none">
+            <span className="text-[12px] sm:text-[14px] font-extrabold tracking-normal leading-snug uppercase select-none px-1.5 text-center">
               {displayName}
             </span>
           </div>
