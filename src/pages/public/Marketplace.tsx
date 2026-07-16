@@ -423,6 +423,7 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
     image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
     parentCategory: 'Position Print Design'
   }
+];
 const getEmbroiderySubcategoryStyle = (name: string) => {
   switch (name) {
     case 'Multi Design':
