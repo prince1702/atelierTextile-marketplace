@@ -589,6 +589,13 @@ export function UploadPage() {
                     <option value="150 mm">150 mm</option>
                     <option value="175 mm">175 mm</option>
                     <option value="200 mm">200 mm</option>
+                    <option value="225 mm">225 mm</option>
+                    <option value="250 mm">250 mm</option>
+                    <option value="300 mm">300 mm</option>
+                    <option value="330 mm">330 mm</option>
+                    <option value="400 mm">400 mm</option>
+                    <option value="500 mm">500 mm</option>
+                    <option value="600 mm">600 mm</option>
                   </>
                 )}
               </select>

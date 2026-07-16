@@ -8,7 +8,7 @@ import { useNotification } from '../../contexts/NotificationContext';
 const EMB_DESIGN_TYPES = ['All', 'Flat/Multi Designs', 'Only Cording Designs', 'Only Sequin Designs', 'Only Chain Stitch Designs', 'Multi+Cording Designs'];
 const WEAVING_DESIGN_TYPES = ['All', '2 fider design', '3 fider design', '4 fider design', '2688 design', '5376 design(jumbo)', 'power loom design'];
 
-const EMB_AREAS = ['All', '100 mm', '125 mm', '150 mm', '175 mm', '200 mm'];
+const EMB_AREAS = ['All', '100 mm', '125 mm', '150 mm', '175 mm', '200 mm', '225 mm', '250 mm', '300 mm', '330 mm', '400 mm', '500 mm', '600 mm'];
 const WEAVING_AREAS = ['All', '88 to 96', '100 to 110', '112 to 124', '188 to 200', '216 to 240'];
 
 const NEEDLES = ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
