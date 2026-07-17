@@ -233,7 +233,7 @@ export function UploadPage() {
                   <span className="material-symbols-outlined text-[48px] text-outline">upload_file</span>
                   <div>
                     <p className="text-sm font-semibold text-on-surface">Drag & drop your file or browse</p>
-                    <p className="text-xs text-on-surface-variant mt-1">Supports JPG, PNG, WEBP (Max 5MB)</p>
+                    <p className="text-xs text-on-surface-variant mt-1">Supports JPG, PNG, WEBP (Max 20MB)</p>
                   </div>
                 </div>
               )}
