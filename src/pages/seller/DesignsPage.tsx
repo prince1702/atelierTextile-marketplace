@@ -82,14 +82,12 @@ export function DesignsPage() {
       ) : (
         <div className="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[800px]">
+            <table className="w-full text-left border-collapse min-w-[600px]">
               <thead>
                 <tr className="bg-surface-container-low text-xs font-semibold text-on-surface-variant uppercase tracking-wider border-b border-outline-variant">
                   <th className="py-4 px-6">Design Details</th>
                   <th className="py-4 px-6">Category</th>
                   <th className="py-4 px-6">Price</th>
-                  <th className="py-4 px-6">Sales</th>
-                  <th className="py-4 px-6">Revenue</th>
                   <th className="py-4 px-6">Status</th>
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
@@ -112,8 +110,6 @@ export function DesignsPage() {
                     </td>
                     <td className="py-4 px-6 text-on-surface-variant">{design.category}</td>
                     <td className="py-4 px-6 font-semibold">₹{design.price}</td>
-                    <td className="py-4 px-6 text-on-surface-variant">{design.sales}</td>
-                    <td className="py-4 px-6 font-bold text-primary">₹{design.revenue.toLocaleString()}</td>
                     <td className="py-4 px-6">
                       <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusColor(design.status)}`}>
                         {design.status}

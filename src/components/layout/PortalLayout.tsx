@@ -16,7 +16,6 @@ const navConfig = {
     { name: 'Dashboard', icon: 'dashboard', path: '/seller/dashboard' },
     { name: 'My Designs', icon: 'palette', path: '/seller/designs' },
     { name: 'Upload', icon: 'upload', path: '/seller/upload' },
-    { name: 'Sales', icon: 'payments', path: '/seller/sales' },
     { name: 'Settings', icon: 'settings', path: '/profile' }
   ],
   customer: [
