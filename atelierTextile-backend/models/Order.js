@@ -46,18 +46,6 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  razorpayOrderId: {
-    type: String,
-    default: '',
-  },
-  razorpayPaymentId: {
-    type: String,
-    default: '',
-  },
-  razorpaySignature: {
-    type: String,
-    default: '',
-  },
   createdAt: {
     type: Date,
     default: Date.now,

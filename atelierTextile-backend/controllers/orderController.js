@@ -1,15 +1,6 @@
 const Order = require('../models/Order');
 const Design = require('../models/Design');
 const User = require('../models/User');
-const Razorpay = require('razorpay');
-
-let razorpay;
-if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
-  razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-  });
-}
 
 // @desc    Get all orders
 // @route   GET /api/orders
@@ -98,7 +89,7 @@ exports.getOrder = async (req, res, next) => {
   }
 };
 
-// @desc    Place a new order
+// @desc    Place a new order (direct checkout — no payment gateway)
 // @route   POST /api/orders
 // @access  Customer
 const getPriceWithLicense = (price, licenseType) => {
@@ -123,7 +114,6 @@ exports.createOrder = async (req, res, next) => {
       });
     }
 
-    let totalAmount = 0;
     const processedItems = [];
     for (const item of purchaseItems) {
       const design = await Design.findById(item.designId);
@@ -133,55 +123,29 @@ exports.createOrder = async (req, res, next) => {
       if (design.status !== 'active') {
         return res.status(400).json({ success: false, error: `Design ${design.title} is not active` });
       }
-      
+
       const seller = await User.findById(design.designer);
       if (!seller) {
         return res.status(404).json({ success: false, error: 'Seller not found' });
       }
-      
+
       const license = item.licenseType || 'Open Regional';
       const itemPrice = getPriceWithLicense(design.price, license);
-      totalAmount += itemPrice;
-      
+
       processedItems.push({
         design,
         seller,
         licenseType: license,
-        amount: itemPrice
+        amount: itemPrice,
       });
     }
 
-    if (Math.round(totalAmount * 100) < 100) {
-      return res.status(400).json({
-        success: false,
-        error: 'Amount must be at least 1 INR (100 paise)',
-      });
-    }
-
-    let razorpayOrder = null;
-    if (razorpay) {
-      try {
-        const options = {
-          amount: Math.round(totalAmount * 100), // amount in paise
-          currency: 'INR',
-          receipt: `receipt_order_${Date.now()}`,
-        };
-        razorpayOrder = await razorpay.orders.create(options);
-      } catch (err) {
-        console.error('Razorpay Order Creation Error:', err);
-        return res.status(500).json({
-          success: false,
-          error: 'Failed to create payment gateway session',
-        });
-      }
-    }
-
-    const createdOrders = [];
     const buyer = await User.findById(req.user.id);
     if (!buyer) {
       return res.status(404).json({ success: false, error: 'Buyer not found' });
     }
 
+    const createdOrders = [];
     for (const item of processedItems) {
       const order = await Order.create({
         design: item.design._id,
@@ -193,120 +157,28 @@ exports.createOrder = async (req, res, next) => {
         buyerName: buyer.name,
         amount: item.amount,
         licenseType: item.licenseType,
-        status: razorpayOrder ? 'pending' : 'completed',
-        razorpayOrderId: razorpayOrder ? razorpayOrder.id : '',
+        status: 'completed',
       });
 
       createdOrders.push(order);
 
-      // In Mock Mode, instantly update stats
-      if (!razorpayOrder) {
-        item.design.sales += 1;
-        item.design.revenue += item.amount;
-        await item.design.save();
+      // Update design and seller stats inline
+      item.design.sales += 1;
+      item.design.revenue += item.amount;
+      await item.design.save();
 
-        buyer.totalOrders += 1;
+      buyer.totalOrders += 1;
 
-        item.seller.totalOrders += 1;
-        item.seller.totalRevenue += item.amount;
-        await item.seller.save();
-      }
-    }
-
-    if (!razorpayOrder) {
-      await buyer.save();
-    }
-
-    res.status(201).json({
-      success: true,
-      data: createdOrders.length === 1 && !items ? createdOrders[0] : createdOrders,
-      razorpayOrder,
-      razorpayKeyId: process.env.RAZORPAY_KEY_ID || '',
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// @desc    Verify Razorpay payment signature
-// @route   POST /api/orders/verify
-// @access  Customer
-exports.verifyPayment = async (req, res, next) => {
-  try {
-    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
-
-    if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing payment details for verification',
-      });
-    }
-
-    if (!process.env.RAZORPAY_KEY_SECRET) {
-      return res.status(500).json({
-        success: false,
-        error: 'Payment gateway configuration is missing on the server',
-      });
-    }
-
-    // Verify signature
-    const crypto = require('crypto');
-    const generated_signature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-      .update(razorpay_order_id + '|' + razorpay_payment_id)
-      .digest('hex');
-
-    if (generated_signature !== razorpay_signature) {
-      return res.status(400).json({
-        success: false,
-        error: 'Payment verification failed. Invalid signature.',
-      });
-    }
-
-    // Update orders
-    const orders = await Order.find({ razorpayOrderId: razorpay_order_id });
-    if (!orders || orders.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'No orders found matching this payment transaction',
-      });
-    }
-
-    const buyer = await User.findById(req.user.id);
-    if (!buyer) {
-      return res.status(404).json({ success: false, error: 'Buyer not found' });
-    }
-
-    for (const order of orders) {
-      if (order.status !== 'completed') {
-        order.status = 'completed';
-        order.razorpayPaymentId = razorpay_payment_id;
-        order.razorpaySignature = razorpay_signature;
-        await order.save();
-
-        const design = await Design.findById(order.design);
-        if (design) {
-          design.sales += 1;
-          design.revenue += order.amount;
-          await design.save();
-        }
-
-        buyer.totalOrders += 1;
-
-        const seller = await User.findById(order.seller);
-        if (seller) {
-          seller.totalOrders += 1;
-          seller.totalRevenue += order.amount;
-          await seller.save();
-        }
-      }
+      item.seller.totalOrders += 1;
+      item.seller.totalRevenue += item.amount;
+      await item.seller.save();
     }
 
     await buyer.save();
 
-    res.status(200).json({
+    res.status(201).json({
       success: true,
-      message: 'Payment verified and orders completed successfully',
+      data: createdOrders.length === 1 && !items ? createdOrders[0] : createdOrders,
     });
   } catch (error) {
     next(error);

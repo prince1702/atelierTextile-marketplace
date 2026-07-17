@@ -9,13 +9,11 @@ const {
   getOrder,
   createOrder,
   updateOrderStatus,
-  verifyPayment,
 } = require('../controllers/orderController');
 
 // Customer
 router.get('/my', auth, authorize('customer'), getMyOrders);
 router.post('/', auth, authorize('customer'), createOrder);
-router.post('/verify', auth, authorize('customer'), verifyPayment);
 
 // Seller
 router.get('/seller', auth, authorize('seller'), getSellerOrders);

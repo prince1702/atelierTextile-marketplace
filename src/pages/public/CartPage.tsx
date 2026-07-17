@@ -44,16 +44,6 @@ export function CartPage() {
     }, 0);
   };
 
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
   const handleCheckout = async () => {
     if (items.length === 0) return;
     setIsSubmitting(true);
@@ -73,71 +63,14 @@ export function CartPage() {
         };
       });
 
-      // Call API to create order
-      const response = await api.orders.create(undefined, undefined, orderItems);
-
-      // If Razorpay order is not returned, it means server is running in mock mode
-      if (!response.razorpayOrder) {
-        await clearCart();
-        showToast('Checkout successful! (Test/Mock Checkout)', 'success');
-        navigate('/customer/orders');
-        return;
-      }
-
-      // Load Razorpay Script
-      const isLoaded = await loadRazorpayScript();
-      if (!isLoaded) {
-        showToast('Failed to load payment gateway. Please check your connection.', 'error');
-        return;
-      }
-
-      // Configure Razorpay checkout options
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || response.razorpayKeyId,
-        amount: response.razorpayOrder.amount,
-        currency: response.razorpayOrder.currency,
-        name: 'AtelierTextile Marketplace',
-        description: `Purchase of ${items.length} design(s)`,
-        order_id: response.razorpayOrder.id,
-        handler: async function (res: any) {
-          try {
-            setIsSubmitting(true);
-            await api.orders.verifyPayment({
-              razorpay_payment_id: res.razorpay_payment_id,
-              razorpay_order_id: res.razorpay_order_id,
-              razorpay_signature: res.razorpay_signature,
-            });
-            await clearCart();
-            showToast('Payment successful! Your order has been placed.', 'success');
-            navigate('/customer/orders');
-          } catch (err: any) {
-            console.error(err);
-            showToast(err.response?.data?.error || 'Payment verification failed', 'error');
-          } finally {
-            setIsSubmitting(false);
-          }
-        },
-        prefill: {
-          name: '',
-          email: '',
-          contact: '',
-        },
-        theme: {
-          color: '#1E3A8A', // Sleek dark navy theme
-        },
-        modal: {
-          ondismiss: function () {
-            showToast('Payment cancelled.', 'info');
-            setIsSubmitting(false);
-          }
-        }
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
+      await api.orders.create(undefined, undefined, orderItems);
+      await clearCart();
+      showToast('Order placed successfully!', 'success');
+      navigate('/customer/orders');
     } catch (error: any) {
       console.error(error);
-      showToast(error.response?.data?.error || 'Failed to initiate checkout', 'error');
+      showToast(error.response?.data?.error || 'Failed to place order', 'error');
+    } finally {
       setIsSubmitting(false);
     }
   };
