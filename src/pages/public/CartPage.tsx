@@ -204,6 +204,7 @@ export function CartPage() {
                   <li>Pay exactly <strong>₹{totalAmount.toLocaleString()}</strong></li>
                   <li>Take a screenshot of the success screen</li>
                   <li>Upload it below and click Submit</li>
+                  <li>For any assistance, call Customer Care: <strong>9712544405</strong></li>
                 </ol>
               </div>
 
