@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { api } from '../../services/api';
 import type { Design } from '../../types';
 import { DesignCard } from '../../components/ui/DesignCard';
@@ -497,7 +497,16 @@ const getPositionPrintSubcategoryStyle = (name: string) => {
 export function Marketplace() {
   const navigate = useNavigate();
   const { showToast } = useNotification();
-  const [activeCategory, setActiveCategory] = useState('Weaving Design');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  const [activeCategory, setActiveCategory] = useState(categoryParam && CATEGORIES.includes(categoryParam) ? categoryParam : 'Weaving Design');
+
+  useEffect(() => {
+    const cat = searchParams.get('category');
+    if (cat && CATEGORIES.includes(cat)) {
+      setActiveCategory(cat);
+    }
+  }, [searchParams]);
 
   const designTypes = activeCategory === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = activeCategory === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
@@ -650,6 +659,7 @@ export function Marketplace() {
                   setActiveCategory(category); 
                   setActiveSubcategory('All');
                   setCurrentPage(1); 
+                  setSearchParams({ category });
                 }}
                 className={`text-center px-4 py-2.5 rounded-xl text-sm sm:text-base font-bold transition-colors md:whitespace-nowrap ${
                   activeCategory === category 

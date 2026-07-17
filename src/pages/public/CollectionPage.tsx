@@ -905,7 +905,7 @@ export function CollectionPage() {
     
     if (subcategory !== 'All') {
       return {
-        to: `/collection?category=${encodeURIComponent(category)}`,
+        to: `/?category=${encodeURIComponent(category)}`,
         text: `Back to ${category}`
       };
     }
