@@ -24,11 +24,29 @@ export function OrdersPage() {
 
   useEffect(() => { fetchOrders(); }, []);
 
-  const handleDownload = (designTitle: string) => {
+  const handleDownload = async (designTitle: string, imageUrl: string) => {
+    if (!imageUrl) {
+      showToast('No file available for download', 'error');
+      return;
+    }
     showToast(`Initializing secure download for: ${designTitle}`, 'success');
-    setTimeout(() => {
-      showToast(`Downloaded high-res file package for ${designTitle}!`, 'success');
-    }, 1500);
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const extension = imageUrl.split('.').pop()?.split('?')[0] || 'png';
+      link.setAttribute('download', `${designTitle.replace(/\s+/g, '_')}.${extension}`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+      // Fallback: open in a new tab if fetch is blocked by CORS
+      window.open(imageUrl, '_blank');
+    }
   };
 
   const handleUploadScreenshot = (orderId: string) => {
@@ -152,7 +170,7 @@ export function OrdersPage() {
                 <div className="flex gap-2">
                   {order.status === 'completed' && (
                     <button
-                      onClick={() => handleDownload(order.designTitle)}
+                      onClick={() => handleDownload(order.designTitle, order.designImage)}
                       className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
                     >
                       <span className="material-symbols-outlined text-[14px]">download</span>
