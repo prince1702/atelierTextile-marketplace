@@ -879,15 +879,54 @@ export function CollectionPage() {
     setCurrentPage(1);
   };
 
+  const getParentSubcategory = (sub: string): string => {
+    if (ALL_SAREE_SUBCATEGORIES_VALUES.includes(sub)) return 'Saree Design';
+    if (ALL_LEHENGHA_SUBCATEGORIES_VALUES.includes(sub)) return 'Lehengha Design';
+    if (ALL_SUIT_SUBCATEGORIES_VALUES.includes(sub)) return 'Suit Design';
+    if (ALL_DUPATTA_SUBCATEGORIES_VALUES.includes(sub)) return 'Dupatta Design';
+    if (ALL_MULTI_SUBCATEGORIES_VALUES.includes(sub)) return 'Multi Design';
+    if (ALL_SEQUIN_SUBCATEGORIES_VALUES.includes(sub)) return 'Sequin Design';
+    if (ALL_CORDING_SUBCATEGORIES_VALUES.includes(sub)) return 'Cording Design';
+    if (ALL_CHAIN_SUBCATEGORIES_VALUES.includes(sub)) return 'Chain Design';
+    if (ALL_BEADS_SUBCATEGORIES_VALUES.includes(sub)) return 'Beads Design';
+    return 'All';
+  };
+
+  const getBackNavigation = () => {
+    if (showAll && subcategory !== 'All') {
+      const parentSub = getParentSubcategory(subcategory);
+      if (parentSub !== 'All') {
+        return {
+          to: `/collection?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(parentSub)}`,
+          text: `Back to ${getSubcategoryDisplayName(parentSub)}`
+        };
+      }
+    }
+    
+    if (subcategory !== 'All') {
+      return {
+        to: `/collection?category=${encodeURIComponent(category)}`,
+        text: `Back to ${category}`
+      };
+    }
+    
+    return {
+      to: '/',
+      text: 'Back to Marketplace'
+    };
+  };
+
+  const backNav = getBackNavigation();
+
   return (
     <div className="bg-surface min-h-screen pb-24">
       {/* Header */}
       <div className="bg-primary pt-12 pb-20 px-6 md:px-10 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
         <div className="max-w-[1440px] mx-auto relative z-10">
-          <Link to="/" className="inline-flex items-center gap-2 text-primary-fixed-dim hover:text-white font-semibold mb-6 transition-colors">
+          <Link to={backNav.to} className="inline-flex items-center gap-2 text-primary-fixed-dim hover:text-white font-semibold mb-6 transition-colors">
             <span className="material-symbols-outlined">arrow_back</span>
-            Back to Marketplace
+            {backNav.text}
           </Link>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             {subcategory !== 'All' ? getSubcategoryDisplayName(subcategory) : category}
