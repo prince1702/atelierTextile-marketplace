@@ -23,6 +23,7 @@ import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { UserManagement } from './pages/admin/UserManagement';
 import { InventoryPage } from './pages/admin/InventoryPage';
 import { AnalyticsPage } from './pages/admin/AnalyticsPage';
+import { PaymentOrdersPage } from './pages/admin/PaymentOrdersPage';
 
 // Seller Portal
 import { SellerDashboard } from './pages/seller/SellerDashboard';
@@ -89,6 +90,7 @@ export default function App() {
                     <Route path="users" element={<UserManagement />} />
                     <Route path="inventory" element={<InventoryPage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
+                    <Route path="payments" element={<PaymentOrdersPage />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />
                   </Routes>
                 </ProtectedRoute>

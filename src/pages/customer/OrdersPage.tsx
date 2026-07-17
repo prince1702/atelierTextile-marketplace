@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { api } from '../../services/api';
 import type { Order } from '../../types';
 import { useNotification } from '../../contexts/NotificationContext';
@@ -6,22 +6,23 @@ import { useNotification } from '../../contexts/NotificationContext';
 export function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [uploadingOrderId, setUploadingOrderId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { showToast } = useNotification();
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const data = await api.orders.getMyOrders();
-        setOrders(data);
-      } catch (error) {
-        console.error('Failed to fetch orders:', error);
-        showToast('Failed to load orders', 'error');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchOrders();
-  }, [showToast]);
+  const fetchOrders = async () => {
+    try {
+      const data = await api.orders.getMyOrders();
+      setOrders(data);
+    } catch (error) {
+      console.error('Failed to fetch orders:', error);
+      showToast('Failed to load orders', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchOrders(); }, []);
 
   const handleDownload = (designTitle: string) => {
     showToast(`Initializing secure download for: ${designTitle}`, 'success');
@@ -30,13 +31,43 @@ export function OrdersPage() {
     }, 1500);
   };
 
-  const getStatusClass = (status: string) => {
-    switch (status) {
-      case 'completed': return 'bg-primary-fixed text-primary';
-      case 'processing': return 'bg-secondary-fixed text-secondary';
-      case 'pending': return 'bg-surface-variant text-on-surface-variant';
-      case 'refunded': return 'bg-error-container text-error';
-      default: return 'bg-surface-variant text-on-surface-variant';
+  const handleUploadScreenshot = (orderId: string) => {
+    setUploadingOrderId(orderId);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !uploadingOrderId) return;
+    try {
+      await api.orders.uploadPaymentScreenshot(uploadingOrderId, file);
+      showToast('Screenshot uploaded! Awaiting admin approval.', 'success');
+      fetchOrders();
+    } catch (error: any) {
+      showToast(error.response?.data?.error || 'Upload failed', 'error');
+    } finally {
+      setUploadingOrderId(null);
+      e.target.value = '';
+    }
+  };
+
+  const getStatusBadge = (order: Order) => {
+    switch (order.status) {
+      case 'completed':
+        return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700">✓ Approved</span>;
+      case 'rejected':
+        return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-700">✗ Rejected</span>;
+      case 'pending':
+        if (order.paymentScreenshot) {
+          return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700">⏳ Under Review</span>;
+        }
+        return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700">💳 Awaiting Payment</span>;
+      case 'processing':
+        return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700">Processing</span>;
+      case 'refunded':
+        return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-variant text-on-surface-variant">Refunded</span>;
+      default:
+        return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-variant text-on-surface-variant">{order.status}</span>;
     }
   };
 
@@ -44,12 +75,21 @@ export function OrdersPage() {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h2 className="text-2xl font-bold text-primary mb-1">My Orders & Licenses</h2>
-        <p className="text-sm text-on-surface-variant">View your purchases, download design source files, and review license agreements.</p>
+        <p className="text-sm text-on-surface-variant">View your purchases, upload payment proofs, and download approved designs.</p>
       </div>
+
+      {/* Hidden file input for screenshot re-upload */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
 
       {isLoading ? (
         <div className="flex justify-center items-center py-20 bg-white border border-outline-variant rounded-xl shadow-sm">
-          <div className="w-10 h-10 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-outline-variant border-t-primary rounded-full animate-spin" />
         </div>
       ) : orders.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-2xl border border-outline-variant border-dashed">
@@ -60,71 +100,87 @@ export function OrdersPage() {
           <p className="text-on-surface-variant mb-6">Your ordered items and active licenses will appear here.</p>
         </div>
       ) : (
-        <div className="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[800px]">
-              <thead>
-                <tr className="bg-surface-container-low text-xs font-semibold text-on-surface-variant uppercase tracking-wider border-b border-outline-variant">
-                  <th className="py-4 px-6">Design Details</th>
-                  <th className="py-4 px-6">Order ID</th>
-                  <th className="py-4 px-6">Designer</th>
-                  <th className="py-4 px-6">License Type</th>
-                  <th className="py-4 px-6">Amount</th>
-                  <th className="py-4 px-6">Status</th>
-                  <th className="py-4 px-6 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm text-on-surface divide-y divide-outline-variant">
-                {orders.map(order => (
-                  <tr key={order.id} className="hover:bg-surface-container-low transition-colors">
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <img 
-                          src={order.designImage} 
-                          alt={order.designTitle} 
-                          className="w-10 h-10 rounded object-cover bg-surface-container shrink-0" 
-                        />
-                        <div>
-                          <p className="font-semibold text-on-surface">{order.designTitle}</p>
-                          <p className="text-[11px] text-on-surface-variant">{order.date}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 font-mono text-xs text-on-surface-variant">
-                      {order.id}
-                    </td>
-                    <td className="py-4 px-6 text-on-surface-variant">
-                      {order.sellerName}
-                    </td>
-                    <td className="py-4 px-6 font-medium text-on-surface-variant">
-                      {order.licenseType}
-                    </td>
-                    <td className="py-4 px-6 font-bold text-primary">
-                      ₹{order.amount}
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusClass(order.status)}`}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      {order.status === 'completed' ? (
-                        <button 
-                          onClick={() => handleDownload(order.designTitle)}
-                          className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
-                        >
-                          <span className="material-symbols-outlined text-[14px]">download</span>
-                          Download Files
-                        </button>
-                      ) : (
-                        <span className="text-xs text-on-surface-variant italic">Pending Verification</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="space-y-4">
+          {orders.map(order => (
+            <div key={order.id} className="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5">
+                {/* Design image + info */}
+                <img
+                  src={order.designImage}
+                  alt={order.designTitle}
+                  className="w-16 h-16 rounded-lg object-cover bg-surface-container shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-on-surface truncate">{order.designTitle}</p>
+                  <p className="text-xs text-on-surface-variant mt-0.5">by {order.sellerName} · {order.licenseType}</p>
+                  <p className="text-xs text-on-surface-variant font-mono mt-0.5 truncate">ID: {order.id}</p>
+                </div>
+                {/* Amount */}
+                <div className="text-right shrink-0">
+                  <p className="font-bold text-lg text-primary">₹{order.amount.toLocaleString()}</p>
+                  <div className="mt-1">{getStatusBadge(order)}</div>
+                </div>
+              </div>
+
+              {/* Rejection note */}
+              {order.status === 'rejected' && order.paymentNote && (
+                <div className="mx-5 mb-4 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 flex items-start gap-2">
+                  <span className="material-symbols-outlined text-red-500 text-[18px] mt-0.5">error</span>
+                  <div>
+                    <p className="text-xs font-bold text-red-700">Payment Rejected</p>
+                    <p className="text-xs text-red-600 mt-0.5">{order.paymentNote}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="border-t border-outline-variant/50 px-5 py-3 bg-surface-container-lowest flex flex-wrap gap-3 items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-on-surface-variant">
+                  {order.paymentScreenshot && (
+                    <a
+                      href={order.paymentScreenshot}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-primary hover:underline"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">image</span>
+                      View Screenshot
+                    </a>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  {order.status === 'completed' && (
+                    <button
+                      onClick={() => handleDownload(order.designTitle)}
+                      className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">download</span>
+                      Download Files
+                    </button>
+                  )}
+                  {(order.status === 'pending' && !order.paymentScreenshot) && (
+                    <button
+                      onClick={() => handleUploadScreenshot(order.id)}
+                      className="px-3.5 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-semibold hover:bg-amber-600 transition-colors shadow-sm inline-flex items-center gap-1.5"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">upload</span>
+                      Upload Payment Proof
+                    </button>
+                  )}
+                  {order.status === 'rejected' && (
+                    <button
+                      onClick={() => handleUploadScreenshot(order.id)}
+                      className="px-3.5 py-1.5 bg-red-500 text-white rounded-lg text-xs font-semibold hover:bg-red-600 transition-colors shadow-sm inline-flex items-center gap-1.5"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">upload</span>
+                      Re-upload Screenshot
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

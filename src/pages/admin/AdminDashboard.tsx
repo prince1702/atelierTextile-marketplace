@@ -123,8 +123,15 @@ export function AdminDashboard() {
             <a href="/admin/inventory" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">
               <span className="material-symbols-outlined text-[24px] text-primary">pending_actions</span>
               <div className="text-left">
-                <p className="text-sm font-bold text-on-surface">Pending Approvals</p>
+                <p className="text-sm font-bold text-on-surface">Design Approvals</p>
                 <p className="text-xs text-on-surface-variant">Review new design submissions</p>
+              </div>
+            </a>
+            <a href="/admin/payments" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-amber-500 transition-all bg-amber-50/50">
+              <span className="material-symbols-outlined text-[24px] text-amber-600">qr_code_2</span>
+              <div className="text-left">
+                <p className="text-sm font-bold text-on-surface">Payment Approvals</p>
+                <p className="text-xs text-on-surface-variant">Review UPI payment screenshots</p>
               </div>
             </a>
             <a href="/admin/users" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">

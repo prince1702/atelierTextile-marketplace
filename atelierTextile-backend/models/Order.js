@@ -39,10 +39,22 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['completed', 'pending', 'processing', 'refunded'],
+    enum: ['completed', 'pending', 'processing', 'refunded', 'rejected'],
     default: 'pending',
   },
   licenseType: {
+    type: String,
+    default: '',
+  },
+  paymentScreenshot: {
+    type: String,
+    default: '',
+  },
+  paymentScreenshotPublicId: {
+    type: String,
+    default: '',
+  },
+  paymentNote: {
     type: String,
     default: '',
   },

@@ -272,6 +272,7 @@ export const api = {
     ): Promise<{
       success: boolean;
       data: any;
+      totalAmount?: number;
     }> => {
       const response = await client.post('/orders', { designId, licenseType, items });
       if (response.data.data) {
@@ -279,9 +280,27 @@ export const api = {
       }
       return response.data;
     },
-    updateStatus: async (id: string, status: 'completed' | 'pending' | 'processing' | 'refunded'): Promise<Order> => {
+    updateStatus: async (id: string, status: 'completed' | 'pending' | 'processing' | 'refunded' | 'rejected'): Promise<Order> => {
       const response = await client.patch(`/orders/${id}/status`, { status });
       return normalize<Order>(response.data.data);
+    },
+    uploadPaymentScreenshot: async (id: string, file: File): Promise<Order> => {
+      const formData = new FormData();
+      formData.append('screenshot', file);
+      const response = await client.post(`/orders/${id}/payment-screenshot`, formData);
+      return normalize<Order>(response.data.data);
+    },
+    approveOrder: async (id: string): Promise<Order> => {
+      const response = await client.post(`/orders/${id}/approve`);
+      return normalize<Order>(response.data.data);
+    },
+    rejectOrder: async (id: string, note?: string): Promise<Order> => {
+      const response = await client.post(`/orders/${id}/reject`, { note });
+      return normalize<Order>(response.data.data);
+    },
+    getPaymentReviewOrders: async (): Promise<Order[]> => {
+      const response = await client.get('/orders/payment-review');
+      return normalize<Order[]>(response.data.data);
     },
   },
 

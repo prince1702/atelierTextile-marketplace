@@ -53,9 +53,11 @@ export interface Order {
   buyer: string;
   buyerName: string;
   amount: number;
-  status: 'completed' | 'pending' | 'processing' | 'refunded';
+  status: 'completed' | 'pending' | 'processing' | 'refunded' | 'rejected';
   date: string;
   licenseType: string;
+  paymentScreenshot?: string;
+  paymentNote?: string;
 }
 
 export interface Ticket {
