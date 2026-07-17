@@ -10,6 +10,7 @@ const navConfig = {
     { name: 'Inventory', icon: 'inventory_2', path: '/admin/inventory' },
     { name: 'Users', icon: 'group', path: '/admin/users' },
     { name: 'Analytics', icon: 'analytics', path: '/admin/analytics' },
+    { name: 'Payments', icon: 'qr_code_2', path: '/admin/payments' },
     { name: 'Settings', icon: 'settings', path: '/profile' }
   ],
   seller: [
