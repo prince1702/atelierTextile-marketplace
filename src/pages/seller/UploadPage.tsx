@@ -24,8 +24,8 @@ export function UploadPage() {
   const [beadsType, setBeadsType] = useState('Beads Design');
   const [ltcType, setLtcType] = useState('LTC Design');
   const [designType, setDesignType] = useState('2 fider design');
-  const [area, setArea] = useState('88 to 96');
-  const [needle, setNeedle] = useState('36 to 42');
+  const [area, setArea] = useState('');
+  const [needle, setNeedle] = useState('');
   const [designFormat, setDesignFormat] = useState('BMP');
   const [sareeConcept, setSareeConcept] = useState('jumbo design');
   const [price, setPrice] = useState('');
@@ -46,8 +46,8 @@ export function UploadPage() {
       setSuitType('Suit Design');
       setDupattaType('Dupatta Design');
       setDesignType('2 fider design');
-      setArea('88 to 96');
-      setNeedle('36 to 42');
+      setArea('');
+      setNeedle('');
       setDesignFormat('BMP');
       setSareeConcept('jumbo design');
       setPdcPrice('');
