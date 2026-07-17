@@ -24,7 +24,7 @@ export function DesignCard({ design }: DesignCardProps) {
 
   return (
     <div className="bg-white rounded-xl border border-outline-variant overflow-hidden card-lift group flex flex-col h-full">
-      <Link to={`/design/${design.id}`} target="_blank" rel="noopener noreferrer" className="relative h-40 sm:h-56 overflow-hidden bg-surface-container block">
+      <Link to={`/design/${design.id}`} className="relative h-40 sm:h-56 overflow-hidden bg-surface-container block">
         <img 
           src={design.image} 
           alt={design.title} 
@@ -53,7 +53,7 @@ export function DesignCard({ design }: DesignCardProps) {
       
       <div className="p-3 sm:p-5 flex-1 flex flex-col">
         <div className="flex justify-between items-start gap-1 mb-1">
-          <Link to={`/design/${design.id}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-on-surface text-sm sm:text-base hover:text-primary transition-colors line-clamp-1">
+          <Link to={`/design/${design.id}`} className="font-semibold text-on-surface text-sm sm:text-base hover:text-primary transition-colors line-clamp-1">
             {design.title}
           </Link>
           <div className="flex items-center gap-0.5 bg-surface-container px-1 py-0.5 rounded text-[10px] sm:text-xs font-semibold text-on-surface-variant shrink-0">
@@ -73,8 +73,6 @@ export function DesignCard({ design }: DesignCardProps) {
           </div>
           <Link 
             to={`/design/${design.id}`} 
-            target="_blank"
-            rel="noopener noreferrer"
             className="bg-primary text-on-primary text-xs sm:text-sm font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-primary-container transition-colors shadow-sm text-center w-full sm:w-auto"
           >
             View Details
