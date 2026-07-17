@@ -175,18 +175,20 @@ export function CartPage() {
               </div>
 
               {/* UPI ID */}
-              <div className="flex items-center gap-3 bg-surface-container-low border border-outline-variant rounded-xl px-4 py-3">
-                <span className="material-symbols-outlined text-primary text-[22px]">account_balance_wallet</span>
-                <div className="flex-1">
-                  <p className="text-xs text-on-surface-variant">UPI ID</p>
-                  <p className="font-bold text-on-surface text-sm">{UPI_ID}</p>
-                  <p className="text-xs text-on-surface-variant">Name: {UPI_NAME}</p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface-container-low border border-outline-variant rounded-xl p-4">
+                <div className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5">account_balance_wallet</span>
+                  <div className="min-w-0">
+                    <p className="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">UPI ID</p>
+                    <p className="font-mono font-bold text-on-surface text-sm break-all mt-0.5">{UPI_ID}</p>
+                    <p className="text-xs text-on-surface-variant mt-0.5">Name: {UPI_NAME}</p>
+                  </div>
                 </div>
                 <button
                   onClick={handleCopyUPI}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${copied ? 'bg-primary text-white' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
+                  className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs font-bold transition-all shrink-0 ${copied ? 'bg-primary text-white' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
                 >
-                  {copied ? '✓ Copied!' : 'Copy'}
+                  {copied ? '✓ Copied!' : 'Copy UPI ID'}
                 </button>
               </div>
 
