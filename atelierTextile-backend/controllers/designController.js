@@ -18,6 +18,16 @@ const uploadToCloudinary = (buffer) => {
   });
 };
 
+const parseRangeNumbers = (str) => {
+  if (!str) return { min: null, max: null };
+  const matches = String(str).match(/\d+/g);
+  if (!matches || matches.length === 0) return { min: null, max: null };
+  const nums = matches.map(Number);
+  const min = nums[0];
+  const max = nums.length > 1 ? nums[1] : nums[0];
+  return { min, max };
+};
+
 // @desc    Get all active designs (public, with filters & pagination)
 // @route   GET /api/designs
 // @access  Public
@@ -234,8 +244,35 @@ exports.getDesigns = async (req, res, next) => {
     }
     if (badge) filter.badge = badge;
     if (designType) filter.designType = designType;
-    if (area) filter.area = area;
-    if (needle) filter.needle = needle;
+    if (area) {
+      const { min: fMin, max: fMax } = parseRangeNumbers(area);
+      if (fMin !== null && fMax !== null) {
+        filter.$and = filter.$and || [];
+        filter.$and.push({
+          $or: [
+            { areaMin: { $lte: fMax }, areaMax: { $gte: fMin } },
+            { area: area }
+          ]
+        });
+      } else {
+        filter.area = area;
+      }
+    }
+
+    if (needle) {
+      const { min: fMin, max: fMax } = parseRangeNumbers(needle);
+      if (fMin !== null && fMax !== null) {
+        filter.$and = filter.$and || [];
+        filter.$and.push({
+          $or: [
+            { needleMin: { $lte: fMax }, needleMax: { $gte: fMin } },
+            { needle: needle }
+          ]
+        });
+      } else {
+        filter.needle = needle;
+      }
+    }
     if (designFormat) filter.designFormat = designFormat;
     if (sareeConcept) filter.sareeConcept = sareeConcept;
 
@@ -381,9 +418,16 @@ exports.createDesign = async (req, res, next) => {
       imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
     }
 
+    const areaRange = parseRangeNumbers(req.body.area);
+    const needleRange = parseRangeNumbers(req.body.needle);
+
     console.log('📥 createDesign req.body keys:', Object.keys(req.body), '| fabric:', req.body.fabric, '| file:', req.file?.originalname);
     const design = await Design.create({
       ...req.body,
+      areaMin: areaRange.min,
+      areaMax: areaRange.max,
+      needleMin: needleRange.min,
+      needleMax: needleRange.max,
 
       tags: req.body.tags
         ? typeof req.body.tags === 'string'
@@ -475,6 +519,18 @@ exports.updateDesign = async (req, res, next) => {
     }
     if (req.body.colorways && typeof req.body.colorways === 'string') {
       req.body.colorways = req.body.colorways.split(',').map((c) => c.trim());
+    }
+
+    if (req.body.area !== undefined) {
+      const areaRange = parseRangeNumbers(req.body.area);
+      req.body.areaMin = areaRange.min;
+      req.body.areaMax = areaRange.max;
+    }
+
+    if (req.body.needle !== undefined) {
+      const needleRange = parseRangeNumbers(req.body.needle);
+      req.body.needleMin = needleRange.min;
+      req.body.needleMax = needleRange.max;
     }
 
     design = await Design.findByIdAndUpdate(req.params.id, req.body, {

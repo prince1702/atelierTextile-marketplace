@@ -66,6 +66,18 @@ const designSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  areaMin: {
+    type: Number,
+  },
+  areaMax: {
+    type: Number,
+  },
+  needleMin: {
+    type: Number,
+  },
+  needleMax: {
+    type: Number,
+  },
   image: {
     type: String,
     default: '',
