@@ -29,6 +29,7 @@ export function UploadPage() {
   const [designFormat, setDesignFormat] = useState('BMP');
   const [sareeConcept, setSareeConcept] = useState('jumbo design');
   const [price, setPrice] = useState('');
+  const [pdcPrice, setPdcPrice] = useState('');
   const [tags, setTags] = useState('');
   const [dimensions, setDimensions] = useState('150cm width, repeat 30cm');
   const [colorways, setColorways] = useState('');
@@ -49,6 +50,7 @@ export function UploadPage() {
       setNeedle('36 to 42');
       setDesignFormat('BMP');
       setSareeConcept('jumbo design');
+      setPdcPrice('');
     } else {
       if (category === 'Embroidery Design') {
         setSubcategory('Multi Design');
@@ -70,6 +72,7 @@ export function UploadPage() {
       setNeedle('1');
       setDesignFormat('EMB');
       setSareeConcept('Box Pallu');
+      setPdcPrice('');
     }
   }, [category]);
 
@@ -143,6 +146,11 @@ export function UploadPage() {
       return;
     }
 
+    if (designFormat === 'PDC' && !pdcPrice) {
+      showToast('Please specify the price for PDC format', 'warning');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const formData = new FormData();
@@ -185,6 +193,9 @@ export function UploadPage() {
       formData.append('area', area);
       formData.append('needle', needle);
       formData.append('designFormat', designFormat);
+      if (designFormat === 'PDC') {
+        formData.append('pdcPrice', pdcPrice);
+      }
       formData.append('sareeConcept', sareeConcept);
 
       await api.designs.create(formData);
@@ -623,7 +634,10 @@ export function UploadPage() {
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design Format *</label>
               <select 
                 value={designFormat} 
-                onChange={(e) => setDesignFormat(e.target.value)}
+                onChange={(e) => {
+                  setDesignFormat(e.target.value);
+                  if (e.target.value !== 'PDC') setPdcPrice('');
+                }}
                 className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
               >
                 {category === 'Weaving Design' ? (
@@ -648,6 +662,22 @@ export function UploadPage() {
                 )}
               </select>
             </div>
+
+            {/* PDC Price */}
+            {designFormat === 'PDC' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">PDC Price (INR) *</label>
+                <input 
+                  type="number" 
+                  value={pdcPrice} 
+                  onChange={(e) => setPdcPrice(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                  placeholder="e.g. 1250"
+                  min="0"
+                  required
+                />
+              </div>
+            )}
 
             {/* Saree Concept / Design Concept */}
             <div className="space-y-1">

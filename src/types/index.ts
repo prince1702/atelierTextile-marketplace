@@ -40,6 +40,7 @@ export interface Design {
   needle?: string;
   designFormat?: string;
   sareeConcept?: string;
+  pdcPrice?: number;
 }
 
 export interface Order {

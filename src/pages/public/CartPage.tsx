@@ -3,6 +3,7 @@ import { useCart } from '../../contexts/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';
 import { api } from '../../services/api';
+import type { Design } from '../../types';
 
 export function CartPage() {
   const { items, removeFromCart, clearCart } = useCart();
@@ -27,16 +28,19 @@ export function CartPage() {
     }));
   };
 
-  const getPrice = (price: number, license: string) => {
-    if (license === 'Extended' || license === 'PDC') return price * 2.5;
-    if (license === 'Exclusive Buyout' || license === 'Exclusive Global') return price * 8;
-    return price;
+  const getPrice = (design: Design, license: string) => {
+    if (license === 'Extended') return design.price * 2.5;
+    if (license === 'PDC') {
+      return design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
+    }
+    if (license === 'Exclusive Buyout' || license === 'Exclusive Global') return design.price * 8;
+    return design.price;
   };
 
   const calculateTotal = () => {
     return items.reduce((sum, item) => {
       const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
-      return sum + getPrice(item.design.price, license);
+      return sum + getPrice(item.design, license);
     }, 0);
   };
 
@@ -161,9 +165,9 @@ export function CartPage() {
             {/* Cart Items List */}
             <div className="lg:col-span-8 space-y-6">
               {items.map(item => {
-                const license = selectedLicenses[item.design.id] || 'Standard';
+                const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
                 const basePrice = item.design.price;
-                const itemPrice = getPrice(basePrice, license);
+                const itemPrice = getPrice(item.design, license);
 
                 return (
                   <div key={item.design.id} className="bg-white border border-outline-variant rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row gap-5 relative group overflow-hidden">

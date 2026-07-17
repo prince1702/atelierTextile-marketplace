@@ -62,6 +62,10 @@ const designSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  pdcPrice: {
+    type: Number,
+    default: 0,
+  },
   image: {
     type: String,
     default: '',

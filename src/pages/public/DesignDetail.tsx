@@ -54,7 +54,10 @@ export function DesignDetail() {
   };
 
   const getPrice = (price: number, license: string) => {
-    if (license === 'Extended' || license === 'PDC') return price * 2.5;
+    if (license === 'Extended') return price * 2.5;
+    if (license === 'PDC') {
+      return design && design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : price * 2.5;
+    }
     if (license === 'Exclusive Buyout') return price * 8;
     return price;
   };
@@ -82,7 +85,7 @@ export function DesignDetail() {
 
   const licenseOptions = design.category === 'Weaving Design' ? [
     { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' },
-    { name: 'PDC', price: design.price * 2.5, desc: 'PDC format. Extended production license.' }
+    { name: 'PDC', price: design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5, desc: 'PDC format. Extended production license.' }
   ] : [
     { name: 'Standard', price: design.price, desc: 'Up to 500 units. Digital + Print.' },
     { name: 'Extended', price: design.price * 2.5, desc: 'Up to 5,000 units. Unlimited web.' },
