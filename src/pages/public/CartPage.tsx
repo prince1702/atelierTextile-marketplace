@@ -161,6 +161,10 @@ export function CartPage() {
                   />
                 </div>
                 <p className="text-xs text-on-surface-variant mt-2">Works with Google Pay, PhonePe, Paytm, any UPI app</p>
+                <div className="mt-3 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center gap-2 text-xs text-amber-800 font-semibold shadow-sm">
+                  <span className="material-symbols-outlined text-[16px] text-amber-600">schedule</span>
+                  <span>Payment Verification Hours: 9:00 AM to 9:00 PM</span>
+                </div>
               </div>
 
               {/* Divider */}

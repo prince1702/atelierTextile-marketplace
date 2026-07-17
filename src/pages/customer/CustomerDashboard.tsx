@@ -58,13 +58,22 @@ export function CustomerDashboard() {
           <h2 className="text-2xl font-bold text-primary mb-1">Welcome back, {user?.name.split(' ')[0]} 👋</h2>
           <p className="text-sm text-on-surface-variant">Manage your orders, licenses, and discover new patterns.</p>
         </div>
-        <Link 
-          to="/marketplace"
-          className="bg-primary-container text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-primary transition-colors shadow-sm w-fit"
-        >
-          <span className="material-symbols-outlined text-[18px]">explore</span>
-          Browse Marketplace
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="bg-primary/5 border border-primary/20 rounded-lg px-4 py-1.5 flex items-center gap-2.5 text-left">
+            <span className="material-symbols-outlined text-primary text-[20px]">support_agent</span>
+            <div>
+              <p className="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Customer Care</p>
+              <p className="font-bold text-primary text-sm">9712544405</p>
+            </div>
+          </div>
+          <Link 
+            to="/marketplace"
+            className="bg-primary-container text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-primary transition-colors shadow-sm w-fit"
+          >
+            <span className="material-symbols-outlined text-[18px]">explore</span>
+            Browse Marketplace
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
