@@ -551,36 +551,35 @@ export function UploadPage() {
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                 {category === 'Weaving Design' ? 'Reed *' : 'Area *'}
               </label>
-              <select 
-                value={area} 
-                onChange={(e) => setArea(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-              >
-                {category === 'Weaving Design' ? (
-                  <>
-                    <option value="88 to 96">88 to 96</option>
-                    <option value="100 to 110">100 to 110</option>
-                    <option value="112 to 124">112 to 124</option>
-                    <option value="188 to 200">188 to 200</option>
-                    <option value="216 to 240">216 to 240</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="100 mm">100 mm</option>
-                    <option value="125 mm">125 mm</option>
-                    <option value="150 mm">150 mm</option>
-                    <option value="175 mm">175 mm</option>
-                    <option value="200 mm">200 mm</option>
-                    <option value="225 mm">225 mm</option>
-                    <option value="250 mm">250 mm</option>
-                    <option value="300 mm">300 mm</option>
-                    <option value="330 mm">330 mm</option>
-                    <option value="400 mm">400 mm</option>
-                    <option value="500 mm">500 mm</option>
-                    <option value="600 mm">600 mm</option>
-                  </>
-                )}
-              </select>
+              {category === 'Weaving Design' ? (
+                <input
+                  type="text"
+                  value={area}
+                  onChange={(e) => setArea(e.target.value)}
+                  placeholder="e.g. 100 to 110"
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                  required
+                />
+              ) : (
+                <select 
+                  value={area} 
+                  onChange={(e) => setArea(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="100 mm">100 mm</option>
+                  <option value="125 mm">125 mm</option>
+                  <option value="150 mm">150 mm</option>
+                  <option value="175 mm">175 mm</option>
+                  <option value="200 mm">200 mm</option>
+                  <option value="225 mm">225 mm</option>
+                  <option value="250 mm">250 mm</option>
+                  <option value="300 mm">300 mm</option>
+                  <option value="330 mm">330 mm</option>
+                  <option value="400 mm">400 mm</option>
+                  <option value="500 mm">500 mm</option>
+                  <option value="600 mm">600 mm</option>
+                </select>
+              )}
             </div>
 
             {/* Needle / Pick */}
@@ -588,37 +587,35 @@ export function UploadPage() {
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                 {category === 'Weaving Design' ? 'Pick *' : 'Needle *'}
               </label>
-              <select 
-                value={needle} 
-                onChange={(e) => setNeedle(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-              >
-                {category === 'Weaving Design' ? (
-                  <>
-                    <option value="36 to 42">36 to 42</option>
-                    <option value="43 to 48">43 to 48</option>
-                    <option value="50 to 60">50 to 60</option>
-                    <option value="61 to 70">61 to 70</option>
-                    <option value="71 to 80">71 to 80</option>
-                    <option value="80 to 90">80 to 90</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                  </>
-                )}
-              </select>
+              {category === 'Weaving Design' ? (
+                <input
+                  type="text"
+                  value={needle}
+                  onChange={(e) => setNeedle(e.target.value)}
+                  placeholder="e.g. 36 to 42"
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                  required
+                />
+              ) : (
+                <select 
+                  value={needle} 
+                  onChange={(e) => setNeedle(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                </select>
+              )}
             </div>
 
             {/* Design Format */}
