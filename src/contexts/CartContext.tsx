@@ -27,9 +27,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { showToast } = useNotification();
   const { user, isAuthenticated } = useAuth();
   
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem('atelier_cart');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [wishlist, setWishlist] = useState<Design[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Save cart items to localStorage on change
+  useEffect(() => {
+    localStorage.setItem('atelier_cart', JSON.stringify(items));
+  }, [items]);
 
   // Sync cart and wishlist when user logs in/out
   useEffect(() => {
@@ -41,19 +49,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
             api.cart.get(),
             api.wishlist.get()
           ]);
-          setItems(cartData.items.map(item => ({
-            design: item.design,
-            licenseType: item.licenseType
-          })));
-          setWishlist(wishlistData.designs);
+          
+          // Filter out any null designs (in case they were deleted/inactive)
+          const validItems = (cartData.items || [])
+            .filter(item => item && item.design)
+            .map(item => ({
+              design: item.design,
+              licenseType: item.licenseType
+            }));
+            
+          setItems(validItems);
+          setWishlist(wishlistData.designs || []);
         } catch (error) {
           console.error('Failed to sync cart and wishlist with server:', error);
         } finally {
           setIsLoading(false);
         }
       } else {
-        setItems([]);
-        setWishlist([]);
+        // Only clear if the user is truly logged out (no token in localStorage)
+        if (!localStorage.getItem('atelier_token')) {
+          setItems([]);
+          setWishlist([]);
+          localStorage.removeItem('atelier_cart');
+        }
       }
     };
 
