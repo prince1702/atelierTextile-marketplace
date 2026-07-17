@@ -51,14 +51,38 @@ export function CartProvider({ children }: { children: ReactNode }) {
           ]);
           
           // Filter out any null designs (in case they were deleted/inactive)
-          const validItems = (cartData.items || [])
+          const apiItems = (cartData.items || [])
             .filter(item => item && item.design)
             .map(item => ({
               design: item.design,
               licenseType: item.licenseType
             }));
+
+          // Merge local items with API items
+          const merged = [...items];
+          apiItems.forEach(apiItem => {
+            const exists = merged.some(localItem => localItem.design.id === apiItem.design.id);
+            if (!exists) {
+              merged.push(apiItem);
+            }
+          });
+
+          // Upload any local items that are missing on the server
+          const missingOnServer = items.filter(localItem => 
+            !apiItems.some(apiItem => apiItem.design.id === localItem.design.id)
+          );
+
+          if (missingOnServer.length > 0) {
+            try {
+              await Promise.all(
+                missingOnServer.map(item => api.cart.add(item.design.id, item.licenseType))
+              );
+            } catch (syncErr) {
+              console.warn('Failed to sync some local items to server:', syncErr);
+            }
+          }
             
-          setItems(validItems);
+          setItems(merged);
           setWishlist(wishlistData.designs || []);
         } catch (error) {
           console.error('Failed to sync cart and wishlist with server:', error);
