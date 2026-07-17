@@ -6,6 +6,68 @@ import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
 
+const getParentSubcategory = (sub: string): string => {
+  const ALL_SAREE_SUBCATEGORIES_VALUES = [
+    'Saree Design', 'Kota Lichi Design', '50 600 Design', 'Dolla-Nylon Design', 'Viscouse Design',
+    '(50 600) Satin Design', 'Nylon Satin Design', 'Cotton Design', 'Dharmavarm Design',
+    'Pattern Beam Design', 'Mix Design', 'Georgept (Crape) Design'
+  ];
+  const ALL_LEHENGHA_SUBCATEGORIES_VALUES = [
+    'Lehengha Design', 'Lehengha - 50 600 Design', 'Lehengha - Kota Lichi Design',
+    'Lehengha - Viscouse Design', 'Lehengha - Nylon Satin Design'
+  ];
+  const ALL_SUIT_SUBCATEGORIES_VALUES = [
+    'Suit Design', 'Suit - Kota Lichi Design', 'Suit - Viscouse Design',
+    'Suit - (50 600) Satin Design', 'Suit - Cotton Design'
+  ];
+  const ALL_DUPATTA_SUBCATEGORIES_VALUES = [
+    'Dupatta Design', 'Dupatta - Kota Lichi Design', 'Dupatta - 50 600 Design',
+    'Dupatta - Dolla-Nylon Design', 'Dupatta - Viscouse Design', 'Dupatta - (50 600) Satin Design',
+    'Dupatta - Nylon Satin Design', 'Dupatta - Cotton Design'
+  ];
+  const ALL_MULTI_SUBCATEGORIES_VALUES = [
+    'Multi Design', 'Saree Daman', 'C Pallu - Box Pallu', 'Gala-Nack-Single Head',
+    'Kurti-Gala', 'Buta', 'Buti', 'Sut Daman & Dupta', 'Lace', 'Figar', 'Garment-Servani',
+    'Penal-Pta', 'Choli-Kli', 'Blouse', 'Rajasthani-Kli', 'Lengha-Kli', 'Patli Daman',
+    'Cross Stitch', 'Kasmiri Design', 'Jal', 'Gamthi Design'
+  ];
+  const ALL_SEQUIN_SUBCATEGORIES_VALUES = [
+    'Sequin Design', 'Dual-Sq', 'Bhugali-Sq', 'Garment & Servani', 'Gala-Top & Tabla',
+    'Daman', 'Sut-Daman & Dupta', 'Choli & Blouse', 'Buta', 'Buti Small', 'Kli-Lengha',
+    'C Pallu', 'Lace', 'Figar Design', 'No Panching'
+  ];
+  const ALL_CORDING_SUBCATEGORIES_VALUES = [
+    'Cording Design', 'Lengha-Kli', 'Choli', 'Gala & Servani', 'Garment & Jal', 'Daman',
+    'Lace', 'C Pallu', 'Dual-Cording Sq', 'Figar Design', 'Buta', 'Blouse', 'Dupta-Only',
+    'Buti', 'No Panching'
+  ];
+  const ALL_CHAIN_SUBCATEGORIES_VALUES = [
+    'Chain Design', 'Pallu-Scat', 'Patli & Kli', 'Gala & Nack', 'Garment & Jal',
+    'Penal-Patta', 'Figar Design', 'Buta', 'C Pallu', 'Blouse', 'No Panching'
+  ];
+  const ALL_BEADS_SUBCATEGORIES_VALUES = [
+    'Beads Design', 'Kli Beads Design', 'C-Pallu Beads Design', 'Daman Beads Design', 'Gala beads Design'
+  ];
+
+  if (ALL_SAREE_SUBCATEGORIES_VALUES.includes(sub)) return 'Saree Design';
+  if (ALL_LEHENGHA_SUBCATEGORIES_VALUES.includes(sub)) return 'Lehengha Design';
+  if (ALL_SUIT_SUBCATEGORIES_VALUES.includes(sub)) return 'Suit Design';
+  if (ALL_DUPATTA_SUBCATEGORIES_VALUES.includes(sub)) return 'Dupatta Design';
+  if (ALL_MULTI_SUBCATEGORIES_VALUES.includes(sub)) return 'Multi Design';
+  if (ALL_SEQUIN_SUBCATEGORIES_VALUES.includes(sub)) return 'Sequin Design';
+  if (ALL_CORDING_SUBCATEGORIES_VALUES.includes(sub)) return 'Cording Design';
+  if (ALL_CHAIN_SUBCATEGORIES_VALUES.includes(sub)) return 'Chain Design';
+  if (ALL_BEADS_SUBCATEGORIES_VALUES.includes(sub)) return 'Beads Design';
+  return 'All';
+};
+
+const getSubcategoryDisplayName = (sub: string) => {
+  if (sub.startsWith('Lehengha - ')) return sub.replace('Lehengha - ', '');
+  if (sub.startsWith('Suit - ')) return sub.replace('Suit - ', '');
+  if (sub.startsWith('Dupatta - ')) return sub.replace('Dupatta - ', '');
+  return sub;
+};
+
 export function DesignDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -96,12 +158,52 @@ export function DesignDetail() {
     <div className="bg-surface min-h-screen pb-24">
       {/* Breadcrumb */}
       <div className="bg-white border-b border-outline-variant">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-4 flex items-center gap-2 text-sm">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-4 flex items-center gap-2 text-sm flex-wrap">
           <Link to="/" className="text-on-surface-variant hover:text-primary transition-colors">Home</Link>
           <span className="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
-          <Link to="/marketplace" className="text-on-surface-variant hover:text-primary transition-colors">Marketplace</Link>
-          <span className="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
-          <span className="text-on-surface font-semibold">{design.category}</span>
+          
+          <Link 
+            to={`/collection?category=${encodeURIComponent(design.category)}`} 
+            className="text-on-surface-variant hover:text-primary transition-colors"
+          >
+            {design.category}
+          </Link>
+          
+          {design.subcategory && design.subcategory !== 'All' && design.subcategory !== '' && (() => {
+            const parentSub = getParentSubcategory(design.subcategory);
+            if (parentSub !== 'All' && parentSub !== design.subcategory) {
+              return (
+                <>
+                  <span className="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
+                  <Link 
+                    to={`/collection?category=${encodeURIComponent(design.category)}&subcategory=${encodeURIComponent(parentSub)}`} 
+                    className="text-on-surface-variant hover:text-primary transition-colors"
+                  >
+                    {getSubcategoryDisplayName(parentSub)}
+                  </Link>
+                  <span className="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
+                  <Link 
+                    to={`/collection?category=${encodeURIComponent(design.category)}&subcategory=${encodeURIComponent(design.subcategory)}&showAll=true`} 
+                    className="text-on-surface-variant hover:text-primary transition-colors"
+                  >
+                    {getSubcategoryDisplayName(design.subcategory)}
+                  </Link>
+                </>
+              );
+            } else {
+              return (
+                <>
+                  <span className="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
+                  <Link 
+                    to={`/collection?category=${encodeURIComponent(design.category)}&subcategory=${encodeURIComponent(design.subcategory)}`} 
+                    className="text-on-surface-variant hover:text-primary transition-colors"
+                  >
+                    {getSubcategoryDisplayName(design.subcategory)}
+                  </Link>
+                </>
+              );
+            }
+          })()}
         </div>
       </div>
 
