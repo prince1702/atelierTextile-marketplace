@@ -786,17 +786,57 @@ exports.downloadDesign = async (req, res, next) => {
       });
     }
 
-    // Case 2: Full remote URL (Cloudinary) — stream it as attachment
+    // Case 2: Full remote URL (Cloudinary or other CDN) — generate secure download URL
     if (fileUrl.startsWith('http')) {
       const ext = path.extname(fileUrl.split('?')[0]) || '.zip';
       const downloadFilename = `${safeTitle}${ext}`;
-      const axios = require('axios');
 
+      // Check if this is a Cloudinary URL
+      const isCloudinaryUrl = fileUrl.includes('cloudinary.com') || fileUrl.includes('res.cloudinary.com');
+
+      if (isCloudinaryUrl) {
+        try {
+          // Extract the public_id from the Cloudinary URL
+          // Cloudinary raw URL format: https://res.cloudinary.com/<cloud>/raw/upload/<version>/<public_id>
+          // We parse it out to generate a fresh signed URL
+          const urlParts = fileUrl.split('/upload/');
+          if (urlParts.length === 2) {
+            let publicIdWithVersion = urlParts[1];
+            // Strip leading version if present (e.g. v1234567890/)
+            publicIdWithVersion = publicIdWithVersion.replace(/^v\d+\//, '');
+            // public_id is everything remaining (including folder path and extension for raw files)
+            const publicId = decodeURIComponent(publicIdWithVersion);
+
+            const signedUrl = cloudinary.url(publicId, {
+              resource_type: 'raw',
+              type: 'upload',
+              sign_url: true,
+              expires_at: Math.floor(Date.now() / 1000) + 3600, // 1 hour
+              attachment: true,  // Forces browser to download rather than preview
+            });
+
+            console.log(`✅ Redirecting to signed Cloudinary URL for: ${publicId}`);
+            return res.redirect(302, signedUrl);
+          }
+        } catch (signErr) {
+          console.warn('⚠️ Could not generate signed Cloudinary URL, falling back to direct redirect:', signErr.message);
+        }
+
+        // Fallback: redirect directly to the stored URL with ?dl= param to force download
+        const directUrl = fileUrl.includes('?')
+          ? `${fileUrl}&dl=${encodeURIComponent(downloadFilename)}`
+          : `${fileUrl}?dl=${encodeURIComponent(downloadFilename)}`;
+        return res.redirect(302, directUrl);
+      }
+
+      // Non-Cloudinary remote URL — stream it via axios
+      const axios = require('axios');
       axios({
         method: 'get',
         url: fileUrl,
         responseType: 'stream',
-        timeout: 30000,
+        timeout: 60000,
+        maxRedirects: 10,
       })
       .then((response) => {
         res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);

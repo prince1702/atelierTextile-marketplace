@@ -24,50 +24,27 @@ export function OrdersPage() {
 
   useEffect(() => { fetchOrders(); }, []);
 
-  const handleDownload = async (designTitle: string, designId: string) => {
+  const handleDownload = (designTitle: string, designId: string) => {
     if (!designId) {
       showToast('No file available for download', 'error');
       return;
     }
 
-    showToast(`Preparing download for: ${designTitle}...`, 'success');
     const token = localStorage.getItem('atelier_token') || '';
     const downloadUrl = `${API_URL}/api/designs/${designId}/download?token=${encodeURIComponent(token)}`;
 
-    try {
-      const response = await fetch(downloadUrl);
+    // Use a hidden anchor tag to navigate directly to the download URL.
+    // The backend will redirect to a signed Cloudinary URL — letting the browser
+    // handle the redirect natively is the only reliable cross-origin download strategy.
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.target = '_blank'; // Open in new tab so the current page stays
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-      if (!response.ok) {
-        let errMsg = 'Download failed. The file may no longer be available.';
-        try {
-          const errJson = await response.json();
-          if (errJson?.error) errMsg = errJson.error;
-        } catch (_) {}
-        showToast(errMsg, 'error');
-        return;
-      }
-
-      const blob = await response.blob();
-      const contentDisposition = response.headers.get('content-disposition');
-      let filename = `${designTitle.replace(/\s+/g, '_')}.zip`;
-      if (contentDisposition) {
-        const match = contentDisposition.match(/filename="?([^"]+)"?/);
-        if (match) filename = match[1];
-      }
-
-      const blobUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(blobUrl);
-      showToast('Download started!', 'success');
-    } catch (error) {
-      console.error('Download failed:', error);
-      showToast('Download failed. Please check your connection and try again.', 'error');
-    }
+    showToast(`Downloading: ${designTitle}...`, 'success');
   };
 
   const handleUploadScreenshot = (orderId: string) => {
