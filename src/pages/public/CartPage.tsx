@@ -163,7 +163,7 @@ export function CartPage() {
                 <p className="text-xs text-on-surface-variant mt-2">Works with Google Pay, PhonePe, Paytm, any UPI app</p>
                 <div className="mt-3 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center gap-2 text-xs text-amber-800 font-semibold shadow-sm">
                   <span className="material-symbols-outlined text-[16px] text-amber-600">schedule</span>
-                  <span>Payment Verification Hours: 9:00 AM to 9:00 PM</span>
+                  <span>Payment Verification Hours: 10:00 AM to 6:00 PM</span>
                 </div>
               </div>
 
@@ -204,7 +204,7 @@ export function CartPage() {
                   <li>Pay exactly <strong>₹{totalAmount.toLocaleString()}</strong></li>
                   <li>Take a screenshot of the success screen</li>
                   <li>Upload it below and click Submit</li>
-                  <li>For any assistance, call Customer Care: <strong>9712544405</strong></li>
+                  <li>For any assistance, call Customer Care: <strong>8849590378</strong></li>
                 </ol>
               </div>
 

@@ -63,7 +63,7 @@ export function CustomerDashboard() {
             <span className="material-symbols-outlined text-primary text-[20px]">support_agent</span>
             <div>
               <p className="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Customer Care</p>
-              <p className="font-bold text-primary text-sm">9712544405</p>
+              <p className="font-bold text-primary text-sm">8849590378</p>
             </div>
           </div>
           <Link 
