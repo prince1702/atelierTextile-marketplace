@@ -628,7 +628,7 @@ export function UploadPage() {
             {/* Area */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                {category === 'Weaving Design' ? 'Reed *' : 'Size *'}
+                {category === 'Weaving Design' ? 'Reed *' : 'Area *'}
               </label>
               {category === 'Weaving Design' ? (
                 <input
@@ -654,7 +654,7 @@ export function UploadPage() {
             {/* Needle / Pick */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                {category === 'Weaving Design' ? 'Pick *' : 'Color *'}
+                {category === 'Weaving Design' ? 'Pick *' : 'Needle *'}
               </label>
               {category === 'Weaving Design' ? (
                 <input
