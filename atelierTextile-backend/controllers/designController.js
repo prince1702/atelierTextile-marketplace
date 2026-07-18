@@ -763,8 +763,10 @@ exports.downloadDesign = async (req, res, next) => {
 
     console.log(`📥 downloadDesign: id=${req.params.id} fileUrl="${fileUrl}"`);
 
-    // ── Case 1: Expired Render ephemeral storage ──────────────────────────────
-    if (fileUrl.includes('/uploads/') && fileUrl.includes('onrender.com')) {
+    // Detect expired Render local-storage URLs (e.g. https://ateliertextile-backend.onrender.com/uploads/...)
+    // These files are gone because Render uses ephemeral disks
+    const isExpiredRenderUrl = fileUrl.includes('/uploads/') && fileUrl.includes('onrender.com');
+    if (isExpiredRenderUrl) {
       return res.status(410).json({
         success: false,
         error: 'This design file was uploaded to a temporary server and has since been deleted. Please ask the seller to re-upload the ZIP/RAR source file.',
@@ -785,59 +787,79 @@ exports.downloadDesign = async (req, res, next) => {
       });
     }
 
-    // ── Case 3 & 4: Cloudinary URL or any other remote HTTP/HTTPS URL ─────────
-    // Stream the file THROUGH the backend so we can attach the correct
-    // Content-Disposition: attachment header. A plain redirect causes browsers
-    // to navigate to the Cloudinary page instead of triggering a file download.
+    // Case 2: Cloudinary URL — generate a signed download URL via Cloudinary SDK
+    // Raw files on Cloudinary require authentication; plain https.get() returns 401
     if (fileUrl.startsWith('http')) {
-      // Strip any leftover fl_attachment transformation fragment (legacy)
-      const cleanUrl = fileUrl
-        .replace('/fl_attachment/', '/')
-        .replace('/upload/fl_attachment', '/upload');
-
-      let ext = '.zip';
-      try { ext = path.extname(new URL(cleanUrl).pathname) || '.zip'; } catch (_) {}
-      const downloadFilename = `${safeTitle}${ext}`;
-
-      console.log(`✅ Streaming remote file to client as "${downloadFilename}": ${cleanUrl}`);
-
-      const https = require('https');
-      const http = require('http');
-
-      const streamFrom = (url, redirectsLeft) => {
-        if (redirectsLeft < 0) {
-          if (!res.headersSent) res.status(502).json({ success: false, error: 'Too many redirects from storage server.' });
-          return;
+      try {
+        const safeTitle = design.title.replace(/[^a-zA-Z0-9]/g, '_');
+        
+        // Extract the public_id from the Cloudinary URL
+        const urlObj = new URL(fileUrl);
+        const pathParts = urlObj.pathname.split('/');
+        const uploadIdx = pathParts.indexOf('upload');
+        let publicIdParts = pathParts.slice(uploadIdx + 1);
+        if (/^v\d+$/.test(publicIdParts[0])) {
+          publicIdParts = publicIdParts.slice(1);
         }
-        const proto = url.startsWith('https') ? https : http;
-        proto.get(url, (remoteRes) => {
-          if (remoteRes.statusCode === 301 || remoteRes.statusCode === 302) {
-            streamFrom(remoteRes.headers.location, redirectsLeft - 1);
-            return;
-          }
-          if (remoteRes.statusCode !== 200) {
-            if (!res.headersSent) {
-              res.status(remoteRes.statusCode || 502).json({
-                success: false,
-                error: `Storage returned status ${remoteRes.statusCode}. The file may have been deleted.`,
-              });
-            }
-            return;
-          }
-          res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
-          res.setHeader('Content-Type', remoteRes.headers['content-type'] || 'application/octet-stream');
-          if (remoteRes.headers['content-length']) {
-            res.setHeader('Content-Length', remoteRes.headers['content-length']);
-          }
-          remoteRes.pipe(res);
-        }).on('error', (err) => {
-          console.error('Stream error:', err.message);
-          if (!res.headersSent) res.status(502).json({ success: false, error: 'Failed to download file from storage.' });
-        });
-      };
+        const publicIdWithExt = publicIdParts.join('/');
+        let ext = path.extname(publicIdWithExt) || '.zip';
+        const publicId = publicIdWithExt.replace(/\.[^.]+$/, '');
 
-      streamFrom(cleanUrl, 3);
-      return;
+        const downloadFilename = `${safeTitle}${ext}`;
+
+        // Generate a signed URL valid for 1 hour
+        const signedUrl = cloudinary.utils.private_download_url(publicId, ext.replace('.', ''), {
+          resource_type: 'raw',
+          expires_at: Math.floor(Date.now() / 1000) + 3600,
+          attachment: downloadFilename,
+        });
+
+        // Stream the file THROUGH the backend using the signed URL, following any redirects.
+        // This avoids CORS issues on the frontend and handles storage server redirects.
+        const https = require('https');
+        const http = require('http');
+
+        const streamFrom = (url, redirectsLeft) => {
+          if (redirectsLeft < 0) {
+            if (!res.headersSent) res.status(502).json({ success: false, error: 'Too many redirects from storage server.' });
+            return;
+          }
+          const proto = url.startsWith('https') ? https : http;
+          proto.get(url, (remoteRes) => {
+            if (remoteRes.statusCode === 301 || remoteRes.statusCode === 302 || remoteRes.statusCode === 307 || remoteRes.statusCode === 308) {
+              streamFrom(remoteRes.headers.location, redirectsLeft - 1);
+              return;
+            }
+            if (remoteRes.statusCode !== 200) {
+              if (!res.headersSent) {
+                res.status(remoteRes.statusCode || 502).json({
+                  success: false,
+                  error: `Storage returned status ${remoteRes.statusCode}. The file may have been deleted.`,
+                });
+              }
+              return;
+            }
+            res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
+            res.setHeader('Content-Type', remoteRes.headers['content-type'] || 'application/octet-stream');
+            if (remoteRes.headers['content-length']) {
+              res.setHeader('Content-Length', remoteRes.headers['content-length']);
+            }
+            remoteRes.pipe(res);
+          }).on('error', (err) => {
+            console.error('❌ Stream error:', err.message);
+            if (!res.headersSent) res.status(502).json({ success: false, error: 'Failed to download file from storage.' });
+          });
+        };
+
+        streamFrom(signedUrl, 3);
+        return;
+      } catch (err) {
+        console.error('❌ Cloudinary signed URL error:', err.message);
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to generate a secure download link. Please try again.',
+        });
+      }
     }
 
     return res.status(404).json({ success: false, error: 'No valid design file is available for download.' });
