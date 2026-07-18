@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { api } from '../../services/api';
+import { api, API_URL } from '../../services/api';
 import type { Order } from '../../types';
 import { useNotification } from '../../contexts/NotificationContext';
 
@@ -52,8 +52,7 @@ export function OrdersPage() {
 
     showToast(`Initializing secure download for: ${designTitle}`, 'success');
     const token = localStorage.getItem('token') || '';
-    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    const downloadUrl = `${backendUrl}/designs/${designId}/download?token=${encodeURIComponent(token)}`;
+    const downloadUrl = `${API_URL}/api/designs/${designId}/download?token=${encodeURIComponent(token)}`;
     window.location.href = downloadUrl;
   };
 

@@ -13,7 +13,7 @@ const getApiUrl = () => {
   return 'http://localhost:5000';
 };
 
-const API_URL = getApiUrl();
+export const API_URL = getApiUrl();
 
 const FRONTEND_MOCK_DESIGNS: Design[] = [];
 
