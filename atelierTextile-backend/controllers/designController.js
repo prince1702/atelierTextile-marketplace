@@ -790,27 +790,29 @@ exports.downloadDesign = async (req, res, next) => {
     if (fileUrl.startsWith('http')) {
       const ext = path.extname(fileUrl.split('?')[0]) || '.zip';
       const downloadFilename = `${safeTitle}${ext}`;
-      const _https = require('https');
-      const _http = require('http');
-      const protocol = fileUrl.startsWith('https') ? _https : _http;
+      const axios = require('axios');
 
-      protocol.get(fileUrl, (fileRes) => {
-        if (fileRes.statusCode !== 200) {
-          return res.status(404).json({
+      axios({
+        method: 'get',
+        url: fileUrl,
+        responseType: 'stream',
+        timeout: 30000,
+      })
+      .then((response) => {
+        res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
+        res.setHeader('Content-Type', response.headers['content-type'] || 'application/octet-stream');
+        if (response.headers['content-length']) {
+          res.setHeader('Content-Length', response.headers['content-length']);
+        }
+        response.data.pipe(res);
+      })
+      .catch((err) => {
+        console.error('❌ Remote file fetch error via axios:', err.message);
+        if (!res.headersSent) {
+          res.status(404).json({
             success: false,
             error: 'The design file could not be retrieved from cloud storage. Please ask the seller to re-upload it.',
           });
-        }
-        res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
-        res.setHeader('Content-Type', fileRes.headers['content-type'] || 'application/octet-stream');
-        if (fileRes.headers['content-length']) {
-          res.setHeader('Content-Length', fileRes.headers['content-length']);
-        }
-        fileRes.pipe(res);
-      }).on('error', (err) => {
-        console.error('❌ Remote file fetch error:', err.message);
-        if (!res.headersSent) {
-          res.status(500).json({ success: false, error: 'Failed to retrieve the design file. Please try again.' });
         }
       });
       return;

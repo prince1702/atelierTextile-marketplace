@@ -193,7 +193,7 @@ export function OrdersPage() {
                     <button
                       onClick={() => handleDownload(
                         order.designTitle,
-                        typeof order.design === 'object' ? (order.design?.id || (order.design as any)?._id) : order.design as string
+                        typeof order.design === 'object' ? (order.design?.id || (order.design as any)?._id) : (order.design as unknown as string || '')
                       )}
                       className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
                     >
