@@ -753,28 +753,59 @@ exports.downloadDesign = async (req, res, next) => {
     if (!fileUrl) {
       return res.status(404).json({
         success: false,
-        error: 'No design file available for download',
+        error: 'No design file has been uploaded for this design',
       });
     }
 
-    // If local file, serve it directly as an attachment
-    if (fileUrl.includes('/uploads/')) {
-      const filename = fileUrl.split('/uploads/').pop();
+    const safeTitle = design.title.replace(/[^a-zA-Z0-9]/g, '_');
+
+    // Case 1: Local file (starts with /, relative path stored as path)
+    const isAbsoluteLocalPath = fileUrl.startsWith('/') && !fileUrl.startsWith('//');
+    if (isAbsoluteLocalPath) {
+      const filename = path.basename(fileUrl);
       const filePath = path.join(__dirname, '../public/uploads', filename);
       if (fs.existsSync(filePath)) {
         const ext = path.extname(filename);
-        const originalName = `${design.title.replace(/\s+/g, '_')}${ext}`;
-        return res.download(filePath, originalName);
-      } else {
-        return res.status(404).json({
-          success: false,
-          error: 'The design file is no longer available on this temporary server instance. Please ask the seller/admin to re-upload the design.',
-        });
+        return res.download(filePath, `${safeTitle}${ext}`);
       }
+      return res.status(404).json({
+        success: false,
+        error: 'The design file is no longer available. Please contact the seller to re-upload it.',
+      });
     }
 
-    // If remote, redirect to start secure download
-    res.redirect(fileUrl);
+    // Case 2: Full URL (local server /uploads/ URL or Cloudinary URL) — stream it
+    if (fileUrl.startsWith('http')) {
+      const ext = path.extname(fileUrl.split('?')[0]) || '.zip';
+      const downloadFilename = `${safeTitle}${ext}`;
+      const { https, http } = (() => {
+        const _https = require('https');
+        const _http = require('http');
+        return { https: _https, http: _http };
+      })();
+      const protocol = fileUrl.startsWith('https') ? https : http;
+
+      protocol.get(fileUrl, (fileRes) => {
+        if (fileRes.statusCode !== 200) {
+          return res.status(404).json({
+            success: false,
+            error: 'The design file could not be retrieved. It may have been deleted from the storage server.',
+          });
+        }
+        res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
+        res.setHeader('Content-Type', fileRes.headers['content-type'] || 'application/octet-stream');
+        if (fileRes.headers['content-length']) {
+          res.setHeader('Content-Length', fileRes.headers['content-length']);
+        }
+        fileRes.pipe(res);
+      }).on('error', (err) => {
+        console.error('❌ Remote file fetch error:', err.message);
+        res.status(500).json({ success: false, error: 'Failed to retrieve the design file. Please try again.' });
+      });
+      return;
+    }
+
+    return res.status(404).json({ success: false, error: 'No valid design file available for download' });
   } catch (error) {
     next(error);
   }

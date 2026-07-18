@@ -24,36 +24,50 @@ export function OrdersPage() {
 
   useEffect(() => { fetchOrders(); }, []);
 
-  const handleDownload = async (designTitle: string, designId: string, fallbackUrl?: string) => {
+  const handleDownload = async (designTitle: string, designId: string) => {
     if (!designId) {
-      if (fallbackUrl) {
-        showToast(`Initializing secure download for: ${designTitle}`, 'success');
-        try {
-          const response = await fetch(fallbackUrl);
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          const extension = fallbackUrl.split('.').pop()?.split('?')[0] || 'png';
-          link.setAttribute('download', `${designTitle.replace(/\s+/g, '_')}.${extension}`);
-          document.body.appendChild(link);
-          link.click();
-          link.parentNode?.removeChild(link);
-          window.URL.revokeObjectURL(url);
-        } catch (error) {
-          console.error('Download failed:', error);
-          window.open(fallbackUrl, '_blank');
-        }
-      } else {
-        showToast('No file available for download', 'error');
-      }
+      showToast('No file available for download', 'error');
       return;
     }
 
-    showToast(`Initializing secure download for: ${designTitle}`, 'success');
+    showToast(`Preparing download for: ${designTitle}...`, 'success');
     const token = localStorage.getItem('token') || '';
     const downloadUrl = `${API_URL}/api/designs/${designId}/download?token=${encodeURIComponent(token)}`;
-    window.location.href = downloadUrl;
+
+    try {
+      const response = await fetch(downloadUrl);
+
+      if (!response.ok) {
+        let errMsg = 'Download failed. The file may no longer be available.';
+        try {
+          const errJson = await response.json();
+          if (errJson?.error) errMsg = errJson.error;
+        } catch (_) {}
+        showToast(errMsg, 'error');
+        return;
+      }
+
+      const blob = await response.blob();
+      const contentDisposition = response.headers.get('content-disposition');
+      let filename = `${designTitle.replace(/\s+/g, '_')}.zip`;
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match) filename = match[1];
+      }
+
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+      showToast('Download started!', 'success');
+    } catch (error) {
+      console.error('Download failed:', error);
+      showToast('Download failed. Please check your connection and try again.', 'error');
+    }
   };
 
   const handleUploadScreenshot = (orderId: string) => {
@@ -179,8 +193,7 @@ export function OrdersPage() {
                     <button
                       onClick={() => handleDownload(
                         order.designTitle,
-                        typeof order.design === 'object' ? (order.design?.id || order.design?._id) : order.design,
-                        order.designImage
+                        typeof order.design === 'object' ? (order.design?.id || (order.design as any)?._id) : order.design as string
                       )}
                       className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
                     >
