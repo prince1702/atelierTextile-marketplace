@@ -79,9 +79,12 @@ exports.getOrder = async (req, res, next) => {
 // @desc    Place a new order — status starts as 'pending' (awaiting UPI payment + screenshot)
 // @route   POST /api/orders
 // @access  Customer
-const getPriceWithLicense = (price, licenseType) => {
-  if (licenseType === 'Standard Regional') return price * 2.5;
-  if (licenseType === 'Exclusive Global') return price * 8;
+const getPriceWithLicense = (price, licenseType, design = null) => {
+  if (licenseType === 'Standard Regional' || licenseType === 'Extended' || licenseType === 'Other' || licenseType === 'OTHER') return price * 2.5;
+  if (licenseType === 'PDC') {
+    return design && design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : price * 2.5;
+  }
+  if (licenseType === 'Exclusive Global' || licenseType === 'Exclusive Buyout') return price * 8;
   return price;
 };
 
@@ -112,7 +115,7 @@ exports.createOrder = async (req, res, next) => {
         return res.status(404).json({ success: false, error: 'Seller not found' });
       }
       const license = item.licenseType || 'Open Regional';
-      const itemPrice = getPriceWithLicense(design.price, license);
+      const itemPrice = getPriceWithLicense(design.price, license, design);
       processedItems.push({ design, seller, licenseType: license, amount: itemPrice });
     }
 

@@ -5,9 +5,9 @@ export function RewardsPage() {
   const { showToast } = useNotification();
   
   const couponOptions = [
-    { code: 'ATELIER15', desc: '15% Off any Extended License', cost: 350 },
-    { code: 'BUYOUT200', desc: '₹200 Off any Exclusive Buyout', cost: 800 },
-    { code: 'ARTISANFREE', desc: 'Free Standard License of ₹490 or less', cost: 1200 },
+    { code: 'ATELIER15', desc: '15% Off any OTHER Format', cost: 350 },
+    { code: 'BUYOUT200', desc: '₹200 Off any OTHER Format', cost: 800 },
+    { code: 'ARTISANFREE', desc: 'Free EMB Format of ₹490 or less', cost: 1200 },
   ];
 
   const handleClaim = (code: string, cost: number) => {

@@ -84,7 +84,7 @@ export function DesignDetail() {
   const [design, setDesign] = useState<Design | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedLicense, setSelectedLicense] = useState('Standard');
+  const [selectedLicense, setSelectedLicense] = useState('EMB');
   const [activeTab, setActiveTab] = useState('details');
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export function DesignDetail() {
         if (data.category === 'Weaving Design') {
           setSelectedLicense('BMP');
         } else {
-          setSelectedLicense('Standard');
+          setSelectedLicense('EMB');
         }
       } catch (err: any) {
         console.error(err);
@@ -122,7 +122,7 @@ export function DesignDetail() {
   };
 
   const getPrice = (price: number, license: string) => {
-    if (license === 'Extended') return price * 2.5;
+    if (license === 'Extended' || license === 'Other' || license === 'OTHER') return price * 2.5;
     if (license === 'PDC') {
       return design && design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : price * 2.5;
     }
@@ -151,14 +151,19 @@ export function DesignDetail() {
     );
   }
 
-  const licenseOptions = design.category === 'Weaving Design' ? [
-    { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' },
-    { name: 'PDC', price: design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5, desc: 'PDC format. Extended production license.' }
-  ] : [
-    { name: 'Standard', price: design.price, desc: 'Up to 500 units. Digital + Print.' },
-    { name: 'Extended', price: design.price * 2.5, desc: 'Up to 5,000 units. Unlimited web.' },
-    { name: 'Exclusive Buyout', price: design.price * 8, desc: 'Full IP transfer. Design removed from store.' }
-  ];
+  const licenseOptions = (() => {
+    if (design.category === 'Weaving Design') {
+      return [
+        { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' },
+        { name: 'PDC', price: design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5, desc: 'PDC format. Extended production license.' }
+      ];
+    } else {
+      return [
+        { name: 'EMB', price: design.price, desc: 'EMB format. Standard embroidery license.' },
+        { name: 'OTHER', price: design.price * 2.5, desc: 'Other formats (DST, PES, JEF, etc.).' }
+      ];
+    }
+  })();
 
   return (
     <div className="bg-surface min-h-screen pb-24">

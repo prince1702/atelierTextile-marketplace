@@ -25,7 +25,7 @@ export function CartPage() {
   const [selectedLicenses, setSelectedLicenses] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
     items.forEach(item => {
-      init[item.design.id] = item.licenseType || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
+      init[item.design.id] = item.licenseType || (item.design.category === 'Weaving Design' ? 'BMP' : 'EMB');
     });
     return init;
   });
@@ -35,7 +35,7 @@ export function CartPage() {
   };
 
   const getPrice = (design: Design, license: string) => {
-    if (license === 'Extended') return design.price * 2.5;
+    if (license === 'Extended' || license === 'Other' || license === 'OTHER') return design.price * 2.5;
     if (license === 'PDC') return design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
     if (license === 'Exclusive Buyout' || license === 'Exclusive Global') return design.price * 8;
     return design.price;
@@ -43,7 +43,7 @@ export function CartPage() {
 
   const calculateTotal = () => {
     return items.reduce((sum, item) => {
-      const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
+      const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'EMB');
       return sum + getPrice(item.design, license);
     }, 0);
   };
@@ -53,14 +53,8 @@ export function CartPage() {
     setIsSubmitting(true);
     try {
       const orderItems = items.map(item => {
-        const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
-        const backendLicense =
-          license === 'Exclusive Buyout' || license === 'Exclusive Global'
-            ? 'Exclusive Global'
-            : license === 'Extended' || license === 'PDC'
-              ? 'Standard Regional'
-              : 'Open Regional';
-        return { designId: item.design.id, licenseType: backendLicense };
+        const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'EMB');
+        return { designId: item.design.id, licenseType: license };
       });
 
       const res = await api.orders.create(undefined, undefined, orderItems);
@@ -291,7 +285,7 @@ export function CartPage() {
             {/* Cart Items List */}
             <div className="lg:col-span-8 space-y-6">
               {items.map(item => {
-                const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
+                const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'EMB');
                 const basePrice = item.design.price;
                 const itemPrice = getPrice(item.design, license);
 
@@ -333,9 +327,8 @@ export function CartPage() {
                               </>
                             ) : (
                               <>
-                                <option value="Standard">Standard License (Digital/Print)</option>
-                                <option value="Extended">Extended License (Commercial)</option>
-                                <option value="Exclusive Buyout">Exclusive Buyout (Full Ownership)</option>
+                                <option value="EMB">EMB Format</option>
+                                <option value="OTHER">Other Format</option>
                               </>
                             )}
                           </select>
