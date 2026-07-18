@@ -786,16 +786,17 @@ exports.downloadDesign = async (req, res, next) => {
     }
 
     // ── Case 3: Cloudinary URL ────────────────────────────────────────────────
-    // Insert fl_attachment into the URL so Cloudinary serves it as a download.
-    // We redirect the browser directly — no streaming, no SDK, no CORS issues.
+    // Redirect directly to the plain Cloudinary URL.
+    // DO NOT add fl_attachment — applying transformations to raw uploads requires
+    // a signed URL (returns HTTP 401 without it). Browsers auto-download ZIP/RAR
+    // files since they can't render them, so no transformation flag is needed.
     if (fileUrl.includes('cloudinary.com')) {
-      let cloudinaryDownloadUrl = fileUrl;
-      if (fileUrl.includes('/upload/') && !fileUrl.includes('fl_attachment')) {
-        cloudinaryDownloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
-      }
-      console.log(`✅ Redirecting to Cloudinary fl_attachment URL: ${cloudinaryDownloadUrl}`);
-      return res.redirect(302, cloudinaryDownloadUrl);
+      // Strip any fl_attachment that may have been added by a previous version
+      const cleanUrl = fileUrl.replace('/fl_attachment/', '/').replace('/upload/fl_attachment', '/upload');
+      console.log(`✅ Redirecting to plain Cloudinary URL: ${cleanUrl}`);
+      return res.redirect(302, cleanUrl);
     }
+
 
     // ── Case 4: Any other remote HTTP/HTTPS URL ───────────────────────────────
     if (fileUrl.startsWith('http')) {
