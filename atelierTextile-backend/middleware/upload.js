@@ -5,14 +5,22 @@ const path = require('path');
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|webp|svg/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
-
-  if (extname && mimetype) {
-    cb(null, true);
+  const ext = path.extname(file.originalname).toLowerCase();
+  
+  if (file.fieldname === 'designFile') {
+    const allowedExts = ['.zip', '.rar'];
+    if (allowedExts.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only ZIP and RAR archive files are allowed for the design file'), false);
+    }
   } else {
-    cb(new Error('Only image files (jpeg, jpg, png, webp, svg) are allowed'), false);
+    const allowedExts = ['.jpeg', '.jpg', '.png', '.webp', '.svg'];
+    if (allowedExts.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files (jpeg, jpg, png, webp, svg) are allowed for the pattern image'), false);
+    }
   }
 };
 

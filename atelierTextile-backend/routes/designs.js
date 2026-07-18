@@ -18,15 +18,20 @@ const {
 router.get('/', getDesigns);
 router.get('/category/:category', getDesignsByCategory);
 
+const cpUpload = upload.fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'designFile', maxCount: 1 }
+]);
+
 // Seller routes (must come before /:id to avoid conflict)
 router.get('/my/listings', auth, authorize('seller'), getMyListings);
-router.post('/', auth, authorize('seller'), upload.single('image'), createDesign);
+router.post('/', auth, authorize('seller'), cpUpload, createDesign);
 
 // Public single design
 router.get('/:id', getDesign);
 
 // Seller update/delete own design
-router.put('/:id', auth, authorize('seller'), upload.single('image'), updateDesign);
+router.put('/:id', auth, authorize('seller'), cpUpload, updateDesign);
 router.delete('/:id', auth, authorize('seller', 'admin'), deleteDesign);
 
 // Admin status update

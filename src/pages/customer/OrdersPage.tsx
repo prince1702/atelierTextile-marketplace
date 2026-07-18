@@ -170,7 +170,7 @@ export function OrdersPage() {
                 <div className="flex gap-2">
                   {order.status === 'completed' && (
                     <button
-                      onClick={() => handleDownload(order.designTitle, order.designImage)}
+                      onClick={() => handleDownload(order.designTitle, order.design?.designFile || order.designImage)}
                       className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
                     >
                       <span className="material-symbols-outlined text-[14px]">download</span>

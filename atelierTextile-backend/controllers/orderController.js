@@ -36,7 +36,7 @@ exports.getPaymentReviewOrders = async (req, res, next) => {
 // @access  Customer
 exports.getMyOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ buyer: req.user.id }).sort({ createdAt: -1 });
+    const orders = await Order.find({ buyer: req.user.id }).populate('design').sort({ createdAt: -1 });
     res.status(200).json({ success: true, count: orders.length, data: orders });
   } catch (error) {
     next(error);
@@ -48,7 +48,7 @@ exports.getMyOrders = async (req, res, next) => {
 // @access  Seller
 exports.getSellerOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ seller: req.user.id }).sort({ createdAt: -1 });
+    const orders = await Order.find({ seller: req.user.id }).populate('design').sort({ createdAt: -1 });
     res.status(200).json({ success: true, count: orders.length, data: orders });
   } catch (error) {
     next(error);
@@ -60,7 +60,7 @@ exports.getSellerOrders = async (req, res, next) => {
 // @access  Admin or involved user (buyer/seller)
 exports.getOrder = async (req, res, next) => {
   try {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate('design');
     if (!order) {
       return res.status(404).json({ success: false, error: 'Order not found' });
     }

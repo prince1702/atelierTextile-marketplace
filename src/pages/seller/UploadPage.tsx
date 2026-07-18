@@ -37,6 +37,7 @@ export function UploadPage() {
   const [licenseType, setLicenseType] = useState('Standard Regional');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [zipFile, setZipFile] = useState<File | null>(null);
 
   // Dynamically update subcategory when category changes
   useEffect(() => {
@@ -142,10 +143,22 @@ export function UploadPage() {
     }
   };
 
+  const handleZipFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (ext !== 'zip' && ext !== 'rar') {
+        showToast('Please upload a ZIP or RAR archive file only', 'warning');
+        return;
+      }
+      setZipFile(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !price || !imageFile) {
-      showToast('Please fill out all required fields and upload an image', 'warning');
+    if (!title.trim() || !price || !imageFile || !zipFile) {
+      showToast('Please fill out all required fields, including both a display image and a ZIP/RAR design file', 'warning');
       return;
     }
 
@@ -194,6 +207,7 @@ export function UploadPage() {
       formData.append('colorways', colorways);
       formData.append('licenseType', licenseType);
       formData.append('image', imageFile);
+      formData.append('designFile', zipFile);
       formData.append('designType', designType);
       formData.append('area', area);
       formData.append('needle', needle);
@@ -248,6 +262,37 @@ export function UploadPage() {
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer"
                 required={!imagePreview}
+              />
+            </div>
+          </div>
+
+          {/* ZIP/RAR File Upload Area */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design Source File (ZIP / RAR) *</label>
+            <div className="border-2 border-dashed border-outline-variant hover:border-primary/50 transition-colors rounded-xl p-4 flex items-center justify-between bg-surface/10 cursor-pointer relative">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-[32px] text-outline">archive</span>
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-on-surface">
+                    {zipFile ? zipFile.name : 'Select ZIP or RAR file'}
+                  </p>
+                  <p className="text-xs text-on-surface-variant">
+                    {zipFile ? `${(zipFile.size / 1024 / 1024).toFixed(2)} MB` : 'Supports ZIP, RAR (Max 50MB)'}
+                  </p>
+                </div>
+              </div>
+              <button 
+                type="button" 
+                className="text-xs font-bold text-primary hover:text-primary-dark uppercase px-3 py-1.5 border border-primary/20 rounded-lg bg-white animate-fade-in"
+              >
+                Browse
+              </button>
+              <input 
+                type="file" 
+                accept=".zip,.rar"
+                onChange={handleZipFileChange}
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                required={!zipFile}
               />
             </div>
           </div>

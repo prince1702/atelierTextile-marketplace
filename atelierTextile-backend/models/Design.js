@@ -82,6 +82,10 @@ const designSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  designFile: {
+    type: String,
+    default: '',
+  },
   rating: {
     type: Number,
     default: 0,

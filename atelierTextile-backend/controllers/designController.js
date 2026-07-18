@@ -5,10 +5,10 @@ const fs = require('fs');
 const path = require('path');
 
 // Helper: upload buffer to Cloudinary
-const uploadToCloudinary = (buffer) => {
+const uploadToCloudinary = (buffer, resourceType = 'image') => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: 'atelierTextile/designs', resource_type: 'image' },
+      { folder: 'atelierTextile/designs', resource_type: resourceType },
       (error, result) => {
         if (error) reject(error);
         else resolve(result);
@@ -385,20 +385,23 @@ exports.createDesign = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'User not found' });
     }
 
-    let imageUrl = '';
+    const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
+    const designFile = req.files && req.files['designFile'] ? req.files['designFile'][0] : null;
 
-    // Upload image to Cloudinary if provided, otherwise save locally
-    if (req.file) {
-      const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
-                                     process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
-                                     process.env.CLOUDINARY_API_KEY && 
-                                     process.env.CLOUDINARY_API_KEY !== 'your_api_key';
-      
+    let imageUrl = '';
+    let designFileUrl = '';
+
+    const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
+                                   process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
+                                   process.env.CLOUDINARY_API_KEY && 
+                                   process.env.CLOUDINARY_API_KEY !== 'your_api_key';
+
+    // 1. Process display image
+    if (imageFile) {
       let uploadSuccess = false;
-      
       if (isCloudinaryConfigured) {
         try {
-          const result = await uploadToCloudinary(req.file.buffer);
+          const result = await uploadToCloudinary(imageFile.buffer, 'image');
           imageUrl = result.secure_url;
           uploadSuccess = true;
         } catch (cloudinaryError) {
@@ -412,9 +415,9 @@ exports.createDesign = async (req, res, next) => {
           if (!fs.existsSync(uploadsDir)) {
             fs.mkdirSync(uploadsDir, { recursive: true });
           }
-          const filename = `design-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(req.file.originalname) || '.jpg'}`;
+          const filename = `design-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(imageFile.originalname) || '.jpg'}`;
           const filePath = path.join(uploadsDir, filename);
-          fs.writeFileSync(filePath, req.file.buffer);
+          fs.writeFileSync(filePath, imageFile.buffer);
           
           // Resolve backend URL dynamically
           const host = req.get('host');
@@ -428,10 +431,42 @@ exports.createDesign = async (req, res, next) => {
       imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
     }
 
+    // 2. Process design source file (ZIP/RAR)
+    if (designFile) {
+      let uploadSuccess = false;
+      if (isCloudinaryConfigured) {
+        try {
+          const result = await uploadToCloudinary(designFile.buffer, 'raw');
+          designFileUrl = result.secure_url;
+          uploadSuccess = true;
+        } catch (cloudinaryError) {
+          console.warn('⚠️ Cloudinary raw file upload failed, using local fallback:', cloudinaryError.message);
+        }
+      }
+
+      if (!uploadSuccess) {
+        try {
+          const uploadsDir = path.join(__dirname, '../public/uploads');
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+          const filename = `designFile-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(designFile.originalname) || '.zip'}`;
+          const filePath = path.join(uploadsDir, filename);
+          fs.writeFileSync(filePath, designFile.buffer);
+          
+          // Resolve backend URL dynamically
+          const host = req.get('host');
+          designFileUrl = `${req.protocol}://${host}/uploads/${filename}`;
+        } catch (localError) {
+          console.error('❌ Local design file write failed:', localError);
+        }
+      }
+    }
+
     const areaRange = parseRangeNumbers(req.body.area);
     const needleRange = parseRangeNumbers(req.body.needle);
 
-    console.log('📥 createDesign req.body keys:', Object.keys(req.body), '| fabric:', req.body.fabric, '| file:', req.file?.originalname);
+    console.log('📥 createDesign req.body keys:', Object.keys(req.body), '| image:', imageFile?.originalname, '| designFile:', designFile?.originalname);
     const design = await Design.create({
       ...req.body,
       areaMin: areaRange.min,
@@ -453,6 +488,7 @@ exports.createDesign = async (req, res, next) => {
       designerName: seller.name,
       designerAvatar: seller.initials,
       image: imageUrl,
+      designFile: designFileUrl,
       status: 'pending', // Admin must approve
     });
 
@@ -484,18 +520,20 @@ exports.updateDesign = async (req, res, next) => {
       });
     }
 
+    const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
+    const designFile = req.files && req.files['designFile'] ? req.files['designFile'][0] : null;
+
+    const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
+                                   process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
+                                   process.env.CLOUDINARY_API_KEY && 
+                                   process.env.CLOUDINARY_API_KEY !== 'your_api_key';
+
     // Upload new image if provided
-    if (req.file) {
-      const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
-                                     process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
-                                     process.env.CLOUDINARY_API_KEY && 
-                                     process.env.CLOUDINARY_API_KEY !== 'your_api_key';
-      
+    if (imageFile) {
       let uploadSuccess = false;
-      
       if (isCloudinaryConfigured) {
         try {
-          const result = await uploadToCloudinary(req.file.buffer);
+          const result = await uploadToCloudinary(imageFile.buffer, 'image');
           req.body.image = result.secure_url;
           uploadSuccess = true;
         } catch (cloudinaryError) {
@@ -509,16 +547,47 @@ exports.updateDesign = async (req, res, next) => {
           if (!fs.existsSync(uploadsDir)) {
             fs.mkdirSync(uploadsDir, { recursive: true });
           }
-          const filename = `design-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(req.file.originalname) || '.jpg'}`;
+          const filename = `design-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(imageFile.originalname) || '.jpg'}`;
           const filePath = path.join(uploadsDir, filename);
-          fs.writeFileSync(filePath, req.file.buffer);
+          fs.writeFileSync(filePath, imageFile.buffer);
           
           // Resolve backend URL dynamically
           const host = req.get('host');
           req.body.image = `${req.protocol}://${host}/uploads/${filename}`;
         } catch (localError) {
           console.error('❌ Local file write failed during edit:', localError);
-          req.body.image = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+        }
+      }
+    }
+
+    // Upload new designFile if provided
+    if (designFile) {
+      let uploadSuccess = false;
+      if (isCloudinaryConfigured) {
+        try {
+          const result = await uploadToCloudinary(designFile.buffer, 'raw');
+          req.body.designFile = result.secure_url;
+          uploadSuccess = true;
+        } catch (cloudinaryError) {
+          console.warn('⚠️ Cloudinary raw upload failed during edit, using local fallback:', cloudinaryError.message);
+        }
+      }
+
+      if (!uploadSuccess) {
+        try {
+          const uploadsDir = path.join(__dirname, '../public/uploads');
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+          const filename = `designFile-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(designFile.originalname) || '.zip'}`;
+          const filePath = path.join(uploadsDir, filename);
+          fs.writeFileSync(filePath, designFile.buffer);
+          
+          // Resolve backend URL dynamically
+          const host = req.get('host');
+          req.body.designFile = `${req.protocol}://${host}/uploads/${filename}`;
+        } catch (localError) {
+          console.error('❌ Local design file write failed during edit:', localError);
         }
       }
     }

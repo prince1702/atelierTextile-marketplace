@@ -41,11 +41,12 @@ export interface Design {
   designFormat?: string;
   sareeConcept?: string;
   pdcPrice?: number;
+  designFile?: string;
 }
 
 export interface Order {
   id: string;
-  design: string; // Design ID
+  design?: Design;
   designTitle: string;
   designImage: string;
   seller: string;
