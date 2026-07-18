@@ -5,10 +5,21 @@ const fs = require('fs');
 const path = require('path');
 
 // Helper: upload buffer to Cloudinary
-const uploadToCloudinary = (buffer, resourceType = 'image') => {
+const uploadToCloudinary = (buffer, resourceType = 'image', originalName = '') => {
   return new Promise((resolve, reject) => {
+    const options = {
+      folder: 'atelierTextile/designs',
+      resource_type: resourceType,
+    };
+
+    if (resourceType === 'raw' && originalName) {
+      const ext = path.extname(originalName);
+      const base = path.basename(originalName, ext).replace(/[^a-zA-Z0-9]/g, '_');
+      options.public_id = `${base}-${Date.now()}${ext}`;
+    }
+
     const stream = cloudinary.uploader.upload_stream(
-      { folder: 'atelierTextile/designs', resource_type: resourceType },
+      options,
       (error, result) => {
         if (error) reject(error);
         else resolve(result);
@@ -436,7 +447,7 @@ exports.createDesign = async (req, res, next) => {
       let uploadSuccess = false;
       if (isCloudinaryConfigured) {
         try {
-          const result = await uploadToCloudinary(designFile.buffer, 'raw');
+          const result = await uploadToCloudinary(designFile.buffer, 'raw', designFile.originalname);
           designFileUrl = result.secure_url;
           uploadSuccess = true;
         } catch (cloudinaryError) {
@@ -565,7 +576,7 @@ exports.updateDesign = async (req, res, next) => {
       let uploadSuccess = false;
       if (isCloudinaryConfigured) {
         try {
-          const result = await uploadToCloudinary(designFile.buffer, 'raw');
+          const result = await uploadToCloudinary(designFile.buffer, 'raw', designFile.originalname);
           req.body.designFile = result.secure_url;
           uploadSuccess = true;
         } catch (cloudinaryError) {
@@ -754,6 +765,11 @@ exports.downloadDesign = async (req, res, next) => {
         const ext = path.extname(filename);
         const originalName = `${design.title.replace(/\s+/g, '_')}${ext}`;
         return res.download(filePath, originalName);
+      } else {
+        return res.status(404).json({
+          success: false,
+          error: 'The design file is no longer available on this temporary server instance. Please ask the seller/admin to re-upload the design.',
+        });
       }
     }
 
