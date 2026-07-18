@@ -112,7 +112,7 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1576016770956-debb63d90029?w=200&h=200&fit=crop',
+    image: '/other_design.png',
   }
 ];
 
@@ -152,7 +152,7 @@ const EMBROIDERY_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    image: '/other_design.png',
   }
 ];
 
@@ -211,7 +211,7 @@ const DIGITAL_PRINT_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+    image: '/other_design.png',
   }
 ];
 
@@ -242,7 +242,7 @@ const POSITION_PRINT_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+    image: '/other_design.png',
   }
 ];
 
@@ -415,22 +415,22 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1576016770956-debb63d90029?w=200&h=200&fit=crop',
+    image: '/other_design.png',
     parentCategory: 'Weaving Design'
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    image: '/other_design.png',
     parentCategory: 'Embroidery Design'
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+    image: '/other_design.png',
     parentCategory: 'Digital Print Design'
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+    image: '/other_design.png',
     parentCategory: 'Position Print Design'
   }
 ];
