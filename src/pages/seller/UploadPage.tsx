@@ -71,8 +71,8 @@ export function UploadPage() {
         setSubcategory('Other');
       }
       setDesignType('Flat/Multi Designs');
-      setArea('100 mm');
-      setNeedle('1');
+      setArea('');
+      setNeedle('');
       setDesignFormat('EMB');
       setSareeConcept('Box Pallu');
       setPdcPrice('');
@@ -628,7 +628,7 @@ export function UploadPage() {
             {/* Area */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                {category === 'Weaving Design' ? 'Reed *' : 'Area *'}
+                {category === 'Weaving Design' ? 'Reed *' : 'Size *'}
               </label>
               {category === 'Weaving Design' ? (
                 <input
@@ -640,31 +640,21 @@ export function UploadPage() {
                   required
                 />
               ) : (
-                <select 
-                  value={area} 
+                <input
+                  type="text"
+                  value={area}
                   onChange={(e) => setArea(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-                >
-                  <option value="100 mm">100 mm</option>
-                  <option value="125 mm">125 mm</option>
-                  <option value="150 mm">150 mm</option>
-                  <option value="175 mm">175 mm</option>
-                  <option value="200 mm">200 mm</option>
-                  <option value="225 mm">225 mm</option>
-                  <option value="250 mm">250 mm</option>
-                  <option value="300 mm">300 mm</option>
-                  <option value="330 mm">330 mm</option>
-                  <option value="400 mm">400 mm</option>
-                  <option value="500 mm">500 mm</option>
-                  <option value="600 mm">600 mm</option>
-                </select>
+                  placeholder="e.g. 150 mm"
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                  required
+                />
               )}
             </div>
 
             {/* Needle / Pick */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                {category === 'Weaving Design' ? 'Pick *' : 'Needle *'}
+                {category === 'Weaving Design' ? 'Pick *' : 'Color *'}
               </label>
               {category === 'Weaving Design' ? (
                 <input
@@ -676,24 +666,14 @@ export function UploadPage() {
                   required
                 />
               ) : (
-                <select 
-                  value={needle} 
+                <input
+                  type="text"
+                  value={needle}
                   onChange={(e) => setNeedle(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-                >
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                  <option value="11">11</option>
-                  <option value="12">12</option>
-                </select>
+                  placeholder="e.g. 9 Color"
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                  required
+                />
               )}
             </div>
 

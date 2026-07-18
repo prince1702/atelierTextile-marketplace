@@ -333,7 +333,7 @@ export function DesignDetail() {
                       {/* Row 5: Area / Reed */}
                       <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
                         <span className="font-semibold text-on-surface-variant">
-                          {design.category === 'Weaving Design' ? 'Reed' : 'Area'}
+                          {design.category === 'Weaving Design' ? 'Reed' : 'Size'}
                         </span>
                         <span className="text-on-surface font-semibold text-right break-words">{design.area || 'N/A'}</span>
                       </div>
@@ -341,7 +341,7 @@ export function DesignDetail() {
                       {/* Row 6: Needle / Pick */}
                       <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
                         <span className="font-semibold text-on-surface-variant">
-                          {design.category === 'Weaving Design' ? 'Pick' : 'Needle'}
+                          {design.category === 'Weaving Design' ? 'Pick' : 'Color'}
                         </span>
                         <span className="text-on-surface font-semibold text-right break-words">{design.needle || 'N/A'}</span>
                       </div>

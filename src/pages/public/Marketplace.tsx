@@ -957,7 +957,7 @@ export function Marketplace() {
                     onClick={() => toggleFilter('area')}
                     className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
                   >
-                    <span className="font-bold text-xs text-primary uppercase tracking-wider">{activeCategory === 'Weaving Design' ? 'Reed' : 'Area'}</span>
+                    <span className="font-bold text-xs text-primary uppercase tracking-wider">{activeCategory === 'Weaving Design' ? 'Reed' : 'Size'}</span>
                     <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.area ? 'rotate-180' : ''}`}>
                       keyboard_arrow_down
                     </span>
