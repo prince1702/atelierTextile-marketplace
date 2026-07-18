@@ -749,17 +749,29 @@ exports.downloadDesign = async (req, res, next) => {
       });
     }
 
-    const fileUrl = design.designFile || design.image;
-    if (!fileUrl) {
+    // Only use designFile — do NOT fall back to display image (display image is preview only)
+    const fileUrl = design.designFile;
+
+    if (!fileUrl || fileUrl.trim() === '') {
       return res.status(404).json({
         success: false,
-        error: 'No design file has been uploaded for this design',
+        error: 'No downloadable file has been uploaded for this design yet. Please ask the seller to upload a ZIP/RAR source file.',
       });
     }
 
     const safeTitle = design.title.replace(/[^a-zA-Z0-9]/g, '_');
 
-    // Case 1: Local file (starts with /, relative path stored as path)
+    // Detect expired Render local-storage URLs (e.g. https://ateliertextile-backend.onrender.com/uploads/...)
+    // These files are gone because Render uses ephemeral disks
+    const isExpiredRenderUrl = fileUrl.includes('/uploads/') && fileUrl.includes('onrender.com');
+    if (isExpiredRenderUrl) {
+      return res.status(410).json({
+        success: false,
+        error: 'This design file was stored on a temporary server and has since been cleared. Please ask the seller to re-upload the ZIP/RAR source file.',
+      });
+    }
+
+    // Case 1: Local relative path (starts with /)
     const isAbsoluteLocalPath = fileUrl.startsWith('/') && !fileUrl.startsWith('//');
     if (isAbsoluteLocalPath) {
       const filename = path.basename(fileUrl);
@@ -770,26 +782,23 @@ exports.downloadDesign = async (req, res, next) => {
       }
       return res.status(404).json({
         success: false,
-        error: 'The design file is no longer available. Please contact the seller to re-upload it.',
+        error: 'The design file is no longer available on the server. Please ask the seller to re-upload it.',
       });
     }
 
-    // Case 2: Full URL (local server /uploads/ URL or Cloudinary URL) — stream it
+    // Case 2: Full remote URL (Cloudinary) — stream it as attachment
     if (fileUrl.startsWith('http')) {
       const ext = path.extname(fileUrl.split('?')[0]) || '.zip';
       const downloadFilename = `${safeTitle}${ext}`;
-      const { https, http } = (() => {
-        const _https = require('https');
-        const _http = require('http');
-        return { https: _https, http: _http };
-      })();
-      const protocol = fileUrl.startsWith('https') ? https : http;
+      const _https = require('https');
+      const _http = require('http');
+      const protocol = fileUrl.startsWith('https') ? _https : _http;
 
       protocol.get(fileUrl, (fileRes) => {
         if (fileRes.statusCode !== 200) {
           return res.status(404).json({
             success: false,
-            error: 'The design file could not be retrieved. It may have been deleted from the storage server.',
+            error: 'The design file could not be retrieved from cloud storage. Please ask the seller to re-upload it.',
           });
         }
         res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
@@ -800,12 +809,14 @@ exports.downloadDesign = async (req, res, next) => {
         fileRes.pipe(res);
       }).on('error', (err) => {
         console.error('❌ Remote file fetch error:', err.message);
-        res.status(500).json({ success: false, error: 'Failed to retrieve the design file. Please try again.' });
+        if (!res.headersSent) {
+          res.status(500).json({ success: false, error: 'Failed to retrieve the design file. Please try again.' });
+        }
       });
       return;
     }
 
-    return res.status(404).json({ success: false, error: 'No valid design file available for download' });
+    return res.status(404).json({ success: false, error: 'No valid design file is available for download' });
   } catch (error) {
     next(error);
   }
