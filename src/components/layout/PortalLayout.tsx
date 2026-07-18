@@ -78,6 +78,15 @@ export function PortalLayout({ children }: PortalLayoutProps) {
           </div>
         )}
 
+        {role === 'customer' && (
+          <div className="px-4 mb-2 mt-4">
+            <Link to="/marketplace" className="flex items-center justify-center gap-2 w-full py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-semibold text-sm shadow-sm">
+              <span className="material-symbols-outlined text-[18px]">storefront</span>
+              Browse Marketplace
+            </Link>
+          </div>
+        )}
+
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
           {navItems.map(item => (
             <Link 
@@ -135,6 +144,19 @@ export function PortalLayout({ children }: PortalLayoutProps) {
           </button>
         </div>
         
+        {role === 'customer' && (
+          <div className="px-4 mb-2 mt-4">
+            <Link
+              to="/marketplace"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-center gap-2 w-full py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-semibold text-sm shadow-sm"
+            >
+              <span className="material-symbols-outlined text-[18px]">storefront</span>
+              Browse Marketplace
+            </Link>
+          </div>
+        )}
+
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
           {navItems.map(item => (
             <Link 
