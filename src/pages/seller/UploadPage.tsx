@@ -17,6 +17,7 @@ export function UploadPage() {
   const [lehenghaType, setLehenghaType] = useState('Lehengha Design');
   const [suitType, setSuitType] = useState('Suit Design');
   const [dupattaType, setDupattaType] = useState('Dupatta Design');
+  const [mekhenaChadarType, setMekhenaChadarType] = useState('Mekhena + Chadar Design');
   const [multiType, setMultiType] = useState('Multi Design');
   const [sequinType, setSequinType] = useState('Sequin Design');
   const [cordingType, setCordingType] = useState('Cording Design');
@@ -45,6 +46,7 @@ export function UploadPage() {
       setLehenghaType('Lehengha Design');
       setSuitType('Suit Design');
       setDupattaType('Dupatta Design');
+      setMekhenaChadarType('Mekhena + Chadar Design');
       setDesignType('2 fider design');
       setArea('');
       setNeedle('');
@@ -88,6 +90,7 @@ export function UploadPage() {
           'Dupatta Design',
           'Blouse Design',
           'Lehengha Design',
+          'Mekhena + Chadar Design',
           'Other'
         ];
       case 'Embroidery Design':
@@ -168,6 +171,8 @@ export function UploadPage() {
           finalSubcategory = suitType;
         } else if (subcategory === 'Dupatta Design') {
           finalSubcategory = dupattaType;
+        } else if (subcategory === 'Mekhena + Chadar Design') {
+          finalSubcategory = mekhenaChadarType;
         }
       } else if (category === 'Embroidery Design') {
         if (subcategory === 'Multi Design') {
@@ -383,6 +388,24 @@ export function UploadPage() {
                   <option value="Dupatta - (50 600) Satin Design">(50 600) Satin Design</option>
                   <option value="Dupatta - Nylon Satin Design">Nylon Satin Design</option>
                   <option value="Dupatta - Cotton Design">Cotton Design</option>
+                </select>
+              </div>
+            )}
+
+            {/* Mekhena + Chadar Type (Conditional) */}
+            {category === 'Weaving Design' && subcategory === 'Mekhena + Chadar Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Mekhena + Chadar Type *</label>
+                <select 
+                  value={mekhenaChadarType} 
+                  onChange={(e) => setMekhenaChadarType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Mekhena + Chadar Design">General Mekhena + Chadar Design</option>
+                  <option value="Mekhena + Chadar - Kota Lichi Design">Kota Lichi Design</option>
+                  <option value="Mekhena + Chadar - 50 600 Design">50 600 Design</option>
+                  <option value="Mekhena + Chadar - Nylon Design">Nylon Design</option>
+                  <option value="Mekhena + Chadar - Cotton Sprun Design">Cotton Sprun Design</option>
                 </select>
               </div>
             )}

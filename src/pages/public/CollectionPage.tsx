@@ -272,6 +272,42 @@ const DUPATTA_SUBCATEGORIES = [
   }
 ];
 
+const ALL_MEKHENA_CHADAR_SUBCATEGORIES_VALUES = [
+  'Mekhena + Chadar Design',
+  'Mekhena + Chadar - Kota Lichi Design',
+  'Mekhena + Chadar - 50 600 Design',
+  'Mekhena + Chadar - Nylon Design',
+  'Mekhena + Chadar - Cotton Sprun Design'
+];
+
+const MEKHENA_CHADAR_SUBCATEGORIES = [
+  {
+    name: 'All Mekhena + Chadar',
+    value: 'Mekhena + Chadar Design',
+    image: '/mekhena_chadar_weaving_design.jpg',
+  },
+  {
+    name: 'Kota Lichi Design',
+    value: 'Mekhena + Chadar - Kota Lichi Design',
+    image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200&h=200&fit=crop',
+  },
+  {
+    name: '50 600 Design',
+    value: 'Mekhena + Chadar - 50 600 Design',
+    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Nylon Design',
+    value: 'Mekhena + Chadar - Nylon Design',
+    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+  },
+  {
+    name: 'Cotton Sprun Design',
+    value: 'Mekhena + Chadar - Cotton Sprun Design',
+    image: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=200&h=200&fit=crop',
+  }
+];
+
 const ALL_MULTI_SUBCATEGORIES_VALUES = [
   'Multi Design',
   'Saree Daman',
@@ -710,6 +746,7 @@ const getSubcategoryDisplayName = (sub: string) => {
   if (sub.startsWith('Lehengha - ')) return sub.replace('Lehengha - ', '');
   if (sub.startsWith('Suit - ')) return sub.replace('Suit - ', '');
   if (sub.startsWith('Dupatta - ')) return sub.replace('Dupatta - ', '');
+  if (sub.startsWith('Mekhena + Chadar - ')) return sub.replace('Mekhena + Chadar - ', '');
   return sub;
 };
 
@@ -830,7 +867,7 @@ export function CollectionPage() {
   };
 
   const fetchDesigns = async () => {
-    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design', 'Cording Design', 'Chain Design', 'Beads Design'].includes(subcategory) && !showAll) {
+    if (['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Mekhena + Chadar Design', 'Multi Design', 'Sequin Design', 'Cording Design', 'Chain Design', 'Beads Design'].includes(subcategory) && !showAll) {
       setDesigns([]);
       setTotalPages(1);
       setTotalResults(0);
@@ -884,6 +921,7 @@ export function CollectionPage() {
     if (ALL_LEHENGHA_SUBCATEGORIES_VALUES.includes(sub)) return 'Lehengha Design';
     if (ALL_SUIT_SUBCATEGORIES_VALUES.includes(sub)) return 'Suit Design';
     if (ALL_DUPATTA_SUBCATEGORIES_VALUES.includes(sub)) return 'Dupatta Design';
+    if (ALL_MEKHENA_CHADAR_SUBCATEGORIES_VALUES.includes(sub)) return 'Mekhena + Chadar Design';
     if (ALL_MULTI_SUBCATEGORIES_VALUES.includes(sub)) return 'Multi Design';
     if (ALL_SEQUIN_SUBCATEGORIES_VALUES.includes(sub)) return 'Sequin Design';
     if (ALL_CORDING_SUBCATEGORIES_VALUES.includes(sub)) return 'Cording Design';
@@ -993,6 +1031,16 @@ export function CollectionPage() {
           </div>
         )}
 
+        {/* Mekhena + Chadar Subcategories Visual Bar */}
+        {category === 'Weaving Design' && subcategory === 'Mekhena + Chadar Design' && !showAll && (
+          <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-6xl mx-auto">
+            <h3 className="text-lg font-bold text-on-surface text-center mb-6 uppercase tracking-wider">Mekhena + Chadar Subcategories</h3>
+            <div className="grid grid-cols-3 gap-3.5 sm:gap-6 justify-center md:flex md:flex-wrap md:justify-center md:gap-8">
+              {MEKHENA_CHADAR_SUBCATEGORIES.map((sub, index) => renderSubcategoryLink(sub, index, 'Weaving Design', subcategory, showAll))}
+            </div>
+          </div>
+        )}
+
         {/* Multi Subcategories Visual Bar */}
         {category === 'Embroidery Design' && subcategory === 'Multi Design' && !showAll && (
           <div className="bg-white rounded-2xl shadow-card p-6 mb-8 border border-outline-variant animate-fade-in max-w-5xl mx-auto">
@@ -1045,7 +1093,7 @@ export function CollectionPage() {
 
 
 
-        {(!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Multi Design', 'Sequin Design', 'Cording Design', 'Chain Design', 'Beads Design'].includes(subcategory) || showAll) && (isLoading || !(designs.length === 0 && 
+        {(!['Saree Design', 'Lehengha Design', 'Suit Design', 'Dupatta Design', 'Mekhena + Chadar Design', 'Multi Design', 'Sequin Design', 'Cording Design', 'Chain Design', 'Beads Design'].includes(subcategory) || showAll) && (isLoading || !(designs.length === 0 && 
                          selectedDesignType === 'All' && 
                          selectedArea === 'All' && 
                          selectedNeedle === 'All' && 

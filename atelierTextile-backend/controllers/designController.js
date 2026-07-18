@@ -130,6 +130,16 @@ exports.getDesigns = async (req, res, next) => {
             'Dupatta - Cotton Design'
           ]
         };
+      } else if (subcategory === 'Mekhena + Chadar Design') {
+        filter.subcategory = {
+          $in: [
+            'Mekhena + Chadar Design',
+            'Mekhena + Chadar - Kota Lichi Design',
+            'Mekhena + Chadar - 50 600 Design',
+            'Mekhena + Chadar - Nylon Design',
+            'Mekhena + Chadar - Cotton Sprun Design'
+          ]
+        };
       } else if (subcategory === 'Multi Design') {
         filter.subcategory = {
           $in: [

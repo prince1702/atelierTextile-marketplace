@@ -106,6 +106,10 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
     image: '/lehengha_weaving_design.jpg',
   },
   {
+    name: 'Mekhena + Chadar Design',
+    image: '/mekhena_chadar_weaving_design.jpg',
+  },
+  {
     name: 'Other',
     image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
   }
@@ -280,6 +284,11 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'Lehengha Design',
     image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=200&h=200&fit=crop',
+    parentCategory: 'Weaving Design'
+  },
+  {
+    name: 'Mekhena + Chadar Design',
+    image: '/mekhena_chadar_weaving_design.jpg',
     parentCategory: 'Weaving Design'
   },
   {

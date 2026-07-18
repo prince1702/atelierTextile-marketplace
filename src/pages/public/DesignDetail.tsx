@@ -25,6 +25,10 @@ const getParentSubcategory = (sub: string): string => {
     'Dupatta - Dolla-Nylon Design', 'Dupatta - Viscouse Design', 'Dupatta - (50 600) Satin Design',
     'Dupatta - Nylon Satin Design', 'Dupatta - Cotton Design'
   ];
+  const ALL_MEKHENA_CHADAR_SUBCATEGORIES_VALUES = [
+    'Mekhena + Chadar Design', 'Mekhena + Chadar - Kota Lichi Design', 'Mekhena + Chadar - 50 600 Design',
+    'Mekhena + Chadar - Nylon Design', 'Mekhena + Chadar - Cotton Sprun Design'
+  ];
   const ALL_MULTI_SUBCATEGORIES_VALUES = [
     'Multi Design', 'Saree Daman', 'C Pallu - Box Pallu', 'Gala-Nack-Single Head',
     'Kurti-Gala', 'Buta', 'Buti', 'Sut Daman & Dupta', 'Lace', 'Figar', 'Garment-Servani',
@@ -53,6 +57,7 @@ const getParentSubcategory = (sub: string): string => {
   if (ALL_LEHENGHA_SUBCATEGORIES_VALUES.includes(sub)) return 'Lehengha Design';
   if (ALL_SUIT_SUBCATEGORIES_VALUES.includes(sub)) return 'Suit Design';
   if (ALL_DUPATTA_SUBCATEGORIES_VALUES.includes(sub)) return 'Dupatta Design';
+  if (ALL_MEKHENA_CHADAR_SUBCATEGORIES_VALUES.includes(sub)) return 'Mekhena + Chadar Design';
   if (ALL_MULTI_SUBCATEGORIES_VALUES.includes(sub)) return 'Multi Design';
   if (ALL_SEQUIN_SUBCATEGORIES_VALUES.includes(sub)) return 'Sequin Design';
   if (ALL_CORDING_SUBCATEGORIES_VALUES.includes(sub)) return 'Cording Design';
@@ -65,6 +70,7 @@ const getSubcategoryDisplayName = (sub: string) => {
   if (sub.startsWith('Lehengha - ')) return sub.replace('Lehengha - ', '');
   if (sub.startsWith('Suit - ')) return sub.replace('Suit - ', '');
   if (sub.startsWith('Dupatta - ')) return sub.replace('Dupatta - ', '');
+  if (sub.startsWith('Mekhena + Chadar - ')) return sub.replace('Mekhena + Chadar - ', '');
   return sub;
 };
 
