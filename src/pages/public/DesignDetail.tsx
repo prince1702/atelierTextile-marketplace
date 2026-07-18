@@ -96,6 +96,8 @@ export function DesignDetail() {
         setDesign(data);
         if (data.category === 'Weaving Design') {
           setSelectedLicense('BMP');
+        } else if (data.category === 'Digital Print Design' || data.category === 'Position Print Design') {
+          setSelectedLicense('PSD');
         } else {
           setSelectedLicense('EMB');
         }
@@ -122,7 +124,7 @@ export function DesignDetail() {
   };
 
   const getPrice = (price: number, license: string) => {
-    if (license === 'Extended' || license === 'Other' || license === 'OTHER') return price * 2.5;
+    if (license === 'Extended' || license === 'Other' || license === 'OTHER' || license === 'TIF') return price * 2.5;
     if (license === 'PDC') {
       return design && design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : price * 2.5;
     }
@@ -156,6 +158,11 @@ export function DesignDetail() {
       return [
         { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' },
         { name: 'PDC', price: design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5, desc: 'PDC format. Extended production license.' }
+      ];
+    } else if (design.category === 'Digital Print Design' || design.category === 'Position Print Design') {
+      return [
+        { name: 'PSD', price: design.price, desc: 'PSD format. Standard print license.' },
+        { name: 'TIF', price: design.price * 2.5, desc: 'TIF format. High-resolution print format.' }
       ];
     } else {
       return [

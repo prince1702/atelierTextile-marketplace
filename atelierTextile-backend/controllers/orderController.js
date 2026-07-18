@@ -80,7 +80,7 @@ exports.getOrder = async (req, res, next) => {
 // @route   POST /api/orders
 // @access  Customer
 const getPriceWithLicense = (price, licenseType, design = null) => {
-  if (licenseType === 'Standard Regional' || licenseType === 'Extended' || licenseType === 'Other' || licenseType === 'OTHER') return price * 2.5;
+  if (licenseType === 'Standard Regional' || licenseType === 'Extended' || licenseType === 'Other' || licenseType === 'OTHER' || licenseType === 'TIF') return price * 2.5;
   if (licenseType === 'PDC') {
     return design && design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : price * 2.5;
   }
