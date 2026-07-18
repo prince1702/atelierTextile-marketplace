@@ -68,10 +68,11 @@ const WEAVING_CONCEPTS = [
   'topdyed',
   'nylon'
 ];
+
 const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'All',
-    image: 'https://images.unsplash.com/photo-1598550476439-6847785fce6e?w=200&h=200&fit=crop',
+    image: '/all_weaving.png',
   },
   {
     name: 'Saree Design',
