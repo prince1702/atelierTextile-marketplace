@@ -71,7 +71,7 @@ const WEAVING_CONCEPTS = [
 const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'All',
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1598550476439-6847785fce6e?w=200&h=200&fit=crop',
   },
   {
     name: 'Saree Design',
@@ -111,7 +111,7 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1576016770956-debb63d90029?w=200&h=200&fit=crop',
   }
 ];
 
@@ -414,7 +414,7 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1576016770956-debb63d90029?w=200&h=200&fit=crop',
     parentCategory: 'Weaving Design'
   },
   {
