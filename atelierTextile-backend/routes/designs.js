@@ -12,6 +12,7 @@ const {
   deleteDesign,
   getMyListings,
   updateDesignStatus,
+  downloadDesign,
 } = require('../controllers/designController');
 
 // Public routes
@@ -29,6 +30,7 @@ router.post('/', auth, authorize('seller'), cpUpload, createDesign);
 
 // Public single design
 router.get('/:id', getDesign);
+router.get('/:id/download', auth, downloadDesign);
 
 // Seller update/delete own design
 router.put('/:id', auth, authorize('seller'), cpUpload, updateDesign);

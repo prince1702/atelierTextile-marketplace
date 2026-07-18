@@ -24,29 +24,37 @@ export function OrdersPage() {
 
   useEffect(() => { fetchOrders(); }, []);
 
-  const handleDownload = async (designTitle: string, imageUrl: string) => {
-    if (!imageUrl) {
-      showToast('No file available for download', 'error');
+  const handleDownload = async (designTitle: string, designId: string, fallbackUrl?: string) => {
+    if (!designId) {
+      if (fallbackUrl) {
+        showToast(`Initializing secure download for: ${designTitle}`, 'success');
+        try {
+          const response = await fetch(fallbackUrl);
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          const extension = fallbackUrl.split('.').pop()?.split('?')[0] || 'png';
+          link.setAttribute('download', `${designTitle.replace(/\s+/g, '_')}.${extension}`);
+          document.body.appendChild(link);
+          link.click();
+          link.parentNode?.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error('Download failed:', error);
+          window.open(fallbackUrl, '_blank');
+        }
+      } else {
+        showToast('No file available for download', 'error');
+      }
       return;
     }
+
     showToast(`Initializing secure download for: ${designTitle}`, 'success');
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      const extension = imageUrl.split('.').pop()?.split('?')[0] || 'png';
-      link.setAttribute('download', `${designTitle.replace(/\s+/g, '_')}.${extension}`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Download failed:', error);
-      // Fallback: open in a new tab if fetch is blocked by CORS
-      window.open(imageUrl, '_blank');
-    }
+    const token = localStorage.getItem('token') || '';
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const downloadUrl = `${backendUrl}/designs/${designId}/download?token=${encodeURIComponent(token)}`;
+    window.location.href = downloadUrl;
   };
 
   const handleUploadScreenshot = (orderId: string) => {
@@ -170,7 +178,11 @@ export function OrdersPage() {
                 <div className="flex gap-2">
                   {order.status === 'completed' && (
                     <button
-                      onClick={() => handleDownload(order.designTitle, order.design?.designFile || order.designImage)}
+                      onClick={() => handleDownload(
+                        order.designTitle,
+                        typeof order.design === 'object' ? (order.design?.id || order.design?._id) : order.design,
+                        order.designImage
+                      )}
                       className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
                     >
                       <span className="material-symbols-outlined text-[14px]">download</span>

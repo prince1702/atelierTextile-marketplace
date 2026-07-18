@@ -710,3 +710,56 @@ exports.updateDesignStatus = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Download secure design file
+// @route   GET /api/designs/:id/download
+// @access  Authenticated (buyer/seller/admin)
+exports.downloadDesign = async (req, res, next) => {
+  try {
+    const Order = require('../models/Order');
+    const design = await Design.findById(req.params.id);
+    if (!design) {
+      return res.status(404).json({ success: false, error: 'Design not found' });
+    }
+
+    // Check permissions: admin, owner, or purchaser
+    const isOwner = design.designer.toString() === req.user.id.toString();
+    const isAdmin = req.user.role === 'admin';
+    const hasPurchased = await Order.exists({
+      buyer: req.user.id,
+      design: design._id,
+      status: 'completed',
+    });
+
+    if (!isOwner && !isAdmin && !hasPurchased) {
+      return res.status(403).json({
+        success: false,
+        error: 'You do not have permission to download this design file',
+      });
+    }
+
+    const fileUrl = design.designFile || design.image;
+    if (!fileUrl) {
+      return res.status(404).json({
+        success: false,
+        error: 'No design file available for download',
+      });
+    }
+
+    // If local file, serve it directly as an attachment
+    if (fileUrl.includes('/uploads/')) {
+      const filename = fileUrl.split('/uploads/').pop();
+      const filePath = path.join(__dirname, '../public/uploads', filename);
+      if (fs.existsSync(filePath)) {
+        const ext = path.extname(filename);
+        const originalName = `${design.title.replace(/\s+/g, '_')}${ext}`;
+        return res.download(filePath, originalName);
+      }
+    }
+
+    // If remote, redirect to start secure download
+    res.redirect(fileUrl);
+  } catch (error) {
+    next(error);
+  }
+};
