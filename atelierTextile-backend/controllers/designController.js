@@ -11,6 +11,9 @@ const uploadToCloudinary = (buffer, resourceType = 'image', originalName = '') =
       folder: 'atelierTextile/designs',
       resource_type: resourceType,
     };
+    if (resourceType === 'raw') {
+      options.type = 'authenticated';
+    }
 
     if (resourceType === 'raw' && originalName) {
       const ext = path.extname(originalName);
@@ -803,13 +806,14 @@ exports.downloadDesign = async (req, res, next) => {
         }
         const publicIdWithExt = publicIdParts.join('/');
         let ext = path.extname(publicIdWithExt) || '.zip';
-        const publicId = publicIdWithExt.replace(/\.[^.]+$/, '');
+        const publicId = publicIdWithExt; // DO NOT STRIP EXTENSION for raw files
 
         const downloadFilename = `${safeTitle}${ext}`;
 
         // Generate a signed URL valid for 1 hour
-        const signedUrl = cloudinary.utils.private_download_url(publicId, ext.replace('.', ''), {
+        const signedUrl = cloudinary.utils.private_download_url(publicId, '', {
           resource_type: 'raw',
+          type: 'authenticated', // matches how we now upload raw files
           expires_at: Math.floor(Date.now() / 1000) + 3600,
           attachment: downloadFilename,
         });
