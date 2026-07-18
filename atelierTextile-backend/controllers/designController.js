@@ -785,23 +785,59 @@ exports.downloadDesign = async (req, res, next) => {
       });
     }
 
-    // ── Case 3: Cloudinary URL ────────────────────────────────────────────────
-    // Redirect directly to the plain Cloudinary URL.
-    // DO NOT add fl_attachment — applying transformations to raw uploads requires
-    // a signed URL (returns HTTP 401 without it). Browsers auto-download ZIP/RAR
-    // files since they can't render them, so no transformation flag is needed.
-    if (fileUrl.includes('cloudinary.com')) {
-      // Strip any fl_attachment that may have been added by a previous version
-      const cleanUrl = fileUrl.replace('/fl_attachment/', '/').replace('/upload/fl_attachment', '/upload');
-      console.log(`✅ Redirecting to plain Cloudinary URL: ${cleanUrl}`);
-      return res.redirect(302, cleanUrl);
-    }
-
-
-    // ── Case 4: Any other remote HTTP/HTTPS URL ───────────────────────────────
+    // ── Case 3 & 4: Cloudinary URL or any other remote HTTP/HTTPS URL ─────────
+    // Stream the file THROUGH the backend so we can attach the correct
+    // Content-Disposition: attachment header. A plain redirect causes browsers
+    // to navigate to the Cloudinary page instead of triggering a file download.
     if (fileUrl.startsWith('http')) {
-      console.log(`✅ Redirecting to remote URL: ${fileUrl}`);
-      return res.redirect(302, fileUrl);
+      // Strip any leftover fl_attachment transformation fragment (legacy)
+      const cleanUrl = fileUrl
+        .replace('/fl_attachment/', '/')
+        .replace('/upload/fl_attachment', '/upload');
+
+      let ext = '.zip';
+      try { ext = path.extname(new URL(cleanUrl).pathname) || '.zip'; } catch (_) {}
+      const downloadFilename = `${safeTitle}${ext}`;
+
+      console.log(`✅ Streaming remote file to client as "${downloadFilename}": ${cleanUrl}`);
+
+      const https = require('https');
+      const http = require('http');
+
+      const streamFrom = (url, redirectsLeft) => {
+        if (redirectsLeft < 0) {
+          if (!res.headersSent) res.status(502).json({ success: false, error: 'Too many redirects from storage server.' });
+          return;
+        }
+        const proto = url.startsWith('https') ? https : http;
+        proto.get(url, (remoteRes) => {
+          if (remoteRes.statusCode === 301 || remoteRes.statusCode === 302) {
+            streamFrom(remoteRes.headers.location, redirectsLeft - 1);
+            return;
+          }
+          if (remoteRes.statusCode !== 200) {
+            if (!res.headersSent) {
+              res.status(remoteRes.statusCode || 502).json({
+                success: false,
+                error: `Storage returned status ${remoteRes.statusCode}. The file may have been deleted.`,
+              });
+            }
+            return;
+          }
+          res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
+          res.setHeader('Content-Type', remoteRes.headers['content-type'] || 'application/octet-stream');
+          if (remoteRes.headers['content-length']) {
+            res.setHeader('Content-Length', remoteRes.headers['content-length']);
+          }
+          remoteRes.pipe(res);
+        }).on('error', (err) => {
+          console.error('Stream error:', err.message);
+          if (!res.headersSent) res.status(502).json({ success: false, error: 'Failed to download file from storage.' });
+        });
+      };
+
+      streamFrom(cleanUrl, 3);
+      return;
     }
 
     return res.status(404).json({ success: false, error: 'No valid design file is available for download.' });

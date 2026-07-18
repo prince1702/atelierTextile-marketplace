@@ -24,7 +24,7 @@ export function OrdersPage() {
 
   useEffect(() => { fetchOrders(); }, []);
 
-  const handleDownload = (designTitle: string, designId: string) => {
+  const handleDownload = async (designTitle: string, designId: string) => {
     if (!designId) {
       showToast('No file available for download', 'error');
       return;
@@ -33,18 +33,31 @@ export function OrdersPage() {
     const token = localStorage.getItem('atelier_token') || '';
     const downloadUrl = `${API_URL}/api/designs/${designId}/download?token=${encodeURIComponent(token)}`;
 
-    // Use a hidden anchor tag to navigate directly to the download URL.
-    // The backend will redirect to a signed Cloudinary URL — letting the browser
-    // handle the redirect natively is the only reliable cross-origin download strategy.
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.target = '_blank'; // Open in new tab so the current page stays
-    link.rel = 'noopener noreferrer';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
     showToast(`Downloading: ${designTitle}...`, 'success');
+
+    try {
+      const response = await fetch(downloadUrl);
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        showToast(errData.error || `Download failed (${response.status})`, 'error');
+        return;
+      }
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      // Try to get filename from Content-Disposition header
+      const disposition = response.headers.get('Content-Disposition') || '';
+      const match = disposition.match(/filename="?([^"\n]+)"?/);
+      link.download = match ? match[1] : `${designTitle}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error('Download error:', err);
+      showToast('Download failed. Please try again.', 'error');
+    }
   };
 
   const handleUploadScreenshot = (orderId: string) => {
@@ -170,7 +183,14 @@ export function OrdersPage() {
                     <button
                       onClick={() => handleDownload(
                         order.designTitle,
-                        typeof order.design === 'object' ? (order.design?.id || (order.design as any)?._id) : (order.design as unknown as string || '')
+                        (() => {
+                          // order.design is populated by the backend, so it may be a
+                          // full Design object or just a string ID. Handle all cases.
+                          const d = order.design as any;
+                          if (!d) return '';
+                          if (typeof d === 'string') return d;
+                          return d.id || d._id?.toString() || '';
+                        })()
                       )}
                       className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
                     >
