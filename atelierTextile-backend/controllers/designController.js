@@ -309,6 +309,9 @@ exports.getDesigns = async (req, res, next) => {
     if (search) {
       filter.$or = [
         { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { category: { $regex: search, $options: 'i' } },
+        { subcategory: { $regex: search, $options: 'i' } },
         { tags: { $regex: search, $options: 'i' } },
         { designerName: { $regex: search, $options: 'i' } },
       ];

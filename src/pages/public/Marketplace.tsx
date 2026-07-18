@@ -515,6 +515,13 @@ export function Marketplace() {
     const cat = searchParams.get('category');
     if (cat && CATEGORIES.includes(cat)) {
       setActiveCategory(cat);
+    } else if (searchParams.get('search')) {
+      setActiveCategory('All');
+    }
+    const q = searchParams.get('search');
+    if (q !== null) {
+      setSearchQuery(q);
+      setSearchTrigger(q);
     }
   }, [searchParams]);
 
@@ -566,13 +573,6 @@ export function Marketplace() {
   };
 
   const fetchDesigns = async () => {
-    if (!searchTrigger.trim()) {
-      setDesigns([]);
-      setTotalPages(1);
-      setTotalResults(0);
-      setIsLoading(false);
-      return;
-    }
     setIsLoading(true);
     try {
       const params: any = {
