@@ -31,7 +31,7 @@ export function OrdersPage() {
     }
 
     showToast(`Preparing download for: ${designTitle}...`, 'success');
-    const token = localStorage.getItem('token') || '';
+    const token = localStorage.getItem('atelier_token') || '';
     const downloadUrl = `${API_URL}/api/designs/${designId}/download?token=${encodeURIComponent(token)}`;
 
     try {
