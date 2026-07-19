@@ -84,7 +84,11 @@ export function UploadPage() {
       setHeight('');
       setWidth('');
       setColor('');
-      setDesignFormat('EMB');
+      if (category === 'Digital Print Design' || category === 'Position Print Design') {
+        setDesignFormat('ALL');
+      } else {
+        setDesignFormat('EMB');
+      }
       setSareeConcept('Box Pallu');
       setPdcPrice('');
     }
@@ -835,6 +839,12 @@ export function UploadPage() {
                   <>
                     <option value="BMP">BMP</option>
                     <option value="PDC">PDC</option>
+                  </>
+                ) : category === 'Digital Print Design' || category === 'Position Print Design' ? (
+                  <>
+                    <option value="ALL">ALL</option>
+                    <option value="PSD">PSD</option>
+                    <option value="TIF">TIF</option>
                   </>
                 ) : (
                   <>

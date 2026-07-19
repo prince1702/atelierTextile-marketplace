@@ -99,7 +99,7 @@ export function DesignDetail() {
         if (data.category === 'Weaving Design') {
           setSelectedLicense('BMP');
         } else if (data.category === 'Digital Print Design' || data.category === 'Position Print Design') {
-          setSelectedLicense('PSD');
+          setSelectedLicense(data.designFormat === 'TIF' ? 'TIF' : 'PSD');
         } else {
           setSelectedLicense('EMB');
         }
@@ -165,10 +165,15 @@ export function DesignDetail() {
       }
       return options;
     } else if (design.category === 'Digital Print Design' || design.category === 'Position Print Design') {
-      return [
-        { name: 'PSD', price: design.price, desc: 'PSD format. Standard print license.' },
-        { name: 'TIF', price: design.price * 2.5, desc: 'TIF format. High-resolution print format.' }
-      ];
+      const options = [];
+      const format = design.designFormat ? design.designFormat.toUpperCase() : 'ALL';
+      if (format === 'ALL' || format === 'PSD') {
+        options.push({ name: 'PSD', price: design.price, desc: 'PSD format. Standard print license.' });
+      }
+      if (format === 'ALL' || format === 'TIF') {
+        options.push({ name: 'TIF', price: design.price * 2.5, desc: 'TIF format. High-resolution print format.' });
+      }
+      return options;
     } else {
       return [
         { name: 'EMB', price: design.price, desc: 'EMB format. Standard embroidery license.' },
