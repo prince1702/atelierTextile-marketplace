@@ -27,7 +27,19 @@ export function Login() {
       showToast('Welcome back to AtelierTextile!');
       // Navigate is handled by ProtectedRoute once auth state updates, 
       // but we can force it here for UX flow.
-      setTimeout(() => navigate('/profile'), 100);
+      const storedUserStr = localStorage.getItem('atelier_user');
+      let targetPath = '/profile';
+      if (storedUserStr) {
+        try {
+          const storedUser = JSON.parse(storedUserStr);
+          if (storedUser.role === 'customer') {
+            targetPath = '/';
+          }
+        } catch (e) {
+          console.error('Failed to parse user role for login redirect', e);
+        }
+      }
+      setTimeout(() => navigate(targetPath), 100);
     } catch (error: any) {
       const message = error.response?.data?.error || error.message || 'Invalid credentials';
       showToast(message, 'error');
