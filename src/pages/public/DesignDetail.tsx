@@ -349,21 +349,45 @@ export function DesignDetail() {
                         <span className="text-on-surface font-semibold text-right break-words">{design.designType || 'N/A'}</span>
                       </div>
 
-                      {/* Row 5: Area / Reed */}
-                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
-                        <span className="font-semibold text-on-surface-variant">
-                          {design.category === 'Weaving Design' ? 'Reed' : 'Area'}
-                        </span>
-                        <span className="text-on-surface font-semibold text-right break-words">{design.area || 'N/A'}</span>
-                      </div>
+                      {design.category === 'Digital Print Design' || design.category === 'Position Print Design' ? (
+                        <>
+                          {/* Row 5a: Height */}
+                          <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                            <span className="font-semibold text-on-surface-variant">Height</span>
+                            <span className="text-on-surface font-semibold text-right break-words">{design.height || 'N/A'}</span>
+                          </div>
 
-                      {/* Row 6: Needle / Pick */}
-                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
-                        <span className="font-semibold text-on-surface-variant">
-                          {design.category === 'Weaving Design' ? 'Pick' : 'Needle'}
-                        </span>
-                        <span className="text-on-surface font-semibold text-right break-words">{design.needle || 'N/A'}</span>
-                      </div>
+                          {/* Row 5b: Width */}
+                          <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                            <span className="font-semibold text-on-surface-variant">Width</span>
+                            <span className="text-on-surface font-semibold text-right break-words">{design.width || 'N/A'}</span>
+                          </div>
+
+                          {/* Row 6: Color */}
+                          <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                            <span className="font-semibold text-on-surface-variant">Color</span>
+                            <span className="text-on-surface font-semibold text-right break-words">{design.color || 'N/A'}</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* Row 5: Area / Reed */}
+                          <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                            <span className="font-semibold text-on-surface-variant">
+                              {design.category === 'Weaving Design' ? 'Reed' : 'Area'}
+                            </span>
+                            <span className="text-on-surface font-semibold text-right break-words">{design.area || 'N/A'}</span>
+                          </div>
+
+                          {/* Row 6: Needle / Pick */}
+                          <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                            <span className="font-semibold text-on-surface-variant">
+                              {design.category === 'Weaving Design' ? 'Pick' : 'Needle'}
+                            </span>
+                            <span className="text-on-surface font-semibold text-right break-words">{design.needle || 'N/A'}</span>
+                          </div>
+                        </>
+                      )}
 
                       {/* Row 7: Design Format */}
                       <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">

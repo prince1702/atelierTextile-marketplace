@@ -38,6 +38,9 @@ export interface Design {
   designType?: string;
   area?: string;
   needle?: string;
+  height?: string;
+  width?: string;
+  color?: string;
   designFormat?: string;
   sareeConcept?: string;
   pdcPrice?: number;

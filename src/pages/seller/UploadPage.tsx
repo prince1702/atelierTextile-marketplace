@@ -27,6 +27,9 @@ export function UploadPage() {
   const [designType, setDesignType] = useState('2 fider design');
   const [area, setArea] = useState('');
   const [needle, setNeedle] = useState('');
+  const [height, setHeight] = useState('');
+  const [width, setWidth] = useState('');
+  const [color, setColor] = useState('');
   const [designFormat, setDesignFormat] = useState('BMP');
   const [sareeConcept, setSareeConcept] = useState('jumbo design');
   const [price, setPrice] = useState('');
@@ -40,7 +43,7 @@ export function UploadPage() {
   const [additionalFiles, setAdditionalFiles] = useState<(File | null)[]>([null, null, null, null]);
   const [additionalPreviews, setAdditionalPreviews] = useState<(string | null)[]>([null, null, null, null]);
   const [zipFile, setZipFile] = useState<File | null>(null);
-
+ 
   // Dynamically update subcategory when category changes
   useEffect(() => {
     if (category === 'Weaving Design') {
@@ -53,6 +56,9 @@ export function UploadPage() {
       setDesignType('2 fider design');
       setArea('');
       setNeedle('');
+      setHeight('');
+      setWidth('');
+      setColor('');
       setDesignFormat('BMP');
       setSareeConcept('jumbo design');
       setPdcPrice('');
@@ -75,6 +81,9 @@ export function UploadPage() {
       setDesignType('Flat/Multi Designs');
       setArea('');
       setNeedle('');
+      setHeight('');
+      setWidth('');
+      setColor('');
       setDesignFormat('EMB');
       setSareeConcept('Box Pallu');
       setPdcPrice('');
@@ -239,8 +248,14 @@ export function UploadPage() {
       });
       formData.append('designFile', zipFile);
       formData.append('designType', designType);
-      formData.append('area', area);
-      formData.append('needle', needle);
+      if (category === 'Digital Print Design' || category === 'Position Print Design') {
+        formData.append('height', height);
+        formData.append('width', width);
+        formData.append('color', color);
+      } else {
+        formData.append('area', area);
+        formData.append('needle', needle);
+      }
       formData.append('designFormat', designFormat);
       if (designFormat === 'PDC') {
         formData.append('pdcPrice', pdcPrice);
@@ -706,57 +721,102 @@ export function UploadPage() {
               </select>
             </div>
 
-            {/* Area */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                {category === 'Weaving Design' ? 'Reed *' : 'Area *'}
-              </label>
-              {category === 'Weaving Design' ? (
-                <input
-                  type="text"
-                  value={area}
-                  onChange={(e) => setArea(e.target.value)}
-                  placeholder="e.g. 100 to 110"
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
-                  required
-                />
-              ) : (
-                <input
-                  type="text"
-                  value={area}
-                  onChange={(e) => setArea(e.target.value)}
-                  placeholder="e.g. 150 mm"
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
-                  required
-                />
-              )}
-            </div>
+            {category === 'Digital Print Design' || category === 'Position Print Design' ? (
+              <>
+                {/* Height */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Height *</label>
+                  <input
+                    type="text"
+                    value={height}
+                    onChange={(e) => setHeight(e.target.value)}
+                    placeholder="e.g. 30 inch or 150 cm"
+                    className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                    required
+                  />
+                </div>
 
-            {/* Needle / Pick */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                {category === 'Weaving Design' ? 'Pick *' : 'Needle *'}
-              </label>
-              {category === 'Weaving Design' ? (
-                <input
-                  type="text"
-                  value={needle}
-                  onChange={(e) => setNeedle(e.target.value)}
-                  placeholder="e.g. 36 to 42"
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
-                  required
-                />
-              ) : (
-                <input
-                  type="text"
-                  value={needle}
-                  onChange={(e) => setNeedle(e.target.value)}
-                  placeholder="e.g. 9 Color"
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
-                  required
-                />
-              )}
-            </div>
+                {/* Width */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Width *</label>
+                  <input
+                    type="text"
+                    value={width}
+                    onChange={(e) => setWidth(e.target.value)}
+                    placeholder="e.g. 44 inch or 110 cm"
+                    className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                    required
+                  />
+                </div>
+
+                {/* Color */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Color *</label>
+                  <input
+                    type="text"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    placeholder="e.g. Multi Color or 4 Color"
+                    className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                    required
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Area */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    {category === 'Weaving Design' ? 'Reed *' : 'Area *'}
+                  </label>
+                  {category === 'Weaving Design' ? (
+                    <input
+                      type="text"
+                      value={area}
+                      onChange={(e) => setArea(e.target.value)}
+                      placeholder="e.g. 100 to 110"
+                      className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                      required
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      value={area}
+                      onChange={(e) => setArea(e.target.value)}
+                      placeholder="e.g. 150 mm"
+                      className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                      required
+                    />
+                  )}
+                </div>
+
+                {/* Needle / Pick */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    {category === 'Weaving Design' ? 'Pick *' : 'Needle *'}
+                  </label>
+                  {category === 'Weaving Design' ? (
+                    <input
+                      type="text"
+                      value={needle}
+                      onChange={(e) => setNeedle(e.target.value)}
+                      placeholder="e.g. 36 to 42"
+                      className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                      required
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      value={needle}
+                      onChange={(e) => setNeedle(e.target.value)}
+                      placeholder="e.g. 9 Color"
+                      className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                      required
+                    />
+                  )}
+                </div>
+              </>
+            )}
 
             {/* Design Format */}
             <div className="space-y-1">
