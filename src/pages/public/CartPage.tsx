@@ -347,7 +347,9 @@ export function CartPage() {
                             {item.design.category === 'Weaving Design' ? (
                               <>
                                 <option value="BMP">BMP Format</option>
-                                <option value="PDC">PDC Format</option>
+                                {item.design.pdcPrice && item.design.pdcPrice > 0 ? (
+                                  <option value="PDC">PDC Format</option>
+                                ) : null}
                               </>
                             ) : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design') ? (
                               <>

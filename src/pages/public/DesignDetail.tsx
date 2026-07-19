@@ -157,10 +157,13 @@ export function DesignDetail() {
 
   const licenseOptions = (() => {
     if (design.category === 'Weaving Design') {
-      return [
-        { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' },
-        { name: 'PDC', price: design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5, desc: 'PDC format. Extended production license.' }
+      const options = [
+        { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' }
       ];
+      if (design.pdcPrice && design.pdcPrice > 0) {
+        options.push({ name: 'PDC', price: design.pdcPrice, desc: 'PDC format. Extended production license.' });
+      }
+      return options;
     } else if (design.category === 'Digital Print Design' || design.category === 'Position Print Design') {
       return [
         { name: 'PSD', price: design.price, desc: 'PSD format. Standard print license.' },
