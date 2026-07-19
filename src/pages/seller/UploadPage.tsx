@@ -37,6 +37,8 @@ export function UploadPage() {
   const [licenseType, setLicenseType] = useState('Standard Regional');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [additionalFiles, setAdditionalFiles] = useState<(File | null)[]>([null, null, null, null]);
+  const [additionalPreviews, setAdditionalPreviews] = useState<(string | null)[]>([null, null, null, null]);
   const [zipFile, setZipFile] = useState<File | null>(null);
 
   // Dynamically update subcategory when category changes
@@ -143,6 +145,29 @@ export function UploadPage() {
     }
   };
 
+  const handleAdditionalFileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const newFiles = [...additionalFiles];
+      newFiles[index] = file;
+      setAdditionalFiles(newFiles);
+
+      const newPreviews = [...additionalPreviews];
+      newPreviews[index] = URL.createObjectURL(file);
+      setAdditionalPreviews(newPreviews);
+    }
+  };
+
+  const removeAdditionalFile = (index: number) => {
+    const newFiles = [...additionalFiles];
+    newFiles[index] = null;
+    setAdditionalFiles(newFiles);
+
+    const newPreviews = [...additionalPreviews];
+    newPreviews[index] = null;
+    setAdditionalPreviews(newPreviews);
+  };
+
   const handleZipFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -207,6 +232,11 @@ export function UploadPage() {
       formData.append('colorways', colorways);
       formData.append('licenseType', licenseType);
       formData.append('image', imageFile);
+      additionalFiles.forEach((file) => {
+        if (file) {
+          formData.append('additionalImages', file);
+        }
+      });
       formData.append('designFile', zipFile);
       formData.append('designType', designType);
       formData.append('area', area);
@@ -263,6 +293,57 @@ export function UploadPage() {
                 className="absolute inset-0 opacity-0 cursor-pointer"
                 required={!imagePreview}
               />
+            </div>
+          </div>
+
+          {/* Additional Images Upload Area */}
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Additional Display Images (Up to 4)</label>
+              <p className="text-xs text-on-surface-variant/80 mt-0.5">Add more views or colorways of the design to display to customers.</p>
+            </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {[0, 1, 2, 3].map((index) => (
+                <div 
+                  key={index}
+                  className="border-2 border-dashed border-outline-variant hover:border-primary/45 transition-colors rounded-xl bg-surface/10 relative h-28 flex flex-col items-center justify-center overflow-hidden group cursor-pointer"
+                >
+                  {additionalPreviews[index] ? (
+                    <div className="absolute inset-0 w-full h-full">
+                      <img 
+                        src={additionalPreviews[index]!} 
+                        alt={`Preview ${index + 1}`} 
+                        className="w-full h-full object-cover" 
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          removeAdditionalFile(index);
+                        }}
+                        className="absolute top-1 right-1 w-6 h-6 bg-black/60 text-white rounded-full flex items-center justify-center hover:bg-black transition-colors z-10"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">close</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-center p-2 flex flex-col items-center">
+                      <span className="material-symbols-outlined text-[24px] text-outline mb-1">add_photo_alternate</span>
+                      <span className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wide">Add Image</span>
+                    </div>
+                  )}
+                  {!additionalPreviews[index] && (
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={(e) => handleAdditionalFileChange(index, e)}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 

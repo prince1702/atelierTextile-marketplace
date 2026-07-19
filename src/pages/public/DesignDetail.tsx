@@ -86,6 +86,7 @@ export function DesignDetail() {
   const [error, setError] = useState<string | null>(null);
   const [selectedLicense, setSelectedLicense] = useState('EMB');
   const [activeTab, setActiveTab] = useState('details');
+  const [activeImage, setActiveImage] = useState<string>('');
 
   useEffect(() => {
     const fetchDesign = async () => {
@@ -94,6 +95,7 @@ export function DesignDetail() {
       try {
         const data = await api.designs.getById(id);
         setDesign(data);
+        setActiveImage(data.image);
         if (data.category === 'Weaving Design') {
           setSelectedLicense('BMP');
         } else if (data.category === 'Digital Print Design' || data.category === 'Position Print Design') {
@@ -231,7 +233,7 @@ export function DesignDetail() {
           {/* Left: Image Gallery */}
           <div className="lg:col-span-7 space-y-4">
             <div className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group">
-              <img src={design.image} alt={design.title} className="w-full h-[600px] object-cover cursor-zoom-in" />
+              <img src={activeImage || design.image} alt={design.title} className="w-full h-[600px] object-cover cursor-zoom-in" />
               <button
                 onClick={() => toggleWishlist(design)}
                 className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-modal z-10"
@@ -239,11 +241,18 @@ export function DesignDetail() {
                 <span className={`material-symbols-outlined text-[24px] ${isWishlisted ? 'filled text-error' : 'text-on-surface-variant'}`}>favorite</span>
               </button>
             </div>
-            <div className="grid grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className={`rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-24 ${i === 1 ? 'border-primary' : 'border-outline-variant/30 hover:border-primary/50'}`}>
-                  <img src={design.image} alt="Thumbnail" className="w-full h-full object-cover" />
-                </div>
+            <div className="grid grid-cols-5 gap-4">
+              {[design.image, ...(design.additionalImages || [])].filter(Boolean).map((imgUrl, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveImage(imgUrl)}
+                  className={`rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-24 transition-all ${
+                    (activeImage || design.image) === imgUrl ? 'border-primary' : 'border-outline-variant/30 hover:border-primary/50'
+                  }`}
+                >
+                  <img src={imgUrl} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                </button>
               ))}
             </div>
           </div>
