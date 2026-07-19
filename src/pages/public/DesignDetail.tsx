@@ -344,10 +344,12 @@ export function DesignDetail() {
                       </div>
 
                       {/* Row 4: Design Type */}
-                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
-                        <span className="font-semibold text-on-surface-variant">Design Type</span>
-                        <span className="text-on-surface font-semibold text-right break-words">{design.designType || 'N/A'}</span>
-                      </div>
+                      {design.category !== 'Digital Print Design' && design.category !== 'Position Print Design' && (
+                        <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                          <span className="font-semibold text-on-surface-variant">Design Type</span>
+                          <span className="text-on-surface font-semibold text-right break-words">{design.designType || 'N/A'}</span>
+                        </div>
+                      )}
 
                       {design.category === 'Digital Print Design' || design.category === 'Position Print Design' ? (
                         <>
@@ -418,10 +420,12 @@ export function DesignDetail() {
                       </div>
 
                       {/* Row 11: Default License Scope */}
-                      <div className="grid grid-cols-2 items-start gap-4 py-3.5">
-                        <span className="font-semibold text-on-surface-variant">Default License Scope</span>
-                        <span className="text-on-surface font-semibold text-right break-words">{design.licenseType || 'N/A'}</span>
-                      </div>
+                      {design.category !== 'Digital Print Design' && design.category !== 'Position Print Design' && (
+                        <div className="grid grid-cols-2 items-start gap-4 py-3.5">
+                          <span className="font-semibold text-on-surface-variant">Default License Scope</span>
+                          <span className="text-on-surface font-semibold text-right break-words">{design.licenseType || 'N/A'}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Tags */}

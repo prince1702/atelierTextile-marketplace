@@ -686,40 +686,42 @@ export function UploadPage() {
 
 
             {/* Design Type (Machine Type) */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design Type (Machine Type) *</label>
-              <select 
-                value={designType} 
-                onChange={(e) => setDesignType(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-              >
-                {category === 'Weaving Design' ? (
-                  <>
-                    <option value="2 fider design">2 fider design</option>
-                    <option value="3 fider design">3 fider design</option>
-                    <option value="4 fider design">4 fider design</option>
-                    <option value="2688 design">2688 design</option>
-                    <option value="5376 design(jumbo)">5376 design(jumbo)</option>
-                    <option value="power loom design">power loom design</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="Flat/Multi Designs">Flat/Multi Designs</option>
-                    <option value="Only Cording Designs">Only Cording Designs</option>
-                    <option value="Only Sequin Designs">Only Sequin Designs</option>
-                    <option value="Only Chain Stitch Designs">Only Chain Stitch Designs</option>
-                    <option value="Multi+Cording Designs">Multi+Cording Designs</option>
-                    <option value="Beads and Sequin Designs">Beads and Sequin Designs</option>
-                    <option value="Multi+Cording+Sequin Designs">Multi+Cording+Sequin Designs</option>
-                    <option value="Multi+Sequin Designs">Multi+Sequin Designs</option>
-                    <option value="Multi+Chain Stitch Designs">Multi+Chain Stitch Designs</option>
-                    <option value="Dual & Sandwich Sequin">Dual & Sandwich Sequin</option>
-                    <option value="2/4/6 Sequin Design">2/4/6 Sequin Design</option>
-                    <option value="Cording + Sequin Designs">Cording + Sequin Designs</option>
-                  </>
-                )}
-              </select>
-            </div>
+            {category !== 'Digital Print Design' && category !== 'Position Print Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design Type (Machine Type) *</label>
+                <select 
+                  value={designType} 
+                  onChange={(e) => setDesignType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  {category === 'Weaving Design' ? (
+                    <>
+                      <option value="2 fider design">2 fider design</option>
+                      <option value="3 fider design">3 fider design</option>
+                      <option value="4 fider design">4 fider design</option>
+                      <option value="2688 design">2688 design</option>
+                      <option value="5376 design(jumbo)">5376 design(jumbo)</option>
+                      <option value="power loom design">power loom design</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="Flat/Multi Designs">Flat/Multi Designs</option>
+                      <option value="Only Cording Designs">Only Cording Designs</option>
+                      <option value="Only Sequin Designs">Only Sequin Designs</option>
+                      <option value="Only Chain Stitch Designs">Only Chain Stitch Designs</option>
+                      <option value="Multi+Cording Designs">Multi+Cording Designs</option>
+                      <option value="Beads and Sequin Designs">Beads and Sequin Designs</option>
+                      <option value="Multi+Cording+Sequin Designs">Multi+Cording+Sequin Designs</option>
+                      <option value="Multi+Sequin Designs">Multi+Sequin Designs</option>
+                      <option value="Multi+Chain Stitch Designs">Multi+Chain Stitch Designs</option>
+                      <option value="Dual & Sandwich Sequin">Dual & Sandwich Sequin</option>
+                      <option value="2/4/6 Sequin Design">2/4/6 Sequin Design</option>
+                      <option value="Cording + Sequin Designs">Cording + Sequin Designs</option>
+                    </>
+                  )}
+                </select>
+              </div>
+            )}
 
             {category === 'Digital Print Design' || category === 'Position Print Design' ? (
               <>
@@ -934,18 +936,20 @@ export function UploadPage() {
             </div>
 
             {/* License Type */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Default License Scope</label>
-              <select 
-                value={licenseType} 
-                onChange={(e) => setLicenseType(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-              >
-                <option value="Open Regional">Open Regional</option>
-                <option value="Standard Regional">Standard Regional</option>
-                <option value="Exclusive Global">Exclusive Global</option>
-              </select>
-            </div>
+            {category !== 'Digital Print Design' && category !== 'Position Print Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Default License Scope</label>
+                <select 
+                  value={licenseType} 
+                  onChange={(e) => setLicenseType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Open Regional">Open Regional</option>
+                  <option value="Standard Regional">Standard Regional</option>
+                  <option value="Exclusive Global">Exclusive Global</option>
+                </select>
+              </div>
+            )}
 
             {/* Colorways */}
             <div className="space-y-1">
