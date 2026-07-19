@@ -68,16 +68,7 @@ export function Login() {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4 bg-white p-8 rounded-xl shadow-card transition-shadow duration-200 hover:shadow-card-hover border border-outline-variant/30">
-            {/* Demo Notice */}
-            <div className="bg-surface-container p-3 rounded-lg border border-outline-variant mb-4">
-              <p className="text-xs font-semibold text-primary mb-1">Demo Accounts:</p>
-              <ul className="text-xs text-on-surface-variant space-y-0.5 ml-2 list-disc">
-                <li>admin@atelier.com</li>
-                <li>seller@atelier.com</li>
-                <li>customer@atelier.com</li>
-              </ul>
-              <p className="text-xs text-on-surface-variant mt-1 italic">Any password works</p>
-            </div>
+
 
             <div>
               <label className="block text-sm font-semibold text-on-surface mb-1.5" htmlFor="email">Email Address</label>
