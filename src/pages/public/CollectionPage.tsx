@@ -823,7 +823,11 @@ export function CollectionPage() {
   const designTypes = category === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = category === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
   const needles = category === 'Weaving Design' ? ['All', '36 to 42', '43 to 48', '50 to 60', '61 to 70', '71 to 80', '80 to 90'] : ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-  const formats = category === 'Weaving Design' ? WEAVING_FORMATS : DESIGN_FORMATS;
+  const formats = category === 'Weaving Design' 
+    ? WEAVING_FORMATS 
+    : (category === 'Digital Print Design' || category === 'Position Print Design')
+      ? ['All', 'TIF', 'PSD']
+      : DESIGN_FORMATS;
   const concepts = category === 'Weaving Design' ? WEAVING_CONCEPTS : SAREE_CONCEPTS;
 
   const { showToast } = useNotification();

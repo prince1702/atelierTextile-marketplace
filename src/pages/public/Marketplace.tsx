@@ -528,7 +528,11 @@ export function Marketplace() {
   const designTypes = activeCategory === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = activeCategory === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
   const needles = activeCategory === 'Weaving Design' ? ['All', '36 to 42', '43 to 48', '50 to 60', '61 to 70', '71 to 80', '80 to 90'] : ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-  const formats = activeCategory === 'Weaving Design' ? WEAVING_FORMATS : DESIGN_FORMATS;
+  const formats = activeCategory === 'Weaving Design' 
+    ? WEAVING_FORMATS 
+    : (activeCategory === 'Digital Print Design' || activeCategory === 'Position Print Design')
+      ? ['All', 'TIF', 'PSD']
+      : DESIGN_FORMATS;
   const concepts = activeCategory === 'Weaving Design' ? WEAVING_CONCEPTS : SAREE_CONCEPTS;
   const [activeSubcategory, setActiveSubcategory] = useState('All');
   const [openFilters, setOpenFilters] = useState(() => {
