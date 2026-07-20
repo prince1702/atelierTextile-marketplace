@@ -884,7 +884,7 @@ export function CollectionPage() {
 
       if (category !== 'All') params.category = category;
       if (subcategory !== 'All') params.subcategory = subcategory;
-      if (selectedDesignType !== 'All') params.designType = selectedDesignType;
+      if (selectedDesignType !== 'All' && category !== 'Digital Print Design' && category !== 'Position Print Design') params.designType = selectedDesignType;
       if (selectedArea !== 'All' && category !== 'Digital Print Design' && category !== 'Position Print Design') params.area = selectedArea;
       if (selectedNeedle !== 'All' && category !== 'Digital Print Design' && category !== 'Position Print Design') params.needle = selectedNeedle;
       if (selectedDesignFormat !== 'All') params.designFormat = selectedDesignFormat;
@@ -1106,36 +1106,38 @@ export function CollectionPage() {
 
 
               {/* 1. Design Types */}
-              <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
-                <button 
-                  onClick={() => toggleFilter('designType')}
-                  className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
-                >
-                  <span className="font-bold text-xs text-primary uppercase tracking-wider">Design Types (machines types)</span>
-                  <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.designType ? 'rotate-180' : ''}`}>
-                    keyboard_arrow_down
-                  </span>
-                </button>
-                {openFilters.designType && (
-                  <>
-                    <div className="w-full h-px bg-outline-variant/50"></div>
-                    <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                      {designTypes.map(type => (
-                        <label key={type} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
-                          <input 
-                            type="radio" 
-                            name="designType"
-                            checked={selectedDesignType === type}
-                            onChange={() => { setSelectedDesignType(type); setCurrentPage(1); }}
-                            className="w-4 h-4 accent-primary cursor-pointer" 
-                          />
-                          <span className={`transition-colors ${selectedDesignType === type ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{type}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
+              {category !== 'Digital Print Design' && category !== 'Position Print Design' && (
+                <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                  <button 
+                    onClick={() => toggleFilter('designType')}
+                    className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                  >
+                    <span className="font-bold text-xs text-primary uppercase tracking-wider">Design Types (machines types)</span>
+                    <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.designType ? 'rotate-180' : ''}`}>
+                      keyboard_arrow_down
+                    </span>
+                  </button>
+                  {openFilters.designType && (
+                    <>
+                      <div className="w-full h-px bg-outline-variant/50"></div>
+                      <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                        {designTypes.map(type => (
+                          <label key={type} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
+                            <input 
+                              type="radio" 
+                              name="designType"
+                              checked={selectedDesignType === type}
+                              onChange={() => { setSelectedDesignType(type); setCurrentPage(1); }}
+                              className="w-4 h-4 accent-primary cursor-pointer" 
+                            />
+                            <span className={`transition-colors ${selectedDesignType === type ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{type}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
 
               {/* 2. Area (Reed & Pick for Weaving Design) */}
               {category !== 'Digital Print Design' && category !== 'Position Print Design' && (

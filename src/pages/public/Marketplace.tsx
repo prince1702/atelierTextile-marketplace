@@ -585,7 +585,7 @@ export function Marketplace() {
       if ((activeCategory === 'Weaving Design' || activeCategory === 'Embroidery Design' || activeCategory === 'Digital Print Design' || activeCategory === 'Position Print Design') && activeSubcategory !== 'All') {
         params.subcategory = activeSubcategory;
       }
-      if (selectedDesignType !== 'All') params.designType = selectedDesignType;
+      if (selectedDesignType !== 'All' && (activeCategory as string) !== 'Digital Print Design' && (activeCategory as string) !== 'Position Print Design') params.designType = selectedDesignType;
       if (selectedArea !== 'All' && (activeCategory as string) !== 'Digital Print Design' && (activeCategory as string) !== 'Position Print Design') params.area = selectedArea;
       if (selectedNeedle !== 'All' && (activeCategory as string) !== 'Digital Print Design' && (activeCategory as string) !== 'Position Print Design') params.needle = selectedNeedle;
       if (selectedDesignFormat !== 'All') params.designFormat = selectedDesignFormat;
