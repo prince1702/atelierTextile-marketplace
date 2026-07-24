@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -64,6 +65,16 @@ app.use('/api/tickets', require('./routes/tickets'));
 
 // Global error handler (must be after routes)
 app.use(errorHandler);
+
+// Serve frontend static build (if present) so frontend and backend
+// can be hosted from the same port. Builds are output to ./frontend
+const frontendDir = path.join(__dirname, 'frontend');
+if (fs.existsSync(frontendDir)) {
+  app.use(express.static(frontendDir));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDir, 'index.html'));
+  });
+}
 
 // Start server
 const PORT = process.env.PORT || 5000;
