@@ -1,0 +1,96 @@
+name: CI/CD Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  # Job 1: Build and test frontend & backend code to ensure correctness before deploy
+  build-and-test:
+    name: Build & Test Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            atelierTextile-backend/package-lock.json
+
+      # Frontend Build Verification
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      - name: Build Frontend
+        run: npm run build
+
+      # Backend Build Verification
+      - name: Install Backend Dependencies
+        working-directory: ./atelierTextile-backend
+        run: npm ci
+
+  # Job 2: Deploy Frontend to Vercel (Runs only on Push to main/master branches if builds pass)
+  deploy-frontend:
+    name: Deploy Frontend (Vercel)
+    needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./
+
+  # Job 3: Deploy Backend (Supports Railway and/or Render Deploy Hooks)
+  deploy-backend:
+    name: Deploy Backend (Railway / Render)
+    needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Deployment Path A: Railway CLI Deployment (Uncomment & configure if deploying to Railway)
+      # To use this, add RAILWAY_TOKEN to your GitHub repository secrets.
+      - name: Deploy to Railway
+        continue-on-error: true # Prevents failing the run if Railway token isn't configured yet
+        run: |
+          if [ -z "${{ secrets.RAILWAY_TOKEN }}" ]; then
+            echo "RAILWAY_TOKEN secret is not set. Skipping Railway deployment."
+          else
+            npm i -g @railway/cli
+            railway up --service ateliertextile-backend
+          fi
+        working-directory: ./atelierTextile-backend
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      # Deployment Path B: Render Deploy Hook (Uncomment & configure if deploying to Render)
+      # To use this, add RENDER_DEPLOY_HOOK_URL to your GitHub repository secrets.
+      - name: Deploy to Render
+        continue-on-error: true # Prevents failing the run if Render hook isn't configured yet
+        run: |
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL secret is not set. Skipping Render deployment."
+          else
+            curl -f -X GET "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+          fi

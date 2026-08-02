@@ -273,8 +273,10 @@ export function DesignDetail() {
             <div 
               className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group cursor-pointer"
               onWheel={handleMainImageWheel}
-              onClick={() => setIsLightboxOpen(true)}
-              title="Click photo to view fullscreen or scroll to change photo"
+              onClick={() => {
+                window.open(allImages[activeImageIndex] || activeImage || design.image, '_blank');
+              }}
+              title="Click to open image in new tab or scroll to change photo"
             >
               <img 
                 src={allImages[activeImageIndex] || activeImage || design.image} 
@@ -285,8 +287,8 @@ export function DesignDetail() {
               {/* Hover Badge overlay */}
               <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-10">
                 <div className="bg-black/75 backdrop-blur text-white px-5 py-2.5 rounded-full font-semibold text-sm flex items-center gap-2 shadow-xl border border-white/20">
-                  <span className="material-symbols-outlined text-[20px]">fullscreen</span>
-                  Click to open photo
+                  <span className="material-symbols-outlined text-[20px]">open_in_new</span>
+                  Click to open image
                 </div>
               </div>
 
