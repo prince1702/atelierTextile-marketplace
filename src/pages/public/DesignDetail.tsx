@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import type { Design } from '../../types';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
+import { ImageLightbox } from '../../components/ui/ImageLightbox';
 
 const getParentSubcategory = (sub: string): string => {
   const ALL_SAREE_SUBCATEGORIES_VALUES = [
@@ -87,6 +88,9 @@ export function DesignDetail() {
   const [selectedLicense, setSelectedLicense] = useState('EMB');
   const [activeTab, setActiveTab] = useState('details');
   const [activeImage, setActiveImage] = useState<string>('');
+  const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
+  const mainWheelTimer = useRef<number>(0);
 
   useEffect(() => {
     const fetchDesign = async () => {
@@ -96,6 +100,7 @@ export function DesignDetail() {
         const data = await api.designs.getById(id);
         setDesign(data);
         setActiveImage(data.image);
+        setActiveImageIndex(0);
         if (data.category === 'Weaving Design') {
           setSelectedLicense('BMP');
         } else if (data.category === 'Digital Print Design' || data.category === 'Position Print Design') {
@@ -113,6 +118,31 @@ export function DesignDetail() {
     };
     fetchDesign();
   }, [id, showToast]);
+
+  const allImages = design ? [design.image, ...(design.additionalImages || [])].filter(Boolean) : [];
+
+  const handleImageSelect = (idx: number) => {
+    if (allImages[idx]) {
+      setActiveImageIndex(idx);
+      setActiveImage(allImages[idx]);
+    }
+  };
+
+  const handleMainImageWheel = (e: React.WheelEvent) => {
+    if (allImages.length <= 1) return;
+    const now = Date.now();
+    if (now - mainWheelTimer.current < 200) return;
+
+    if (e.deltaY > 0 || e.deltaX > 0) {
+      mainWheelTimer.current = now;
+      const nextIdx = (activeImageIndex + 1) % allImages.length;
+      handleImageSelect(nextIdx);
+    } else if (e.deltaY < 0 || e.deltaX < 0) {
+      mainWheelTimer.current = now;
+      const prevIdx = (activeImageIndex - 1 + allImages.length) % allImages.length;
+      handleImageSelect(prevIdx);
+    }
+  };
 
   const isWishlisted = design ? isInWishlist(design.id) : false;
 
@@ -240,23 +270,56 @@ export function DesignDetail() {
 
           {/* Left: Image Gallery */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group">
-              <img src={activeImage || design.image} alt={design.title} className="w-full h-[600px] object-cover cursor-zoom-in" />
+            <div 
+              className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group cursor-pointer"
+              onWheel={handleMainImageWheel}
+              onClick={() => setIsLightboxOpen(true)}
+              title="Click photo to view fullscreen or scroll to change photo"
+            >
+              <img 
+                src={allImages[activeImageIndex] || activeImage || design.image} 
+                alt={design.title} 
+                className="w-full h-[600px] object-cover group-hover:scale-[1.015] transition-transform duration-300" 
+              />
+
+              {/* Hover Badge overlay */}
+              <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-10">
+                <div className="bg-black/75 backdrop-blur text-white px-5 py-2.5 rounded-full font-semibold text-sm flex items-center gap-2 shadow-xl border border-white/20">
+                  <span className="material-symbols-outlined text-[20px]">fullscreen</span>
+                  Click to open photo
+                </div>
+              </div>
+
+              {/* Photo Counter badge */}
+              {allImages.length > 1 && (
+                <div className="absolute top-6 left-6 bg-black/60 backdrop-blur text-white text-xs font-semibold px-3.5 py-1.5 rounded-full z-10 flex items-center gap-1.5 border border-white/10 shadow-sm">
+                  <span className="material-symbols-outlined text-[15px]">photo_library</span>
+                  {activeImageIndex + 1} / {allImages.length}
+                </div>
+              )}
+
+              {/* Wishlist Button */}
               <button
-                onClick={() => toggleWishlist(design)}
-                className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-modal z-10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleWishlist(design);
+                }}
+                className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-modal z-20"
+                title="Add to Wishlist"
               >
                 <span className={`material-symbols-outlined text-[24px] ${isWishlisted ? 'filled text-error' : 'text-on-surface-variant'}`}>favorite</span>
               </button>
             </div>
+
+            {/* Thumbnails */}
             <div className="grid grid-cols-5 gap-4">
-              {[design.image, ...(design.additionalImages || [])].filter(Boolean).map((imgUrl, idx) => (
+              {allImages.map((imgUrl, idx) => (
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => setActiveImage(imgUrl)}
-                  className={`rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-24 transition-all ${
-                    (activeImage || design.image) === imgUrl ? 'border-primary' : 'border-outline-variant/30 hover:border-primary/50'
+                  onClick={() => handleImageSelect(idx)}
+                  className={`rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-24 transition-all relative ${
+                    activeImageIndex === idx ? 'border-primary ring-2 ring-primary/30 scale-[1.02]' : 'border-outline-variant/30 hover:border-primary/50'
                   }`}
                 >
                   <img src={imgUrl} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
@@ -459,6 +522,16 @@ export function DesignDetail() {
           </div>
         </div>
       </div>
+
+      {/* Lightbox Fullscreen Photo Viewer */}
+      <ImageLightbox
+        isOpen={isLightboxOpen}
+        images={allImages}
+        currentIndex={activeImageIndex}
+        onClose={() => setIsLightboxOpen(false)}
+        onIndexChange={handleImageSelect}
+        title={design.title}
+      />
     </div>
   );
 }
