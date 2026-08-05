@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 interface ImageLightboxProps {
   images: string[];
   currentIndex: number;
   isOpen: boolean;
   onClose: () => void;
-  onSelectImage: (index: number) => void;
+  onSelectImage?: (index: number) => void;
+  onIndexChange?: (index: number) => void;
   title?: string;
 }
 
@@ -15,6 +16,7 @@ export function ImageLightbox({
   isOpen,
   onClose,
   onSelectImage,
+  onIndexChange,
   title = 'Design Image View',
 }: ImageLightboxProps) {
   const [zoom, setZoom] = useState(1);
@@ -29,6 +31,14 @@ export function ImageLightbox({
   const safeIndex = Math.max(0, Math.min(currentIndex, images.length - 1));
   const currentImage = images[safeIndex] || images[0];
 
+  const changeIndex = useCallback(
+    (newIdx: number) => {
+      if (onSelectImage) onSelectImage(newIdx);
+      if (onIndexChange) onIndexChange(newIdx);
+    },
+    [onSelectImage, onIndexChange]
+  );
+
   // Reset zoom & pan when image changes or modal opens
   useEffect(() => {
     setZoom(1);
@@ -38,27 +48,25 @@ export function ImageLightbox({
   const handleNext = useCallback(() => {
     if (images.length === 0) return;
     const nextIndex = (safeIndex + 1) % images.length;
-    onSelectImage(nextIndex);
-  }, [safeIndex, images.length, onSelectImage]);
+    changeIndex(nextIndex);
+  }, [safeIndex, images.length, changeIndex]);
 
   const handlePrev = useCallback(() => {
     if (images.length === 0) return;
     const prevIndex = (safeIndex - 1 + images.length) % images.length;
-    onSelectImage(prevIndex);
-  }, [safeIndex, images.length, onSelectImage]);
+    changeIndex(prevIndex);
+  }, [safeIndex, images.length, changeIndex]);
 
   // Handle Wheel Scroll for Image Navigation
   const handleWheel = useCallback(
     (e: React.WheelEvent<HTMLDivElement>) => {
       e.stopPropagation();
 
-      // If user is zoomed in, allow scrolling/zooming inside image
       if (zoom > 1.05) {
         setZoom((prev) => Math.max(1, Math.min(4, prev - e.deltaY * 0.002)));
         return;
       }
 
-      // If wheel is locked during transition debounce, ignore
       if (isWheelLockedRef.current) return;
 
       if (e.deltaY > 20 || e.deltaX > 20) {
@@ -219,7 +227,6 @@ export function ImageLightbox({
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onClick={(e) => {
-          // If clicked backdrop directly, close
           if (e.target === e.currentTarget) {
             onClose();
           }
@@ -285,7 +292,7 @@ export function ImageLightbox({
             {images.map((img, idx) => (
               <button
                 key={idx}
-                onClick={() => onSelectImage(idx)}
+                onClick={() => changeIndex(idx)}
                 className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 shrink-0 ${
                   idx === safeIndex
                     ? 'border-primary ring-4 ring-primary/40 scale-105 opacity-100'

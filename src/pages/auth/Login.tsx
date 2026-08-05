@@ -27,7 +27,19 @@ export function Login() {
       showToast('Welcome back to AtelierTextile!');
       // Navigate is handled by ProtectedRoute once auth state updates, 
       // but we can force it here for UX flow.
-      setTimeout(() => navigate('/profile'), 100);
+      const storedUserStr = localStorage.getItem('atelier_user');
+      let targetPath = '/profile';
+      if (storedUserStr) {
+        try {
+          const storedUser = JSON.parse(storedUserStr);
+          if (storedUser.role === 'customer') {
+            targetPath = '/';
+          }
+        } catch (e) {
+          console.error('Failed to parse user role for login redirect', e);
+        }
+      }
+      setTimeout(() => navigate(targetPath), 100);
     } catch (error: any) {
       const message = error.response?.data?.error || error.message || 'Invalid credentials';
       showToast(message, 'error');
@@ -68,16 +80,7 @@ export function Login() {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4 bg-white p-8 rounded-xl shadow-card transition-shadow duration-200 hover:shadow-card-hover border border-outline-variant/30">
-            {/* Demo Notice */}
-            <div className="bg-surface-container p-3 rounded-lg border border-outline-variant mb-4">
-              <p className="text-xs font-semibold text-primary mb-1">Demo Accounts:</p>
-              <ul className="text-xs text-on-surface-variant space-y-0.5 ml-2 list-disc">
-                <li>admin@atelier.com</li>
-                <li>seller@atelier.com</li>
-                <li>customer@atelier.com</li>
-              </ul>
-              <p className="text-xs text-on-surface-variant mt-1 italic">Any password works</p>
-            </div>
+
 
             <div>
               <label className="block text-sm font-semibold text-on-surface mb-1.5" htmlFor="email">Email Address</label>

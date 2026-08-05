@@ -145,7 +145,7 @@ export function Landing() {
                 <span className="material-symbols-outlined text-[28px]">gavel</span>
               </div>
               <h3 className="text-xl font-bold mb-3 text-on-primary">Clear Licensing</h3>
-              <p className="text-primary-fixed-dim leading-relaxed">Transparent digital contracts for Standard, Exclusive, or Global buyouts. No legal ambiguity.</p>
+              <p className="text-primary-fixed-dim leading-relaxed">Transparent digital contracts for EMB, OTHER, and Weaving formats. No legal ambiguity.</p>
             </div>
             <div className="bg-primary-container/40 p-8 rounded-2xl border border-primary-container backdrop-blur-sm card-lift">
               <div className="w-14 h-14 bg-tertiary-fixed text-tertiary-container rounded-xl flex items-center justify-center mb-6">

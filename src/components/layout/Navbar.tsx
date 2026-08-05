@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
 
@@ -7,7 +7,14 @@ export function Navbar() {
   const { user, isAuthenticated } = useAuth();
   const { items } = useCart();
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchVal, setSearchVal] = useState('');
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate(`/marketplace?search=${encodeURIComponent(searchVal.trim())}`);
+  };
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -28,14 +35,16 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex relative mr-2">
+          <form onSubmit={handleSearchSubmit} className="hidden md:flex relative mr-2">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
             <input 
               className="pl-9 pr-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest focus:border-primary-container focus:ring-2 focus:ring-primary-container/10 focus:outline-none transition-all text-sm w-56 input-glow" 
               placeholder="Search patterns..." 
               type="text"
+              value={searchVal}
+              onChange={(e) => setSearchVal(e.target.value)}
             />
-          </div>
+          </form>
 
           {isAuthenticated ? (
             <div className="flex items-center gap-3">

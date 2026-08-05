@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import type { Design } from '../../types';
@@ -85,10 +85,13 @@ export function DesignDetail() {
   const [design, setDesign] = useState<Design | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedLicense, setSelectedLicense] = useState('Standard');
+  const [selectedLicense, setSelectedLicense] = useState('EMB');
   const [activeTab, setActiveTab] = useState('details');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [activeImage, setActiveImage] = useState<string>('');
+  const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
+  const mainWheelTimer = useRef<number>(0);
 
   useEffect(() => {
     const fetchDesign = async () => {
@@ -97,10 +100,14 @@ export function DesignDetail() {
       try {
         const data = await api.designs.getById(id);
         setDesign(data);
+        setActiveImage(data.image);
+        setActiveImageIndex(0);
         if (data.category === 'Weaving Design') {
           setSelectedLicense('BMP');
+        } else if (data.category === 'Digital Print Design' || data.category === 'Position Print Design') {
+          setSelectedLicense(data.designFormat === 'TIF' ? 'TIF' : 'PSD');
         } else {
-          setSelectedLicense('Standard');
+          setSelectedLicense('EMB');
         }
       } catch (err: any) {
         console.error(err);
@@ -112,6 +119,31 @@ export function DesignDetail() {
     };
     fetchDesign();
   }, [id, showToast]);
+
+  const allImages = design ? [design.image, ...(design.additionalImages || [])].filter(Boolean) : [];
+
+  const handleImageSelect = (idx: number) => {
+    if (allImages[idx]) {
+      setActiveImageIndex(idx);
+      setActiveImage(allImages[idx]);
+    }
+  };
+
+  const handleMainImageWheel = (e: React.WheelEvent) => {
+    if (allImages.length <= 1) return;
+    const now = Date.now();
+    if (now - mainWheelTimer.current < 200) return;
+
+    if (e.deltaY > 0 || e.deltaX > 0) {
+      mainWheelTimer.current = now;
+      const nextIdx = (activeImageIndex + 1) % allImages.length;
+      handleImageSelect(nextIdx);
+    } else if (e.deltaY < 0 || e.deltaX < 0) {
+      mainWheelTimer.current = now;
+      const prevIdx = (activeImageIndex - 1 + allImages.length) % allImages.length;
+      handleImageSelect(prevIdx);
+    }
+  };
 
   const isWishlisted = design ? isInWishlist(design.id) : false;
 
@@ -125,7 +157,7 @@ export function DesignDetail() {
   };
 
   const getPrice = (price: number, license: string) => {
-    if (license === 'Extended') return price * 2.5;
+    if (license === 'Extended' || license === 'Other' || license === 'OTHER' || license === 'TIF') return price * 2.5;
     if (license === 'PDC') {
       return design && design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : price * 2.5;
     }
@@ -154,14 +186,32 @@ export function DesignDetail() {
     );
   }
 
-  const licenseOptions = design.category === 'Weaving Design' ? [
-    { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' },
-    { name: 'PDC', price: design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5, desc: 'PDC format. Extended production license.' }
-  ] : [
-    { name: 'Standard', price: design.price, desc: 'Up to 500 units. Digital + Print.' },
-    { name: 'Extended', price: design.price * 2.5, desc: 'Up to 5,000 units. Unlimited web.' },
-    { name: 'Exclusive Buyout', price: design.price * 8, desc: 'Full IP transfer. Design removed from store.' }
-  ];
+  const licenseOptions = (() => {
+    if (design.category === 'Weaving Design') {
+      const options = [
+        { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' }
+      ];
+      if (design.pdcPrice && design.pdcPrice > 0) {
+        options.push({ name: 'PDC', price: design.pdcPrice, desc: 'PDC format. Extended production license.' });
+      }
+      return options;
+    } else if (design.category === 'Digital Print Design' || design.category === 'Position Print Design') {
+      const options = [];
+      const format = design.designFormat ? design.designFormat.toUpperCase() : 'ALL';
+      if (format === 'ALL' || format === 'PSD') {
+        options.push({ name: 'PSD', price: design.price, desc: 'PSD format. Standard print license.' });
+      }
+      if (format === 'ALL' || format === 'TIF') {
+        options.push({ name: 'TIF', price: design.price * 2.5, desc: 'TIF format. High-resolution print format.' });
+      }
+      return options;
+    } else {
+      return [
+        { name: 'EMB', price: design.price, desc: 'EMB format. Standard embroidery license.' },
+        { name: 'OTHER', price: design.price * 2.5, desc: 'Other formats (DST, PES, JEF, etc.).' }
+      ];
+    }
+  })();
 
   return (
     <div className="bg-surface min-h-screen pb-24">
@@ -220,45 +270,60 @@ export function DesignDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
           {/* Left: Image Gallery */}
+          {/* Left: Image Gallery */}
           {(() => {
-            const galleryImages = (design.images && design.images.length > 0) 
-              ? design.images 
+            const galleryImages = (allImages && allImages.length > 0)
+              ? allImages
               : [design.image, design.image, design.image, design.image];
-            const activeImage = galleryImages[selectedImageIndex] || design.image;
+            const activeImg = galleryImages[activeImageIndex] || galleryImages[selectedImageIndex] || design.image;
 
             return (
               <div className="lg:col-span-7 space-y-4">
                 <div 
+                  onWheel={handleMainImageWheel}
                   onClick={() => setIsLightboxOpen(true)}
                   className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group cursor-zoom-in shadow-sm hover:shadow-md transition-shadow"
+                  title="Click to view full screen image modal or scroll wheel to switch photos"
                 >
-                  <img src={activeImage} alt={design.title} className="w-full h-[600px] object-cover transition-transform duration-300 group-hover:scale-102" />
+                  <img src={activeImg} alt={design.title} className="w-full h-[600px] object-cover transition-transform duration-300 group-hover:scale-102" />
                   
                   {/* Click to expand overlay hint */}
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                    <div className="bg-black/75 backdrop-blur text-white px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg">
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-10">
+                    <div className="bg-black/75 backdrop-blur text-white px-5 py-2.5 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg border border-white/20">
                       <span className="material-symbols-outlined text-[20px]">fullscreen</span>
                       Click to open full view
                     </div>
                   </div>
+
+                  {/* Photo Counter badge */}
+                  {galleryImages.length > 1 && (
+                    <div className="absolute top-6 left-6 bg-black/60 backdrop-blur text-white text-xs font-semibold px-3.5 py-1.5 rounded-full z-10 flex items-center gap-1.5 border border-white/10 shadow-sm">
+                      <span className="material-symbols-outlined text-[15px]">photo_library</span>
+                      {activeImageIndex + 1} / {galleryImages.length}
+                    </div>
+                  )}
 
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleWishlist(design);
                     }}
-                    className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-modal z-10"
+                    className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-modal z-20"
+                    title="Add to Wishlist"
                   >
                     <span className={`material-symbols-outlined text-[24px] ${isWishlisted ? 'filled text-error' : 'text-on-surface-variant'}`}>favorite</span>
                   </button>
                 </div>
 
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-5 gap-3 sm:gap-4">
                   {galleryImages.map((img, i) => (
                     <div 
                       key={i} 
-                      onClick={() => setSelectedImageIndex(i)}
-                      className={`rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-24 transition-all duration-200 ${i === selectedImageIndex ? 'border-primary ring-2 ring-primary/30 scale-105' : 'border-outline-variant/30 hover:border-primary/50 opacity-70 hover:opacity-100'}`}
+                      onClick={() => {
+                        handleImageSelect(i);
+                        setSelectedImageIndex(i);
+                      }}
+                      className={`rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-20 sm:h-24 transition-all duration-200 ${i === activeImageIndex ? 'border-primary ring-2 ring-primary/30 scale-105 opacity-100' : 'border-outline-variant/30 hover:border-primary/50 opacity-70 hover:opacity-100'}`}
                     >
                       <img src={img} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
                     </div>
@@ -352,26 +417,52 @@ export function DesignDetail() {
                       </div>
 
                       {/* Row 4: Design Type */}
-                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
-                        <span className="font-semibold text-on-surface-variant">Design Type</span>
-                        <span className="text-on-surface font-semibold text-right break-words">{design.designType || 'N/A'}</span>
-                      </div>
+                      {design.category !== 'Digital Print Design' && design.category !== 'Position Print Design' && (
+                        <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                          <span className="font-semibold text-on-surface-variant">Design Type</span>
+                          <span className="text-on-surface font-semibold text-right break-words">{design.designType || 'N/A'}</span>
+                        </div>
+                      )}
 
-                      {/* Row 5: Area / Reed */}
-                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
-                        <span className="font-semibold text-on-surface-variant">
-                          {design.category === 'Weaving Design' ? 'Reed' : 'Area'}
-                        </span>
-                        <span className="text-on-surface font-semibold text-right break-words">{design.area || 'N/A'}</span>
-                      </div>
+                      {design.category === 'Digital Print Design' || design.category === 'Position Print Design' ? (
+                        <>
+                          {/* Row 5a: Height */}
+                          <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                            <span className="font-semibold text-on-surface-variant">Height</span>
+                            <span className="text-on-surface font-semibold text-right break-words">{design.height || 'N/A'}</span>
+                          </div>
 
-                      {/* Row 6: Needle / Pick */}
-                      <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
-                        <span className="font-semibold text-on-surface-variant">
-                          {design.category === 'Weaving Design' ? 'Pick' : 'Needle'}
-                        </span>
-                        <span className="text-on-surface font-semibold text-right break-words">{design.needle || 'N/A'}</span>
-                      </div>
+                          {/* Row 5b: Width */}
+                          <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                            <span className="font-semibold text-on-surface-variant">Width</span>
+                            <span className="text-on-surface font-semibold text-right break-words">{design.width || 'N/A'}</span>
+                          </div>
+
+                          {/* Row 6: Color */}
+                          <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                            <span className="font-semibold text-on-surface-variant">Color</span>
+                            <span className="text-on-surface font-semibold text-right break-words">{design.color || 'N/A'}</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* Row 5: Area / Reed */}
+                          <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                            <span className="font-semibold text-on-surface-variant">
+                              {design.category === 'Weaving Design' ? 'Reed' : 'Area'}
+                            </span>
+                            <span className="text-on-surface font-semibold text-right break-words">{design.area || 'N/A'}</span>
+                          </div>
+
+                          {/* Row 6: Needle / Pick */}
+                          <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
+                            <span className="font-semibold text-on-surface-variant">
+                              {design.category === 'Weaving Design' ? 'Pick' : 'Needle'}
+                            </span>
+                            <span className="text-on-surface font-semibold text-right break-words">{design.needle || 'N/A'}</span>
+                          </div>
+                        </>
+                      )}
 
                       {/* Row 7: Design Format */}
                       <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
@@ -402,10 +493,12 @@ export function DesignDetail() {
                       </div>
 
                       {/* Row 11: Default License Scope */}
-                      <div className="grid grid-cols-2 items-start gap-4 py-3.5">
-                        <span className="font-semibold text-on-surface-variant">Default License Scope</span>
-                        <span className="text-on-surface font-semibold text-right break-words">{design.licenseType || 'N/A'}</span>
-                      </div>
+                      {design.category !== 'Digital Print Design' && design.category !== 'Position Print Design' && (
+                        <div className="grid grid-cols-2 items-start gap-4 py-3.5">
+                          <span className="font-semibold text-on-surface-variant">Default License Scope</span>
+                          <span className="text-on-surface font-semibold text-right break-words">{design.licenseType || 'N/A'}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Tags */}
@@ -435,6 +528,7 @@ export function DesignDetail() {
         </div>
       </div>
 
+<<<<<<< HEAD
       {/* Lightbox Image Modal */}
       {design && (
         <ImageLightbox
@@ -450,6 +544,17 @@ export function DesignDetail() {
           title={design.title}
         />
       )}
+=======
+      {/* Lightbox Fullscreen Photo Viewer */}
+      <ImageLightbox
+        isOpen={isLightboxOpen}
+        images={allImages}
+        currentIndex={activeImageIndex}
+        onClose={() => setIsLightboxOpen(false)}
+        onIndexChange={handleImageSelect}
+        title={design.title}
+      />
+>>>>>>> origin/master
     </div>
   );
 }

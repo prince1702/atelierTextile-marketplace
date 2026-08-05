@@ -309,6 +309,9 @@ exports.getDesigns = async (req, res, next) => {
     if (search) {
       filter.$or = [
         { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { category: { $regex: search, $options: 'i' } },
+        { subcategory: { $regex: search, $options: 'i' } },
         { tags: { $regex: search, $options: 'i' } },
         { designerName: { $regex: search, $options: 'i' } },
       ];
@@ -401,9 +404,11 @@ exports.createDesign = async (req, res, next) => {
 
     const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
     const designFile = req.files && req.files['designFile'] ? req.files['designFile'][0] : null;
+    const additionalImageFiles = req.files && req.files['additionalImages'] ? req.files['additionalImages'] : [];
 
     let imageUrl = '';
     let designFileUrl = '';
+    const additionalImageUrls = [];
 
     const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
                                    process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
@@ -443,6 +448,42 @@ exports.createDesign = async (req, res, next) => {
       }
     } else {
       imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+    }
+
+    // 1b. Process additional display images
+    if (additionalImageFiles.length > 0) {
+      for (const file of additionalImageFiles) {
+        let uploadSuccess = false;
+        let additionalUrl = '';
+        if (isCloudinaryConfigured) {
+          try {
+            const result = await uploadToCloudinary(file.buffer, 'image');
+            additionalUrl = result.secure_url;
+            uploadSuccess = true;
+          } catch (cloudinaryError) {
+            console.warn('⚠️ Cloudinary upload failed for additional image, using local fallback:', cloudinaryError.message);
+          }
+        }
+
+        if (!uploadSuccess) {
+          try {
+            const uploadsDir = path.join(__dirname, '../public/uploads');
+            if (!fs.existsSync(uploadsDir)) {
+              fs.mkdirSync(uploadsDir, { recursive: true });
+            }
+            const filename = `design-add-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname) || '.jpg'}`;
+            const filePath = path.join(uploadsDir, filename);
+            fs.writeFileSync(filePath, file.buffer);
+            
+            const host = req.get('host');
+            additionalUrl = `${req.protocol}://${host}/uploads/${filename}`;
+          } catch (localError) {
+            console.error('❌ Local additional image write failed:', localError);
+            additionalUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+          }
+        }
+        additionalImageUrls.push(additionalUrl);
+      }
     }
 
     // 2. Process design source file (ZIP/RAR)
@@ -502,6 +543,7 @@ exports.createDesign = async (req, res, next) => {
       designerName: seller.name,
       designerAvatar: seller.initials,
       image: imageUrl,
+      additionalImages: additionalImageUrls,
       designFile: designFileUrl,
       status: 'pending', // Admin must approve
     });
@@ -536,6 +578,7 @@ exports.updateDesign = async (req, res, next) => {
 
     const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
     const designFile = req.files && req.files['designFile'] ? req.files['designFile'][0] : null;
+    const additionalImageFiles = req.files && req.files['additionalImages'] ? req.files['additionalImages'] : [];
 
     const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
                                    process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
@@ -606,12 +649,57 @@ exports.updateDesign = async (req, res, next) => {
       }
     }
 
+    // Upload new additional images if provided
+    if (additionalImageFiles.length > 0) {
+      const additionalImageUrls = [];
+      for (const file of additionalImageFiles) {
+        let uploadSuccess = false;
+        let additionalUrl = '';
+        if (isCloudinaryConfigured) {
+          try {
+            const result = await uploadToCloudinary(file.buffer, 'image');
+            additionalUrl = result.secure_url;
+            uploadSuccess = true;
+          } catch (cloudinaryError) {
+            console.warn('⚠️ Cloudinary upload failed for additional image during edit, using local fallback:', cloudinaryError.message);
+          }
+        }
+
+        if (!uploadSuccess) {
+          try {
+            const uploadsDir = path.join(__dirname, '../public/uploads');
+            if (!fs.existsSync(uploadsDir)) {
+              fs.mkdirSync(uploadsDir, { recursive: true });
+            }
+            const filename = `design-add-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname) || '.jpg'}`;
+            const filePath = path.join(uploadsDir, filename);
+            fs.writeFileSync(filePath, file.buffer);
+            
+            const host = req.get('host');
+            additionalUrl = `${req.protocol}://${host}/uploads/${filename}`;
+          } catch (localError) {
+            console.error('❌ Local additional image write failed during edit:', localError);
+            additionalUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+          }
+        }
+        additionalImageUrls.push(additionalUrl);
+      }
+      req.body.additionalImages = additionalImageUrls;
+    }
+
     // Parse array fields if sent as strings
     if (req.body.tags && typeof req.body.tags === 'string') {
       req.body.tags = req.body.tags.split(',').map((t) => t.trim());
     }
     if (req.body.colorways && typeof req.body.colorways === 'string') {
       req.body.colorways = req.body.colorways.split(',').map((c) => c.trim());
+    }
+    if (req.body.additionalImages && typeof req.body.additionalImages === 'string') {
+      try {
+        req.body.additionalImages = JSON.parse(req.body.additionalImages);
+      } catch (err) {
+        req.body.additionalImages = req.body.additionalImages.split(',').map((t) => t.trim());
+      }
     }
 
     if (req.body.area !== undefined) {

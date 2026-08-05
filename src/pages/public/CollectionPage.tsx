@@ -823,7 +823,11 @@ export function CollectionPage() {
   const designTypes = category === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = category === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
   const needles = category === 'Weaving Design' ? ['All', '36 to 42', '43 to 48', '50 to 60', '61 to 70', '71 to 80', '80 to 90'] : ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-  const formats = category === 'Weaving Design' ? WEAVING_FORMATS : DESIGN_FORMATS;
+  const formats = category === 'Weaving Design' 
+    ? WEAVING_FORMATS 
+    : (category === 'Digital Print Design' || category === 'Position Print Design')
+      ? ['All', 'TIF', 'PSD']
+      : DESIGN_FORMATS;
   const concepts = category === 'Weaving Design' ? WEAVING_CONCEPTS : SAREE_CONCEPTS;
 
   const { showToast } = useNotification();
@@ -884,9 +888,9 @@ export function CollectionPage() {
 
       if (category !== 'All') params.category = category;
       if (subcategory !== 'All') params.subcategory = subcategory;
-      if (selectedDesignType !== 'All') params.designType = selectedDesignType;
-      if (selectedArea !== 'All') params.area = selectedArea;
-      if (selectedNeedle !== 'All') params.needle = selectedNeedle;
+      if (selectedDesignType !== 'All' && category !== 'Digital Print Design' && category !== 'Position Print Design') params.designType = selectedDesignType;
+      if (selectedArea !== 'All' && category !== 'Digital Print Design' && category !== 'Position Print Design') params.area = selectedArea;
+      if (selectedNeedle !== 'All' && category !== 'Digital Print Design' && category !== 'Position Print Design') params.needle = selectedNeedle;
       if (selectedDesignFormat !== 'All') params.designFormat = selectedDesignFormat;
       if (selectedSareeConcept !== 'All') params.sareeConcept = selectedSareeConcept;
 
@@ -1106,104 +1110,110 @@ export function CollectionPage() {
 
 
               {/* 1. Design Types */}
-              <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
-                <button 
-                  onClick={() => toggleFilter('designType')}
-                  className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
-                >
-                  <span className="font-bold text-xs text-primary uppercase tracking-wider">Design Types (machines types)</span>
-                  <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.designType ? 'rotate-180' : ''}`}>
-                    keyboard_arrow_down
-                  </span>
-                </button>
-                {openFilters.designType && (
-                  <>
-                    <div className="w-full h-px bg-outline-variant/50"></div>
-                    <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                      {designTypes.map(type => (
-                        <label key={type} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
-                          <input 
-                            type="radio" 
-                            name="designType"
-                            checked={selectedDesignType === type}
-                            onChange={() => { setSelectedDesignType(type); setCurrentPage(1); }}
-                            className="w-4 h-4 accent-primary cursor-pointer" 
-                          />
-                          <span className={`transition-colors ${selectedDesignType === type ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{type}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
+              {category !== 'Digital Print Design' && category !== 'Position Print Design' && (
+                <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                  <button 
+                    onClick={() => toggleFilter('designType')}
+                    className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                  >
+                    <span className="font-bold text-xs text-primary uppercase tracking-wider">Design Types (machines types)</span>
+                    <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.designType ? 'rotate-180' : ''}`}>
+                      keyboard_arrow_down
+                    </span>
+                  </button>
+                  {openFilters.designType && (
+                    <>
+                      <div className="w-full h-px bg-outline-variant/50"></div>
+                      <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                        {designTypes.map(type => (
+                          <label key={type} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
+                            <input 
+                              type="radio" 
+                              name="designType"
+                              checked={selectedDesignType === type}
+                              onChange={() => { setSelectedDesignType(type); setCurrentPage(1); }}
+                              className="w-4 h-4 accent-primary cursor-pointer" 
+                            />
+                            <span className={`transition-colors ${selectedDesignType === type ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{type}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
 
               {/* 2. Area (Reed & Pick for Weaving Design) */}
-              <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
-                <button 
-                  onClick={() => toggleFilter('area')}
-                  className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
-                >
-                  <span className="font-bold text-xs text-primary uppercase tracking-wider">
-                    {category === 'Weaving Design' ? 'Reed' : 'Area'}
-                  </span>
-                  <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.area ? 'rotate-180' : ''}`}>
-                    keyboard_arrow_down
-                  </span>
-                </button>
-                {openFilters.area && (
-                  <>
-                    <div className="w-full h-px bg-outline-variant/50"></div>
-                    <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                      {areas.map(ar => (
-                        <label key={ar} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
-                          <input 
-                            type="radio" 
-                            name="area"
-                            checked={selectedArea === ar}
-                            onChange={() => { setSelectedArea(ar); setCurrentPage(1); }}
-                            className="w-4 h-4 accent-primary cursor-pointer" 
-                          />
-                          <span className={`transition-colors ${selectedArea === ar ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{ar}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
+              {category !== 'Digital Print Design' && category !== 'Position Print Design' && (
+                <>
+                  <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                    <button 
+                      onClick={() => toggleFilter('area')}
+                      className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                    >
+                      <span className="font-bold text-xs text-primary uppercase tracking-wider">
+                        {category === 'Weaving Design' ? 'Reed' : 'Area'}
+                      </span>
+                      <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.area ? 'rotate-180' : ''}`}>
+                        keyboard_arrow_down
+                      </span>
+                    </button>
+                    {openFilters.area && (
+                      <>
+                        <div className="w-full h-px bg-outline-variant/50"></div>
+                        <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                          {areas.map(ar => (
+                            <label key={ar} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
+                              <input 
+                                type="radio" 
+                                name="area"
+                                checked={selectedArea === ar}
+                                onChange={() => { setSelectedArea(ar); setCurrentPage(1); }}
+                                className="w-4 h-4 accent-primary cursor-pointer" 
+                              />
+                              <span className={`transition-colors ${selectedArea === ar ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{ar}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
 
-              {/* 3. Needle / Color */}
-              <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
-                <button 
-                  onClick={() => toggleFilter('needle')}
-                  className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
-                >
-                  <span className="font-bold text-xs text-primary uppercase tracking-wider">
-                    {category === 'Weaving Design' ? 'Pick' : 'Needle'}
-                  </span>
-                  <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.needle ? 'rotate-180' : ''}`}>
-                    keyboard_arrow_down
-                  </span>
-                </button>
-                {openFilters.needle && (
-                  <>
-                    <div className="w-full h-px bg-outline-variant/50"></div>
-                    <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                      {needles.map(n => (
-                        <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
-                          <input 
-                            type="radio" 
-                            name="needle"
-                            checked={selectedNeedle === n}
-                            onChange={() => { setSelectedNeedle(n); setCurrentPage(1); }}
-                            className="w-4 h-4 accent-primary cursor-pointer" 
-                          />
-                          <span className={`transition-colors ${selectedNeedle === n ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{n}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
+                  {/* 3. Needle / Color */}
+                  <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                    <button 
+                      onClick={() => toggleFilter('needle')}
+                      className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                    >
+                      <span className="font-bold text-xs text-primary uppercase tracking-wider">
+                        {category === 'Weaving Design' ? 'Pick' : 'Needle'}
+                      </span>
+                      <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.needle ? 'rotate-180' : ''}`}>
+                        keyboard_arrow_down
+                      </span>
+                    </button>
+                    {openFilters.needle && (
+                      <>
+                        <div className="w-full h-px bg-outline-variant/50"></div>
+                        <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                          {needles.map(n => (
+                            <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
+                              <input 
+                                type="radio" 
+                                name="needle"
+                                checked={selectedNeedle === n}
+                                onChange={() => { setSelectedNeedle(n); setCurrentPage(1); }}
+                                className="w-4 h-4 accent-primary cursor-pointer" 
+                              />
+                              <span className={`transition-colors ${selectedNeedle === n ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{n}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
 
               {/* 4. Design Format */}
               <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">

@@ -25,7 +25,13 @@ export function CartPage() {
   const [selectedLicenses, setSelectedLicenses] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
     items.forEach(item => {
-      init[item.design.id] = item.licenseType || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
+      init[item.design.id] = item.licenseType || (
+        item.design.category === 'Weaving Design' 
+          ? 'BMP' 
+          : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design')
+            ? 'PSD' 
+            : 'EMB'
+      );
     });
     return init;
   });
@@ -35,7 +41,7 @@ export function CartPage() {
   };
 
   const getPrice = (design: Design, license: string) => {
-    if (license === 'Extended') return design.price * 2.5;
+    if (license === 'Extended' || license === 'Other' || license === 'OTHER' || license === 'TIF') return design.price * 2.5;
     if (license === 'PDC') return design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
     if (license === 'Exclusive Buyout' || license === 'Exclusive Global') return design.price * 8;
     return design.price;
@@ -43,7 +49,13 @@ export function CartPage() {
 
   const calculateTotal = () => {
     return items.reduce((sum, item) => {
-      const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
+      const license = selectedLicenses[item.design.id] || (
+        item.design.category === 'Weaving Design' 
+          ? 'BMP' 
+          : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design')
+            ? 'PSD' 
+            : 'EMB'
+      );
       return sum + getPrice(item.design, license);
     }, 0);
   };
@@ -53,14 +65,14 @@ export function CartPage() {
     setIsSubmitting(true);
     try {
       const orderItems = items.map(item => {
-        const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
-        const backendLicense =
-          license === 'Exclusive Buyout' || license === 'Exclusive Global'
-            ? 'Exclusive Global'
-            : license === 'Extended' || license === 'PDC'
-              ? 'Standard Regional'
-              : 'Open Regional';
-        return { designId: item.design.id, licenseType: backendLicense };
+        const license = selectedLicenses[item.design.id] || (
+          item.design.category === 'Weaving Design' 
+            ? 'BMP' 
+            : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design')
+              ? 'PSD' 
+              : 'EMB'
+        );
+        return { designId: item.design.id, licenseType: license };
       });
 
       const res = await api.orders.create(undefined, undefined, orderItems);
@@ -163,7 +175,7 @@ export function CartPage() {
                 <p className="text-xs text-on-surface-variant mt-2">Works with Google Pay, PhonePe, Paytm, any UPI app</p>
                 <div className="mt-3 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center gap-2 text-xs text-amber-800 font-semibold shadow-sm">
                   <span className="material-symbols-outlined text-[16px] text-amber-600">schedule</span>
-                  <span>Payment Verification Hours: 9:00 AM to 9:00 PM</span>
+                  <span>Payment Verification Hours: 10:00 AM to 6:00 PM</span>
                 </div>
               </div>
 
@@ -204,7 +216,7 @@ export function CartPage() {
                   <li>Pay exactly <strong>₹{totalAmount.toLocaleString()}</strong></li>
                   <li>Take a screenshot of the success screen</li>
                   <li>Upload it below and click Submit</li>
-                  <li>For any assistance, call Customer Care: <strong>9712544405</strong></li>
+                  <li>For any assistance, call Customer Care: <strong>8849590378</strong></li>
                 </ol>
               </div>
 
@@ -291,7 +303,13 @@ export function CartPage() {
             {/* Cart Items List */}
             <div className="lg:col-span-8 space-y-6">
               {items.map(item => {
-                const license = selectedLicenses[item.design.id] || (item.design.category === 'Weaving Design' ? 'BMP' : 'Standard');
+                const license = selectedLicenses[item.design.id] || (
+                  item.design.category === 'Weaving Design' 
+                    ? 'BMP' 
+                    : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design')
+                      ? 'PSD' 
+                      : 'EMB'
+                );
                 const basePrice = item.design.price;
                 const itemPrice = getPrice(item.design, license);
 
@@ -329,13 +347,19 @@ export function CartPage() {
                             {item.design.category === 'Weaving Design' ? (
                               <>
                                 <option value="BMP">BMP Format</option>
-                                <option value="PDC">PDC Format</option>
+                                {item.design.pdcPrice && item.design.pdcPrice > 0 ? (
+                                  <option value="PDC">PDC Format</option>
+                                ) : null}
+                              </>
+                            ) : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design') ? (
+                              <>
+                                <option value="PSD">PSD Format</option>
+                                <option value="TIF">TIF Format</option>
                               </>
                             ) : (
                               <>
-                                <option value="Standard">Standard License (Digital/Print)</option>
-                                <option value="Extended">Extended License (Commercial)</option>
-                                <option value="Exclusive Buyout">Exclusive Buyout (Full Ownership)</option>
+                                <option value="EMB">EMB Format</option>
+                                <option value="OTHER">Other Format</option>
                               </>
                             )}
                           </select>

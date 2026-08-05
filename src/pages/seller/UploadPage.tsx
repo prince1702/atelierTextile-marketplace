@@ -27,6 +27,9 @@ export function UploadPage() {
   const [designType, setDesignType] = useState('2 fider design');
   const [area, setArea] = useState('');
   const [needle, setNeedle] = useState('');
+  const [height, setHeight] = useState('');
+  const [width, setWidth] = useState('');
+  const [color, setColor] = useState('');
   const [designFormat, setDesignFormat] = useState('BMP');
   const [sareeConcept, setSareeConcept] = useState('jumbo design');
   const [price, setPrice] = useState('');
@@ -37,8 +40,10 @@ export function UploadPage() {
   const [licenseType, setLicenseType] = useState('Standard Regional');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [additionalFiles, setAdditionalFiles] = useState<(File | null)[]>([null, null, null, null]);
+  const [additionalPreviews, setAdditionalPreviews] = useState<(string | null)[]>([null, null, null, null]);
   const [zipFile, setZipFile] = useState<File | null>(null);
-
+ 
   // Dynamically update subcategory when category changes
   useEffect(() => {
     if (category === 'Weaving Design') {
@@ -51,6 +56,9 @@ export function UploadPage() {
       setDesignType('2 fider design');
       setArea('');
       setNeedle('');
+      setHeight('');
+      setWidth('');
+      setColor('');
       setDesignFormat('BMP');
       setSareeConcept('jumbo design');
       setPdcPrice('');
@@ -71,9 +79,16 @@ export function UploadPage() {
         setSubcategory('Other');
       }
       setDesignType('Flat/Multi Designs');
-      setArea('100 mm');
-      setNeedle('1');
-      setDesignFormat('EMB');
+      setArea('');
+      setNeedle('');
+      setHeight('');
+      setWidth('');
+      setColor('');
+      if (category === 'Digital Print Design' || category === 'Position Print Design') {
+        setDesignFormat('ALL');
+      } else {
+        setDesignFormat('EMB');
+      }
       setSareeConcept('Box Pallu');
       setPdcPrice('');
     }
@@ -143,6 +158,29 @@ export function UploadPage() {
     }
   };
 
+  const handleAdditionalFileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const newFiles = [...additionalFiles];
+      newFiles[index] = file;
+      setAdditionalFiles(newFiles);
+
+      const newPreviews = [...additionalPreviews];
+      newPreviews[index] = URL.createObjectURL(file);
+      setAdditionalPreviews(newPreviews);
+    }
+  };
+
+  const removeAdditionalFile = (index: number) => {
+    const newFiles = [...additionalFiles];
+    newFiles[index] = null;
+    setAdditionalFiles(newFiles);
+
+    const newPreviews = [...additionalPreviews];
+    newPreviews[index] = null;
+    setAdditionalPreviews(newPreviews);
+  };
+
   const handleZipFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -207,10 +245,21 @@ export function UploadPage() {
       formData.append('colorways', colorways);
       formData.append('licenseType', licenseType);
       formData.append('image', imageFile);
+      additionalFiles.forEach((file) => {
+        if (file) {
+          formData.append('additionalImages', file);
+        }
+      });
       formData.append('designFile', zipFile);
       formData.append('designType', designType);
-      formData.append('area', area);
-      formData.append('needle', needle);
+      if (category === 'Digital Print Design' || category === 'Position Print Design') {
+        formData.append('height', height);
+        formData.append('width', width);
+        formData.append('color', color);
+      } else {
+        formData.append('area', area);
+        formData.append('needle', needle);
+      }
       formData.append('designFormat', designFormat);
       if (designFormat === 'PDC') {
         formData.append('pdcPrice', pdcPrice);
@@ -263,6 +312,57 @@ export function UploadPage() {
                 className="absolute inset-0 opacity-0 cursor-pointer"
                 required={!imagePreview}
               />
+            </div>
+          </div>
+
+          {/* Additional Images Upload Area */}
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Additional Display Images (Up to 4)</label>
+              <p className="text-xs text-on-surface-variant/80 mt-0.5">Add more views or colorways of the design to display to customers.</p>
+            </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {[0, 1, 2, 3].map((index) => (
+                <div 
+                  key={index}
+                  className="border-2 border-dashed border-outline-variant hover:border-primary/45 transition-colors rounded-xl bg-surface/10 relative h-28 flex flex-col items-center justify-center overflow-hidden group cursor-pointer"
+                >
+                  {additionalPreviews[index] ? (
+                    <div className="absolute inset-0 w-full h-full">
+                      <img 
+                        src={additionalPreviews[index]!} 
+                        alt={`Preview ${index + 1}`} 
+                        className="w-full h-full object-cover" 
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          removeAdditionalFile(index);
+                        }}
+                        className="absolute top-1 right-1 w-6 h-6 bg-black/60 text-white rounded-full flex items-center justify-center hover:bg-black transition-colors z-10"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">close</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-center p-2 flex flex-col items-center">
+                      <span className="material-symbols-outlined text-[24px] text-outline mb-1">add_photo_alternate</span>
+                      <span className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wide">Add Image</span>
+                    </div>
+                  )}
+                  {!additionalPreviews[index] && (
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={(e) => handleAdditionalFileChange(index, e)}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -590,112 +690,139 @@ export function UploadPage() {
 
 
             {/* Design Type (Machine Type) */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design Type (Machine Type) *</label>
-              <select 
-                value={designType} 
-                onChange={(e) => setDesignType(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-              >
-                {category === 'Weaving Design' ? (
-                  <>
-                    <option value="2 fider design">2 fider design</option>
-                    <option value="3 fider design">3 fider design</option>
-                    <option value="4 fider design">4 fider design</option>
-                    <option value="2688 design">2688 design</option>
-                    <option value="5376 design(jumbo)">5376 design(jumbo)</option>
-                    <option value="power loom design">power loom design</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="Flat/Multi Designs">Flat/Multi Designs</option>
-                    <option value="Only Cording Designs">Only Cording Designs</option>
-                    <option value="Only Sequin Designs">Only Sequin Designs</option>
-                    <option value="Only Chain Stitch Designs">Only Chain Stitch Designs</option>
-                    <option value="Multi+Cording Designs">Multi+Cording Designs</option>
-                    <option value="Beads and Sequin Designs">Beads and Sequin Designs</option>
-                    <option value="Multi+Cording+Sequin Designs">Multi+Cording+Sequin Designs</option>
-                    <option value="Multi+Sequin Designs">Multi+Sequin Designs</option>
-                    <option value="Multi+Chain Stitch Designs">Multi+Chain Stitch Designs</option>
-                    <option value="Dual & Sandwich Sequin">Dual & Sandwich Sequin</option>
-                    <option value="2/4/6 Sequin Design">2/4/6 Sequin Design</option>
-                    <option value="Cording + Sequin Designs">Cording + Sequin Designs</option>
-                  </>
-                )}
-              </select>
-            </div>
-
-            {/* Area */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                {category === 'Weaving Design' ? 'Reed *' : 'Area *'}
-              </label>
-              {category === 'Weaving Design' ? (
-                <input
-                  type="text"
-                  value={area}
-                  onChange={(e) => setArea(e.target.value)}
-                  placeholder="e.g. 100 to 110"
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
-                  required
-                />
-              ) : (
+            {category !== 'Digital Print Design' && category !== 'Position Print Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design Type (Machine Type) *</label>
                 <select 
-                  value={area} 
-                  onChange={(e) => setArea(e.target.value)}
+                  value={designType} 
+                  onChange={(e) => setDesignType(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
                 >
-                  <option value="100 mm">100 mm</option>
-                  <option value="125 mm">125 mm</option>
-                  <option value="150 mm">150 mm</option>
-                  <option value="175 mm">175 mm</option>
-                  <option value="200 mm">200 mm</option>
-                  <option value="225 mm">225 mm</option>
-                  <option value="250 mm">250 mm</option>
-                  <option value="300 mm">300 mm</option>
-                  <option value="330 mm">330 mm</option>
-                  <option value="400 mm">400 mm</option>
-                  <option value="500 mm">500 mm</option>
-                  <option value="600 mm">600 mm</option>
+                  {category === 'Weaving Design' ? (
+                    <>
+                      <option value="2 fider design">2 fider design</option>
+                      <option value="3 fider design">3 fider design</option>
+                      <option value="4 fider design">4 fider design</option>
+                      <option value="2688 design">2688 design</option>
+                      <option value="5376 design(jumbo)">5376 design(jumbo)</option>
+                      <option value="power loom design">power loom design</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="Flat/Multi Designs">Flat/Multi Designs</option>
+                      <option value="Only Cording Designs">Only Cording Designs</option>
+                      <option value="Only Sequin Designs">Only Sequin Designs</option>
+                      <option value="Only Chain Stitch Designs">Only Chain Stitch Designs</option>
+                      <option value="Multi+Cording Designs">Multi+Cording Designs</option>
+                      <option value="Beads and Sequin Designs">Beads and Sequin Designs</option>
+                      <option value="Multi+Cording+Sequin Designs">Multi+Cording+Sequin Designs</option>
+                      <option value="Multi+Sequin Designs">Multi+Sequin Designs</option>
+                      <option value="Multi+Chain Stitch Designs">Multi+Chain Stitch Designs</option>
+                      <option value="Dual & Sandwich Sequin">Dual & Sandwich Sequin</option>
+                      <option value="2/4/6 Sequin Design">2/4/6 Sequin Design</option>
+                      <option value="Cording + Sequin Designs">Cording + Sequin Designs</option>
+                    </>
+                  )}
                 </select>
-              )}
-            </div>
+              </div>
+            )}
 
-            {/* Needle / Pick */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                {category === 'Weaving Design' ? 'Pick *' : 'Needle *'}
-              </label>
-              {category === 'Weaving Design' ? (
-                <input
-                  type="text"
-                  value={needle}
-                  onChange={(e) => setNeedle(e.target.value)}
-                  placeholder="e.g. 36 to 42"
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
-                  required
-                />
-              ) : (
-                <select 
-                  value={needle} 
-                  onChange={(e) => setNeedle(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-                >
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                  <option value="11">11</option>
-                  <option value="12">12</option>
-                </select>
-              )}
-            </div>
+            {category === 'Digital Print Design' || category === 'Position Print Design' ? (
+              <>
+                {/* Height */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Height *</label>
+                  <input
+                    type="text"
+                    value={height}
+                    onChange={(e) => setHeight(e.target.value)}
+                    placeholder="e.g. 30 inch or 150 cm"
+                    className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                    required
+                  />
+                </div>
+
+                {/* Width */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Width *</label>
+                  <input
+                    type="text"
+                    value={width}
+                    onChange={(e) => setWidth(e.target.value)}
+                    placeholder="e.g. 44 inch or 110 cm"
+                    className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                    required
+                  />
+                </div>
+
+                {/* Color */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Color *</label>
+                  <input
+                    type="text"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    placeholder="e.g. Multi Color or 4 Color"
+                    className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                    required
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Area */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    {category === 'Weaving Design' ? 'Reed *' : 'Area *'}
+                  </label>
+                  {category === 'Weaving Design' ? (
+                    <input
+                      type="text"
+                      value={area}
+                      onChange={(e) => setArea(e.target.value)}
+                      placeholder="e.g. 100 to 110"
+                      className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                      required
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      value={area}
+                      onChange={(e) => setArea(e.target.value)}
+                      placeholder="e.g. 150 mm"
+                      className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                      required
+                    />
+                  )}
+                </div>
+
+                {/* Needle / Pick */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    {category === 'Weaving Design' ? 'Pick *' : 'Needle *'}
+                  </label>
+                  {category === 'Weaving Design' ? (
+                    <input
+                      type="text"
+                      value={needle}
+                      onChange={(e) => setNeedle(e.target.value)}
+                      placeholder="e.g. 36 to 42"
+                      className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                      required
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      value={needle}
+                      onChange={(e) => setNeedle(e.target.value)}
+                      placeholder="e.g. 9 Color"
+                      className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                      required
+                    />
+                  )}
+                </div>
+              </>
+            )}
 
             {/* Design Format */}
             <div className="space-y-1">
@@ -712,6 +839,12 @@ export function UploadPage() {
                   <>
                     <option value="BMP">BMP</option>
                     <option value="PDC">PDC</option>
+                  </>
+                ) : category === 'Digital Print Design' || category === 'Position Print Design' ? (
+                  <>
+                    <option value="ALL">ALL</option>
+                    <option value="PSD">PSD</option>
+                    <option value="TIF">TIF</option>
                   </>
                 ) : (
                   <>
@@ -813,18 +946,20 @@ export function UploadPage() {
             </div>
 
             {/* License Type */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Default License Scope</label>
-              <select 
-                value={licenseType} 
-                onChange={(e) => setLicenseType(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-              >
-                <option value="Open Regional">Open Regional</option>
-                <option value="Standard Regional">Standard Regional</option>
-                <option value="Exclusive Global">Exclusive Global</option>
-              </select>
-            </div>
+            {category !== 'Digital Print Design' && category !== 'Position Print Design' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Default License Scope</label>
+                <select 
+                  value={licenseType} 
+                  onChange={(e) => setLicenseType(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+                >
+                  <option value="Open Regional">Open Regional</option>
+                  <option value="Standard Regional">Standard Regional</option>
+                  <option value="Exclusive Global">Exclusive Global</option>
+                </select>
+              </div>
+            )}
 
             {/* Colorways */}
             <div className="space-y-1">

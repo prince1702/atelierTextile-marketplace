@@ -68,10 +68,11 @@ const WEAVING_CONCEPTS = [
   'topdyed',
   'nylon'
 ];
+
 const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   {
     name: 'All',
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+    image: '/all_weaving.png',
   },
   {
     name: 'Saree Design',
@@ -111,7 +112,7 @@ const WEAVING_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+    image: '/other_design.png',
   }
 ];
 
@@ -151,7 +152,7 @@ const EMBROIDERY_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    image: '/other_design.png',
   }
 ];
 
@@ -210,7 +211,7 @@ const DIGITAL_PRINT_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+    image: '/other_design.png',
   }
 ];
 
@@ -241,7 +242,7 @@ const POSITION_PRINT_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+    image: '/other_design.png',
   }
 ];
 
@@ -414,22 +415,22 @@ const ALL_SUBCATEGORIES_WITH_IMAGES = [
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop',
+    image: '/other_design.png',
     parentCategory: 'Weaving Design'
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&h=200&fit=crop',
+    image: '/other_design.png',
     parentCategory: 'Embroidery Design'
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&h=200&fit=crop',
+    image: '/other_design.png',
     parentCategory: 'Digital Print Design'
   },
   {
     name: 'Other',
-    image: 'https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=200&h=200&fit=crop',
+    image: '/other_design.png',
     parentCategory: 'Position Print Design'
   }
 ];
@@ -508,19 +509,30 @@ export function Marketplace() {
   const { showToast } = useNotification();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
-  const [activeCategory, setActiveCategory] = useState(categoryParam && CATEGORIES.includes(categoryParam) ? categoryParam : 'Weaving Design');
+  const [activeCategory, setActiveCategory] = useState<string>(categoryParam && CATEGORIES.includes(categoryParam) ? categoryParam : 'Weaving Design');
 
   useEffect(() => {
     const cat = searchParams.get('category');
     if (cat && CATEGORIES.includes(cat)) {
       setActiveCategory(cat);
+    } else if (searchParams.get('search')) {
+      setActiveCategory('All');
+    }
+    const q = searchParams.get('search');
+    if (q !== null) {
+      setSearchQuery(q);
+      setSearchTrigger(q);
     }
   }, [searchParams]);
 
   const designTypes = activeCategory === 'Weaving Design' ? WEAVING_DESIGN_TYPES : EMB_DESIGN_TYPES;
   const areas = activeCategory === 'Weaving Design' ? WEAVING_AREAS : EMB_AREAS;
   const needles = activeCategory === 'Weaving Design' ? ['All', '36 to 42', '43 to 48', '50 to 60', '61 to 70', '71 to 80', '80 to 90'] : ['All', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-  const formats = activeCategory === 'Weaving Design' ? WEAVING_FORMATS : DESIGN_FORMATS;
+  const formats = activeCategory === 'Weaving Design' 
+    ? WEAVING_FORMATS 
+    : (activeCategory === 'Digital Print Design' || activeCategory === 'Position Print Design')
+      ? ['All', 'TIF', 'PSD']
+      : DESIGN_FORMATS;
   const concepts = activeCategory === 'Weaving Design' ? WEAVING_CONCEPTS : SAREE_CONCEPTS;
   const [activeSubcategory, setActiveSubcategory] = useState('All');
   const [openFilters, setOpenFilters] = useState(() => {
@@ -565,13 +577,6 @@ export function Marketplace() {
   };
 
   const fetchDesigns = async () => {
-    if (!searchTrigger.trim()) {
-      setDesigns([]);
-      setTotalPages(1);
-      setTotalResults(0);
-      setIsLoading(false);
-      return;
-    }
     setIsLoading(true);
     try {
       const params: any = {
@@ -584,9 +589,9 @@ export function Marketplace() {
       if ((activeCategory === 'Weaving Design' || activeCategory === 'Embroidery Design' || activeCategory === 'Digital Print Design' || activeCategory === 'Position Print Design') && activeSubcategory !== 'All') {
         params.subcategory = activeSubcategory;
       }
-      if (selectedDesignType !== 'All') params.designType = selectedDesignType;
-      if (selectedArea !== 'All') params.area = selectedArea;
-      if (selectedNeedle !== 'All') params.needle = selectedNeedle;
+      if (selectedDesignType !== 'All' && (activeCategory as string) !== 'Digital Print Design' && (activeCategory as string) !== 'Position Print Design') params.designType = selectedDesignType;
+      if (selectedArea !== 'All' && (activeCategory as string) !== 'Digital Print Design' && (activeCategory as string) !== 'Position Print Design') params.area = selectedArea;
+      if (selectedNeedle !== 'All' && (activeCategory as string) !== 'Digital Print Design' && (activeCategory as string) !== 'Position Print Design') params.needle = selectedNeedle;
       if (selectedDesignFormat !== 'All') params.designFormat = selectedDesignFormat;
       if (selectedSareeConcept !== 'All') params.sareeConcept = selectedSareeConcept;
       if (searchTrigger.trim()) params.search = searchTrigger;
@@ -667,6 +672,11 @@ export function Marketplace() {
                 onClick={() => { 
                   setActiveCategory(category); 
                   setActiveSubcategory('All');
+                  setSelectedDesignType('All');
+                  setSelectedArea('All');
+                  setSelectedNeedle('All');
+                  setSelectedDesignFormat('All');
+                  setSelectedSareeConcept('All');
                   setCurrentPage(1); 
                   setSearchParams({ category });
                 }}
@@ -950,69 +960,73 @@ export function Marketplace() {
                   )}
                 </div>
 
-                {/* 2. Reed & Pick */}
-                <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
-                  <button 
-                    onClick={() => toggleFilter('area')}
-                    className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
-                  >
-                    <span className="font-bold text-xs text-primary uppercase tracking-wider">{activeCategory === 'Weaving Design' ? 'Reed' : 'Area'}</span>
-                    <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.area ? 'rotate-180' : ''}`}>
-                      keyboard_arrow_down
-                    </span>
-                  </button>
-                  {openFilters.area && (
-                    <>
-                      <div className="w-full h-px bg-outline-variant/50"></div>
-                      <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                        {areas.map(ar => (
-                          <label key={ar} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
-                            <input 
-                              type="radio" 
-                              name="area"
-                              checked={selectedArea === ar}
-                              onChange={() => { setSelectedArea(ar); setCurrentPage(1); }}
-                              className="w-4 h-4 accent-primary cursor-pointer" 
-                            />
-                            <span className={`transition-colors ${selectedArea === ar ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{ar}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
+                {/* 2. Reed & Pick (Size & Color) */}
+                {(activeCategory as string) !== 'Digital Print Design' && (activeCategory as string) !== 'Position Print Design' && (
+                  <>
+                    <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                      <button 
+                        onClick={() => toggleFilter('area')}
+                        className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                      >
+                        <span className="font-bold text-xs text-primary uppercase tracking-wider">{activeCategory === 'Weaving Design' ? 'Reed' : 'Area'}</span>
+                        <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.area ? 'rotate-180' : ''}`}>
+                          keyboard_arrow_down
+                        </span>
+                      </button>
+                      {openFilters.area && (
+                        <>
+                          <div className="w-full h-px bg-outline-variant/50"></div>
+                          <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                            {areas.map(ar => (
+                              <label key={ar} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
+                                <input 
+                                  type="radio" 
+                                  name="area"
+                                  checked={selectedArea === ar}
+                                  onChange={() => { setSelectedArea(ar); setCurrentPage(1); }}
+                                  className="w-4 h-4 accent-primary cursor-pointer" 
+                                />
+                                <span className={`transition-colors ${selectedArea === ar ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{ar}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
 
-                {/* 3. Color */}
-                <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
-                  <button 
-                    onClick={() => toggleFilter('needle')}
-                    className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
-                  >
-                    <span className="font-bold text-xs text-primary uppercase tracking-wider">{activeCategory === 'Weaving Design' ? 'Pick' : 'Color'}</span>
-                    <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.needle ? 'rotate-180' : ''}`}>
-                      keyboard_arrow_down
-                    </span>
-                  </button>
-                  {openFilters.needle && (
-                    <>
-                      <div className="w-full h-px bg-outline-variant/50"></div>
-                      <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
-                        {needles.map(n => (
-                          <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
-                            <input 
-                              type="radio" 
-                              name="needle"
-                              checked={selectedNeedle === n}
-                              onChange={() => { setSelectedNeedle(n); setCurrentPage(1); }}
-                              className="w-4 h-4 accent-primary cursor-pointer" 
-                            />
-                            <span className={`transition-colors ${selectedNeedle === n ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{n}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
+                    {/* 3. Color */}
+                    <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">
+                      <button 
+                        onClick={() => toggleFilter('needle')}
+                        className="w-full flex justify-between items-center px-4 py-3.5 hover:bg-surface-container-lowest/50 transition-colors text-left"
+                      >
+                        <span className="font-bold text-xs text-primary uppercase tracking-wider">{activeCategory === 'Weaving Design' ? 'Pick' : 'Needle'}</span>
+                        <span className={`material-symbols-outlined text-primary/80 transition-transform duration-200 ${openFilters.needle ? 'rotate-180' : ''}`}>
+                          keyboard_arrow_down
+                        </span>
+                      </button>
+                      {openFilters.needle && (
+                        <>
+                          <div className="w-full h-px bg-outline-variant/50"></div>
+                          <div className="px-4 py-3.5 bg-white custom-filter-scroll max-h-[185px] overflow-y-auto space-y-2.5">
+                            {needles.map(n => (
+                              <label key={n} className="flex items-center gap-3 cursor-pointer group text-sm font-medium">
+                                <input 
+                                  type="radio" 
+                                  name="needle"
+                                  checked={selectedNeedle === n}
+                                  onChange={() => { setSelectedNeedle(n); setCurrentPage(1); }}
+                                  className="w-4 h-4 accent-primary cursor-pointer" 
+                                />
+                                <span className={`transition-colors ${selectedNeedle === n ? 'text-primary font-semibold' : 'text-on-surface-variant group-hover:text-primary'}`}>{n}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
 
                 {/* 4. Design Format */}
                 <div className="border border-outline-variant/60 bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-200">

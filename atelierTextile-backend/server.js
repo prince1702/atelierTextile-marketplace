@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -11,14 +12,19 @@ dotenv.config();
 // Connect to MongoDB
 connectDB();
 
+// Determine port early so it can be used to build allowed origins
+const PORT = process.env.PORT || 5000;
+
 const app = express();
 
 // CORS — allow frontend origin and vercel preview domains
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  `http://localhost:${PORT}`,
+  `http://127.0.0.1:${PORT}`,
   'http://localhost:5173',
   'http://localhost:3000',
-  'http://localhost:5000',
+  process.env.FRONTEND_URL
 ].filter(Boolean);
 
 app.use(
@@ -61,13 +67,20 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/cart', require('./routes/cart'));
 app.use('/api/wishlist', require('./routes/wishlist'));
 app.use('/api/tickets', require('./routes/tickets'));
+// Serve frontend static build (if present) so frontend and backend
+// can be hosted from the same port. Builds are output to ./frontend
+const frontendDir = path.join(__dirname, 'frontend');
+if (fs.existsSync(frontendDir)) {
+  app.use(express.static(frontendDir));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDir, 'index.html'));
+  });
+}
 
-// Global error handler (must be after routes)
+// Global error handler (must be after routes and static serving)
 app.use(errorHandler);
 
 // Start server
-const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
   console.log(`\n🚀 AtelierTextile API Server running on port ${PORT}`);
   console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);

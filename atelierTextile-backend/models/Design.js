@@ -54,6 +54,18 @@ const designSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  height: {
+    type: String,
+    default: '',
+  },
+  width: {
+    type: String,
+    default: '',
+  },
+  color: {
+    type: String,
+    default: '',
+  },
   designFormat: {
     type: String,
     default: '',
@@ -83,6 +95,10 @@ const designSchema = new mongoose.Schema({
     default: '',
   },
   images: {
+    type: [String],
+    default: [],
+  },
+  additionalImages: {
     type: [String],
     default: [],
   },
