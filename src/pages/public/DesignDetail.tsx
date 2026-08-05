@@ -528,33 +528,24 @@ export function DesignDetail() {
         </div>
       </div>
 
-<<<<<<< HEAD
       {/* Lightbox Image Modal */}
       {design && (
         <ImageLightbox
           isOpen={isLightboxOpen}
           onClose={() => setIsLightboxOpen(false)}
-          images={
-            (design.images && design.images.length > 0)
-              ? design.images
-              : [design.image, design.image, design.image, design.image]
-          }
-          currentIndex={selectedImageIndex}
-          onSelectImage={(idx) => setSelectedImageIndex(idx)}
+          images={allImages.length > 0 ? allImages : [design.image]}
+          currentIndex={activeImageIndex}
+          onSelectImage={(idx) => {
+            handleImageSelect(idx);
+            setSelectedImageIndex(idx);
+          }}
+          onIndexChange={(idx) => {
+            handleImageSelect(idx);
+            setSelectedImageIndex(idx);
+          }}
           title={design.title}
         />
       )}
-=======
-      {/* Lightbox Fullscreen Photo Viewer */}
-      <ImageLightbox
-        isOpen={isLightboxOpen}
-        images={allImages}
-        currentIndex={activeImageIndex}
-        onClose={() => setIsLightboxOpen(false)}
-        onIndexChange={handleImageSelect}
-        title={design.title}
-      />
->>>>>>> origin/master
     </div>
   );
 }

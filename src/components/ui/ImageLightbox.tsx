@@ -25,7 +25,7 @@ export function ImageLightbox({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
-  const wheelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const wheelTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isWheelLockedRef = useRef(false);
 
   const safeIndex = Math.max(0, Math.min(currentIndex, images.length - 1));

@@ -5,8 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    // Place production build into the backend's `frontend` folder
-    outDir: 'atelierTextile-backend/frontend',
+    outDir: 'dist',
     emptyOutDir: true,
   },
   test: {
