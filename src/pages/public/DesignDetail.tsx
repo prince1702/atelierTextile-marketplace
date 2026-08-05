@@ -5,6 +5,7 @@ import type { Design } from '../../types';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
+import { ImageLightbox } from '../../components/ui/ImageLightbox';
 
 const getParentSubcategory = (sub: string): string => {
   const ALL_SAREE_SUBCATEGORIES_VALUES = [
@@ -86,6 +87,8 @@ export function DesignDetail() {
   const [error, setError] = useState<string | null>(null);
   const [selectedLicense, setSelectedLicense] = useState('Standard');
   const [activeTab, setActiveTab] = useState('details');
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   useEffect(() => {
     const fetchDesign = async () => {
@@ -217,24 +220,53 @@ export function DesignDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
           {/* Left: Image Gallery */}
-          <div className="lg:col-span-7 space-y-4">
-            <div className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group">
-              <img src={design.image} alt={design.title} className="w-full h-[600px] object-cover cursor-zoom-in" />
-              <button
-                onClick={() => toggleWishlist(design)}
-                className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-modal z-10"
-              >
-                <span className={`material-symbols-outlined text-[24px] ${isWishlisted ? 'filled text-error' : 'text-on-surface-variant'}`}>favorite</span>
-              </button>
-            </div>
-            <div className="grid grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className={`rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-24 ${i === 1 ? 'border-primary' : 'border-outline-variant/30 hover:border-primary/50'}`}>
-                  <img src={design.image} alt="Thumbnail" className="w-full h-full object-cover" />
+          {(() => {
+            const galleryImages = (design.images && design.images.length > 0) 
+              ? design.images 
+              : [design.image, design.image, design.image, design.image];
+            const activeImage = galleryImages[selectedImageIndex] || design.image;
+
+            return (
+              <div className="lg:col-span-7 space-y-4">
+                <div 
+                  onClick={() => setIsLightboxOpen(true)}
+                  className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group cursor-zoom-in shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <img src={activeImage} alt={design.title} className="w-full h-[600px] object-cover transition-transform duration-300 group-hover:scale-102" />
+                  
+                  {/* Click to expand overlay hint */}
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <div className="bg-black/75 backdrop-blur text-white px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg">
+                      <span className="material-symbols-outlined text-[20px]">fullscreen</span>
+                      Click to open full view
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWishlist(design);
+                    }}
+                    className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-modal z-10"
+                  >
+                    <span className={`material-symbols-outlined text-[24px] ${isWishlisted ? 'filled text-error' : 'text-on-surface-variant'}`}>favorite</span>
+                  </button>
                 </div>
-              ))}
-            </div>
-          </div>
+
+                <div className="grid grid-cols-4 gap-4">
+                  {galleryImages.map((img, i) => (
+                    <div 
+                      key={i} 
+                      onClick={() => setSelectedImageIndex(i)}
+                      className={`rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-24 transition-all duration-200 ${i === selectedImageIndex ? 'border-primary ring-2 ring-primary/30 scale-105' : 'border-outline-variant/30 hover:border-primary/50 opacity-70 hover:opacity-100'}`}
+                    >
+                      <img src={img} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Right: Product Details */}
           <div className="lg:col-span-5 space-y-8 lg:pl-4">
@@ -402,6 +434,22 @@ export function DesignDetail() {
           </div>
         </div>
       </div>
+
+      {/* Lightbox Image Modal */}
+      {design && (
+        <ImageLightbox
+          isOpen={isLightboxOpen}
+          onClose={() => setIsLightboxOpen(false)}
+          images={
+            (design.images && design.images.length > 0)
+              ? design.images
+              : [design.image, design.image, design.image, design.image]
+          }
+          currentIndex={selectedImageIndex}
+          onSelectImage={(idx) => setSelectedImageIndex(idx)}
+          title={design.title}
+        />
+      )}
     </div>
   );
 }

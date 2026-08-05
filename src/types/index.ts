@@ -22,6 +22,7 @@ export interface Design {
   category: 'Weaving Design' | 'Embroidery Design' | 'Digital Print Design' | 'Position Print Design';
   subcategory?: string;
   image: string;
+  images?: string[];
   rating: number;
   reviews: number;
   tags: string[];

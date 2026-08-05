@@ -82,6 +82,10 @@ const designSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  images: {
+    type: [String],
+    default: [],
+  },
   designFile: {
     type: String,
     default: '',
