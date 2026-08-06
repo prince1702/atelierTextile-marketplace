@@ -1013,6 +1013,7 @@ exports.downloadDesign = async (req, res, next) => {
           
           // Find the upload or authenticated index
           let typeIdx = pathParts.indexOf('authenticated');
+          const uploadType = typeIdx !== -1 ? 'authenticated' : 'upload';
           if (typeIdx === -1) typeIdx = pathParts.indexOf('upload');
           
           let publicIdParts = pathParts.slice(typeIdx + 1);
@@ -1026,14 +1027,14 @@ exports.downloadDesign = async (req, res, next) => {
           }
           const publicId = publicIdParts.join('/');
 
-          console.log(`📥 Cloudinary download: publicId="${publicId}", fileUrl="${fileUrl}"`);
+          console.log(`📥 Cloudinary download: publicId="${publicId}", type="${uploadType}"`);
 
-          // Use cloudinary.url() with sign_url to generate a proper signed URL
-          const signedUrl = cloudinary.url(publicId, {
+          // Use private_download_url to generate a proper API download URL
+          const signedUrl = cloudinary.utils.private_download_url(publicId, '', {
             resource_type: 'raw',
-            type: 'authenticated',
-            sign_url: true,
-            flags: 'attachment:' + safeTitle,
+            type: uploadType,
+            expires_at: Math.floor(Date.now() / 1000) + 3600,
+            attachment: true,
           });
 
           console.log(`📥 Cloudinary signed URL: "${signedUrl}"`);
