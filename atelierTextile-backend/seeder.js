@@ -26,16 +26,8 @@ const seedDataWithoutExit = async () => {
       await mongoose.connect(process.env.MONGODB_URI);
       console.log('✅ Connected to MongoDB');
     }
-    // Clear all collections
-    await User.deleteMany();
-    await Design.deleteMany();
-    await Order.deleteMany();
-    await Cart.deleteMany();
-    await Wishlist.deleteMany();
-    await Ticket.deleteMany();
-    console.log('🗑️  All collections cleared');
 
-    // --- SEED USERS ---
+    // --- SEED DEMO USERS SAFELY (Preserve personal accounts) ---
     const usersData = [
       { name: 'Alex Chen', email: 'admin@atelier.com', password: 'admin123', role: 'admin', status: 'active', country: 'USA' },
       { name: 'Elena Jenkins', email: 'seller@atelier.com', password: 'seller123', role: 'seller', status: 'active', country: 'France', totalRevenue: 42800, totalOrders: 284 },
@@ -47,22 +39,13 @@ const seedDataWithoutExit = async () => {
       { name: 'Sophie Martin', email: 'sophie.m@atelier.fr', password: 'password123', role: 'seller', status: 'active', country: 'France', totalRevenue: 61200, totalOrders: 412 },
     ];
 
-    const users = await User.create(usersData);
-    console.log(`👤 ${users.length} users seeded`);
-
-    // Map users by email for easy reference
-    const admin = users.find((u) => u.email === 'admin@atelier.com');
-    const seller1 = users.find((u) => u.email === 'seller@atelier.com');
-    const seller2 = users.find((u) => u.email === 'david.t@design.io');
-    const seller3 = users.find((u) => u.email === 'sophie.m@atelier.fr');
-    const customer1 = users.find((u) => u.email === 'customer@atelier.com');
-    const customer2 = users.find((u) => u.email === 'priya.p@fashion.in');
-    const customer3 = users.find((u) => u.email === 'james.k@luxbrand.kr');
-
-    // --- SEED DESIGNS ---
-    const designsData = [];
-    const designs = await Design.insertMany(designsData);
-    console.log(`🎨 ${designs.length} designs seeded`);
+    for (const u of usersData) {
+      const exists = await User.findOne({ email: u.email });
+      if (!exists) {
+        await User.create(u);
+      }
+    }
+    console.log('👤 Demo users verified & preserved');
 
     // --- SEED ORDERS ---
     const ordersData = [];
