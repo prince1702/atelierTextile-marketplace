@@ -44,7 +44,7 @@ export function Register() {
       <div className="w-full max-w-2xl mb-4">
         <Link to="/" className="flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors">
           <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-          Back to AtelierTextile
+          Back to TexDesigner
         </Link>
       </div>
 
@@ -52,9 +52,9 @@ export function Register() {
         <div className="px-8 py-6 border-b border-outline-variant bg-white text-center">
           <div className="flex items-center justify-center gap-2 text-primary mb-2">
             <span className="material-symbols-outlined text-[24px]">texture</span>
-            <span className="font-bold text-lg">AtelierTextile</span>
+            <span className="font-bold text-lg">TexDesigner</span>
           </div>
-          <h1 className="text-2xl font-bold text-primary mb-1">Join Atelier</h1>
+          <h1 className="text-2xl font-bold text-primary mb-1">Join TexDesigner</h1>
           <p className="text-sm text-on-surface-variant">Create your account to explore premium textiles.</p>
         </div>
 
@@ -97,7 +97,7 @@ export function Register() {
             {/* Step 2 */}
             {step === 2 && (
               <div className="space-y-4 animate-slide-in">
-                <p className="text-sm text-on-surface-variant mb-4">How do you plan to use AtelierTextile?</p>
+                <p className="text-sm text-on-surface-variant mb-4">How do you plan to use TexDesigner?</p>
                 <label className="relative block cursor-pointer group">
                   <input type="radio" name="role" value="customer" checked={role === 'customer'} onChange={() => setRole('customer')} className="peer sr-only" />
                   <div className="p-4 bg-white border-2 border-outline-variant rounded-xl peer-checked:border-primary peer-checked:bg-primary-fixed/10 hover:shadow-md transition-all flex items-center gap-4">

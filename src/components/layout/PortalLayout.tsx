@@ -64,7 +64,7 @@ export function PortalLayout({ children }: PortalLayoutProps) {
             <span className="material-symbols-outlined">texture</span>
           </Link>
           <div>
-            <h2 className="font-bold text-primary leading-tight">AtelierTextile</h2>
+            <h2 className="font-bold text-primary leading-tight">TexDesigner</h2>
             <p className="text-xs text-on-surface-variant font-medium capitalize">{role} Portal</p>
           </div>
         </div>
@@ -135,7 +135,7 @@ export function PortalLayout({ children }: PortalLayoutProps) {
               <span className="material-symbols-outlined">texture</span>
             </div>
             <div>
-              <h2 className="font-bold text-primary leading-tight">AtelierTextile</h2>
+              <h2 className="font-bold text-primary leading-tight">TexDesigner</h2>
               <p className="text-xs text-on-surface-variant font-medium capitalize">{role} Portal</p>
             </div>
           </div>

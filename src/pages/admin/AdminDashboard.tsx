@@ -80,7 +80,7 @@ export function AdminDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-primary mb-1">Welcome back, {user?.name.split(' ')[0]} 👋</h2>
-          <p className="text-sm text-on-surface-variant">Here is the latest data for the Atelier Textile Marketplace.</p>
+          <p className="text-sm text-on-surface-variant">Here is the latest data for the TexDesigner Marketplace.</p>
         </div>
         <div className="flex items-center gap-2 bg-white border border-outline-variant rounded-lg px-4 py-2 shadow-sm">
           <span className="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_today</span>
