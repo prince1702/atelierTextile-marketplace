@@ -215,17 +215,27 @@ export function UploadPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !price || !imageFile || !zipFile) {
-      showToast('Please fill out all required fields, including both a display image and a ZIP/RAR design file', 'warning');
+    if (!title.trim() || !imageFile) {
+      showToast('Please fill out all required fields, including a display image', 'warning');
       return;
     }
 
-    if (designFormat === 'PDC' && !pdcPrice) {
-      showToast('Please specify the price for PDC format', 'warning');
+    // At least one design file (BMP or PDC) must be provided
+    if (!zipFile && !pdcZipFile) {
+      showToast('Please upload at least one design source file (BMP or PDC/TIF)', 'warning');
       return;
     }
-    if (designFormat === 'TIF' && !pdcPrice) {
-      showToast('Please specify the price for TIF format', 'warning');
+
+    // If BMP file is provided, BMP price is required
+    if (zipFile && !price) {
+      showToast('Please specify the price for BMP file', 'warning');
+      return;
+    }
+
+    // If PDC/TIF file is provided, PDC/TIF price is required
+    if (pdcZipFile && !pdcPrice) {
+      const label = category === 'Weaving Design' ? 'PDC' : 'TIF';
+      showToast(`Please specify the price for ${label} file`, 'warning');
       return;
     }
 
@@ -274,7 +284,9 @@ export function UploadPage() {
           formData.append('additionalImages', file);
         }
       });
-      formData.append('designFile', zipFile);
+      if (zipFile) {
+        formData.append('designFile', zipFile);
+      }
       if (pdcZipFile) {
         formData.append('pdcDesignFile', pdcZipFile);
       }
@@ -393,15 +405,34 @@ export function UploadPage() {
             </div>
           </div>
 
-          {/* ZIP/RAR File Upload Area */}
+          {/* BMP / PSD Design Source File Upload Area */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design Source File (ZIP / RAR) *</label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                {category === 'Weaving Design'
+                  ? `BMP Design Source File (ZIP / RAR) ${pdcZipFile ? '(Optional)' : '*'}`
+                  : (category === 'Digital Print Design' || category === 'Position Print Design')
+                    ? `PSD Design Source File (ZIP / RAR) ${pdcZipFile ? '(Optional)' : '*'}`
+                    : `Design Source File (ZIP / RAR) *`
+                }
+              </label>
+              {zipFile && (
+                <button
+                  type="button"
+                  onClick={() => setZipFile(null)}
+                  className="text-xs text-red-600 font-semibold hover:underline flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-[14px]">close</span>
+                  Remove File
+                </button>
+              )}
+            </div>
             <div className="border-2 border-dashed border-outline-variant hover:border-primary/50 transition-colors rounded-xl p-4 flex items-center justify-between bg-surface/10 cursor-pointer relative">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-[32px] text-outline">archive</span>
                 <div className="text-left">
                   <p className="text-sm font-semibold text-on-surface">
-                    {zipFile ? zipFile.name : 'Select ZIP or RAR file'}
+                    {zipFile ? zipFile.name : (category === 'Weaving Design' ? 'Select ZIP or RAR file for BMP' : 'Select ZIP or RAR file')}
                   </p>
                   <p className="text-xs text-on-surface-variant">
                     {zipFile ? `${(zipFile.size / 1024 / 1024).toFixed(2)} MB` : 'Supports ZIP, RAR (Max 50MB)'}
@@ -419,7 +450,6 @@ export function UploadPage() {
                 accept=".zip,.rar"
                 onChange={handleZipFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer"
-                required={!zipFile}
               />
             </div>
           </div>
@@ -430,8 +460,8 @@ export function UploadPage() {
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                   {category === 'Weaving Design' 
-                    ? `PDC Design Source File (ZIP / RAR) ${designFormat === 'PDC' || pdcPrice ? '*' : '(Optional)'}`
-                    : `TIF Design Source File (ZIP / RAR) ${designFormat === 'TIF' || pdcPrice ? '*' : '(Optional)'}`
+                    ? `PDC Design Source File (ZIP / RAR) ${zipFile ? '(Optional)' : '*'}`
+                    : `TIF Design Source File (ZIP / RAR) ${zipFile ? '(Optional)' : '*'}`
                   }
                 </label>
                 {pdcZipFile && (
@@ -499,9 +529,9 @@ export function UploadPage() {
             <div className="space-y-1">
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                 {category === 'Weaving Design' 
-                  ? 'Price for BMP (INR) *' 
+                  ? `Price for BMP (INR) ${zipFile ? '*' : '(Optional)'}` 
                   : (category === 'Digital Print Design' || category === 'Position Print Design')
-                    ? 'Price for PSD (INR) *'
+                    ? `Price for PSD (INR) ${zipFile ? '*' : '(Optional)'}`
                     : 'Price (INR) *'
                 }
               </label>
@@ -512,7 +542,7 @@ export function UploadPage() {
                 className="w-full px-4 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
                 placeholder="e.g. 500"
                 min="0"
-                required
+                required={!!zipFile || category === 'Embroidery Design'}
               />
             </div>
 
@@ -521,8 +551,8 @@ export function UploadPage() {
               <div className="space-y-1">
                 <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                   {category === 'Weaving Design'
-                    ? `Price for PDC (INR) ${designFormat === 'PDC' ? '*' : '(Optional)'}`
-                    : `Price for TIF (INR) ${designFormat === 'TIF' ? '*' : '(Optional)'}`
+                    ? `Price for PDC (INR) ${pdcZipFile ? '*' : '(Optional)'}`
+                    : `Price for TIF (INR) ${pdcZipFile ? '*' : '(Optional)'}`
                   }
                 </label>
                 <input 
@@ -532,7 +562,7 @@ export function UploadPage() {
                   className="w-full px-4 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
                   placeholder="e.g. 1250"
                   min="0"
-                  required={designFormat === 'PDC' || designFormat === 'TIF'}
+                  required={!!pdcZipFile}
                 />
               </div>
             )}
