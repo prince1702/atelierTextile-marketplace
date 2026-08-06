@@ -6,7 +6,7 @@ import { api } from '../../services/api';
 import type { Design, Order } from '../../types';
 
 const UPI_ID = 'dhavalhidad2600@okicici';
-const UPI_NAME = 'TexDesigner';
+const UPI_NAME = 'AtelierTextile';
 
 export function CartPage() {
   const { items, removeFromCart, clearCart } = useCart();
@@ -41,8 +41,8 @@ export function CartPage() {
   };
 
   const getPrice = (design: Design, license: string) => {
-    if (license === 'Extended' || license === 'Other' || license === 'OTHER') return design.price * 2.5;
-    if (license === 'PDC' || license === 'TIF') return design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
+    if (license === 'Extended' || license === 'Other' || license === 'OTHER' || license === 'TIF') return design.price * 2.5;
+    if (license === 'PDC') return design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
     if (license === 'Exclusive Buyout' || license === 'Exclusive Global') return design.price * 8;
     return design.price;
   };
@@ -428,7 +428,7 @@ export function CartPage() {
               </button>
 
               <p className="text-[11px] text-center text-on-surface-variant mt-4 leading-relaxed">
-                By purchasing, you agree to TexDesigner's License Agreement and Terms of Service.
+                By purchasing, you agree to AtelierTextile's License Agreement and Terms of Service.
               </p>
             </div>
 

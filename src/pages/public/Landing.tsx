@@ -128,7 +128,7 @@ export function Landing() {
         
         <div className="max-w-[1440px] mx-auto px-6 md:px-10 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-on-primary">Why Choose TexDesigner?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-on-primary">Why Choose AtelierTextile?</h2>
             <p className="text-lg text-primary-fixed-dim">We provide an end-to-end solution for sourcing and managing premium textile intellectual property.</p>
           </div>
           

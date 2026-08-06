@@ -24,7 +24,7 @@ export function Login() {
     try {
       await login(email, password);
       // Wait for login to set user context, then redirect
-      showToast('Welcome back to TexDesigner!');
+      showToast('Welcome back to AtelierTextile!');
       // Navigate is handled by ProtectedRoute once auth state updates, 
       // but we can force it here for UX flow.
       const storedUserStr = localStorage.getItem('atelier_user');
@@ -58,7 +58,7 @@ export function Login() {
         <div className="relative z-20 p-10 text-white max-w-lg mt-auto mb-10 animate-fade-up">
           <div className="flex items-center gap-2 mb-6">
             <span className="material-symbols-outlined text-[24px]">texture</span>
-            <span className="font-bold text-lg">TexDesigner</span>
+            <span className="font-bold text-lg">AtelierTextile</span>
           </div>
           <h2 className="text-5xl font-bold mb-4 leading-tight">Weave Your<br/>Success.</h2>
           <p className="text-lg text-white/90 leading-relaxed">Join the premier destination for high-end textile design. Discover, source, and collaborate with leading artisans globally.</p>
@@ -74,7 +74,7 @@ export function Login() {
           <div className="mb-8 text-center lg:text-left">
             <Link to="/" className="flex items-center justify-center lg:justify-start gap-2 mb-4 text-primary hover:opacity-80 transition-opacity">
               <span className="material-symbols-outlined text-[28px]">texture</span>
-              <h1 className="text-2xl font-bold">TexDesigner</h1>
+              <h1 className="text-2xl font-bold">AtelierTextile</h1>
             </Link>
             <p className="text-sm text-on-surface-variant">Welcome back. Please enter your details.</p>
           </div>

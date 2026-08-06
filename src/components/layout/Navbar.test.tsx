@@ -19,6 +19,6 @@ describe('Navbar Component', () => {
         </NotificationProvider>
       </BrowserRouter>
     );
-    expect(screen.getByText(/TexDesigner/i)).toBeInTheDocument();
+    expect(screen.getByText(/AtelierTextile/i)).toBeInTheDocument();
   });
 });
