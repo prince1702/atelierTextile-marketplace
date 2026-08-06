@@ -498,7 +498,14 @@ exports.createDesign = async (req, res, next) => {
           designFileUrl = result.secure_url;
           uploadSuccess = true;
         } catch (cloudinaryError) {
-          console.warn('⚠️ Cloudinary raw file upload failed, using local fallback:', cloudinaryError.message);
+          console.error('❌ Cloudinary raw file upload failed:', cloudinaryError.message);
+          const host = req.get('host') || '';
+          if (host.includes('onrender.com') || process.env.NODE_ENV === 'production') {
+            return res.status(500).json({
+              success: false,
+              error: `Failed to upload primary design file to Cloudinary storage (${cloudinaryError.message}). Please try uploading again.`,
+            });
+          }
         }
       }
 
@@ -512,7 +519,6 @@ exports.createDesign = async (req, res, next) => {
           const filePath = path.join(uploadsDir, filename);
           fs.writeFileSync(filePath, designFile.buffer);
           
-          // Resolve backend URL dynamically
           const host = req.get('host');
           designFileUrl = `${req.protocol}://${host}/uploads/${filename}`;
         } catch (localError) {
@@ -530,7 +536,14 @@ exports.createDesign = async (req, res, next) => {
           pdcDesignFileUrl = result.secure_url;
           uploadSuccess = true;
         } catch (cloudinaryError) {
-          console.warn('⚠️ Cloudinary raw pdc file upload failed, using local fallback:', cloudinaryError.message);
+          console.error('❌ Cloudinary raw pdc file upload failed:', cloudinaryError.message);
+          const host = req.get('host') || '';
+          if (host.includes('onrender.com') || process.env.NODE_ENV === 'production') {
+            return res.status(500).json({
+              success: false,
+              error: `Failed to upload secondary design file to Cloudinary storage (${cloudinaryError.message}). Please try uploading again.`,
+            });
+          }
         }
       }
 
@@ -926,29 +939,19 @@ exports.downloadDesign = async (req, res, next) => {
     // Helper to check if a URL points to an expired Render ephemeral upload
     const isExpiredUrl = (url) => typeof url === 'string' && url.includes('/uploads/') && url.includes('onrender.com');
 
-    // If requested file is missing or expired, try fallback to the alternate file (pdcDesignFile <-> designFile)
-    if (!fileUrl || fileUrl.trim() === '' || isExpiredUrl(fileUrl)) {
-      const altFileUrl = (requestedType === 'pdc' || requestedType === 'tif' || requestedType === 'optional')
-        ? design.designFile
-        : design.pdcDesignFile;
-
-      if (altFileUrl && altFileUrl.trim() !== '' && !isExpiredUrl(altFileUrl)) {
-        console.log(`⚠️ Primary file is invalid/expired. Falling back to alternative fileUrl="${altFileUrl}"`);
-        fileUrl = altFileUrl;
-      }
-    }
-
     if (!fileUrl || fileUrl.trim() === '') {
+      const fileFormatName = (requestedType === 'pdc' || requestedType === 'tif' || requestedType === 'optional') ? 'PDC/TIF' : 'BMP';
       return res.status(404).json({
         success: false,
-        error: 'No downloadable file has been uploaded for this design yet. Please ask the seller to upload a ZIP/RAR source file.',
+        error: `No downloadable ${fileFormatName} file has been uploaded for this design yet.`,
       });
     }
 
     if (isExpiredUrl(fileUrl)) {
+      const fileFormatName = (requestedType === 'pdc' || requestedType === 'tif' || requestedType === 'optional') ? 'PDC/TIF' : 'BMP';
       return res.status(410).json({
         success: false,
-        error: 'This design file was uploaded to a temporary server and has since been deleted. Please ask the seller to re-upload the ZIP/RAR source file.',
+        error: `The ${fileFormatName} design file was uploaded to a temporary server and has expired. Please ask the seller to re-upload the file.`,
       });
     }
 
