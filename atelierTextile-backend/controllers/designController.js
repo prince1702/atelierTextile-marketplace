@@ -942,53 +942,35 @@ exports.downloadDesign = async (req, res, next) => {
       });
     }
 
-    // ── Case 2: Local relative path on this server ───────────────────────────
-    if (fileUrl.startsWith('/') && !fileUrl.startsWith('//')) {
-      const filename = path.basename(fileUrl);
-      const filePath = path.join(__dirname, '../public/uploads', filename);
-      if (fs.existsSync(filePath)) {
-        const ext = path.extname(filename);
-        return res.download(filePath, `${safeTitle}${ext}`);
+    // ── Check 1: Is file located in local /uploads/ directory? ──────────────
+    if (fileUrl.includes('/uploads/')) {
+      try {
+        const urlObj = new URL(fileUrl, 'http://localhost:5000');
+        const filename = path.basename(urlObj.pathname);
+        const filePath = path.join(__dirname, '../public/uploads', filename);
+
+        if (fs.existsSync(filePath)) {
+          const ext = path.extname(filename) || '.zip';
+          return res.download(filePath, `${safeTitle}${ext}`);
+        }
+      } catch (e) {
+        console.warn('⚠️ Path parse error for local file:', e.message);
       }
-      return res.status(404).json({
-        success: false,
-        error: 'The design file is no longer available on this server. Please ask the seller to re-upload it.',
-      });
     }
 
-    // Case 2: Cloudinary URL — generate a signed download URL via Cloudinary SDK
-    // Raw files on Cloudinary require authentication; plain https.get() returns 401
-    if (fileUrl.startsWith('http')) {
+    // ── Check 2: Direct HTTP/HTTPS file (Cloudinary or Remote URL) ──────────
+    if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+      const https = require('https');
+      const http = require('http');
+
+      let ext = '.zip';
       try {
-        const safeTitle = design.title.replace(/[^a-zA-Z0-9]/g, '_');
-        
-        // Extract the public_id from the Cloudinary URL
-        const urlObj = new URL(fileUrl);
-        const pathParts = urlObj.pathname.split('/');
-        const uploadIdx = pathParts.indexOf('upload');
-        let publicIdParts = pathParts.slice(uploadIdx + 1);
-        if (/^v\d+$/.test(publicIdParts[0])) {
-          publicIdParts = publicIdParts.slice(1);
-        }
-        const publicIdWithExt = publicIdParts.join('/');
-        let ext = path.extname(publicIdWithExt) || '.zip';
-        const publicId = publicIdWithExt; // DO NOT STRIP EXTENSION for raw files
+        ext = path.extname(new URL(fileUrl).pathname) || '.zip';
+      } catch (e) {}
 
-        const downloadFilename = `${safeTitle}${ext}`;
+      const downloadFilename = `${safeTitle}${ext}`;
 
-        // Generate a signed URL valid for 1 hour
-        const signedUrl = cloudinary.utils.private_download_url(publicId, '', {
-          resource_type: 'raw',
-          type: 'authenticated', // matches how we now upload raw files
-          expires_at: Math.floor(Date.now() / 1000) + 3600,
-          attachment: downloadFilename,
-        });
-
-        // Stream the file THROUGH the backend using the signed URL, following any redirects.
-        // This avoids CORS issues on the frontend and handles storage server redirects.
-        const https = require('https');
-        const http = require('http');
-
+      const streamDirectUrl = (targetUrl, dlName) => {
         const streamFrom = (url, redirectsLeft) => {
           if (redirectsLeft < 0) {
             if (!res.headersSent) res.status(502).json({ success: false, error: 'Too many redirects from storage server.' });
@@ -1009,7 +991,7 @@ exports.downloadDesign = async (req, res, next) => {
               }
               return;
             }
-            res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
+            res.setHeader('Content-Disposition', `attachment; filename="${dlName}"`);
             res.setHeader('Content-Type', remoteRes.headers['content-type'] || 'application/octet-stream');
             if (remoteRes.headers['content-length']) {
               res.setHeader('Content-Length', remoteRes.headers['content-length']);
@@ -1020,16 +1002,38 @@ exports.downloadDesign = async (req, res, next) => {
             if (!res.headersSent) res.status(502).json({ success: false, error: 'Failed to download file from storage.' });
           });
         };
+        streamFrom(targetUrl, 5);
+      };
 
-        streamFrom(signedUrl, 3);
-        return;
-      } catch (err) {
-        console.error('❌ Cloudinary signed URL error:', err.message);
-        return res.status(500).json({
-          success: false,
-          error: 'Failed to generate a secure download link. Please try again.',
-        });
+      // If it is a Cloudinary authenticated raw file URL
+      if (fileUrl.includes('cloudinary.com') && fileUrl.includes('/raw/upload/')) {
+        try {
+          const urlObj = new URL(fileUrl);
+          const pathParts = urlObj.pathname.split('/');
+          const uploadIdx = pathParts.indexOf('upload');
+          let publicIdParts = pathParts.slice(uploadIdx + 1);
+          if (/^v\d+$/.test(publicIdParts[0])) {
+            publicIdParts = publicIdParts.slice(1);
+          }
+          const publicId = publicIdParts.join('/');
+
+          const signedUrl = cloudinary.utils.private_download_url(publicId, '', {
+            resource_type: 'raw',
+            type: 'authenticated',
+            expires_at: Math.floor(Date.now() / 1000) + 3600,
+            attachment: downloadFilename,
+          });
+
+          streamDirectUrl(signedUrl, downloadFilename);
+          return;
+        } catch (err) {
+          console.warn('⚠️ Cloudinary signed URL error, streaming directly:', err.message);
+        }
       }
+
+      // Fallback stream for any standard HTTP/HTTPS file URL
+      streamDirectUrl(fileUrl, downloadFilename);
+      return;
     }
 
     return res.status(404).json({ success: false, error: 'No valid design file is available for download.' });
