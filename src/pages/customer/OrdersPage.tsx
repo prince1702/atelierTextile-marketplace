@@ -182,30 +182,16 @@ export function OrdersPage() {
                   {order.status === 'completed' && (() => {
                     const d = order.design as any;
                     const designId = typeof d === 'string' ? d : (d?.id || d?._id?.toString() || '');
-                    const lt = order.licenseType || '';
-                    const isOptionalFormat = lt === 'PDC' || lt === 'TIF';
+                    const lt = (order.licenseType || '').toUpperCase();
+                    const fileType = (lt === 'PDC' || lt === 'TIF') ? lt.toLowerCase() : undefined;
 
-                    // Customer bought PDC or TIF → download the optional file
-                    if (isOptionalFormat) {
-                      return (
-                        <button
-                          onClick={() => handleDownload(order.designTitle, designId, lt.toLowerCase())}
-                          className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
-                        >
-                          <span className="material-symbols-outlined text-[14px]">download</span>
-                          Download {lt}
-                        </button>
-                      );
-                    }
-
-                    // Customer bought BMP / PSD / EMB → download the main file
                     return (
                       <button
-                        onClick={() => handleDownload(order.designTitle, designId)}
+                        onClick={() => handleDownload(order.designTitle, designId, fileType)}
                         className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
                       >
                         <span className="material-symbols-outlined text-[14px]">download</span>
-                        Download {lt || 'File'}
+                        Download
                       </button>
                     );
                   })()}
