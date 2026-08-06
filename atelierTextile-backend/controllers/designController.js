@@ -10,6 +10,7 @@ const uploadToCloudinary = (buffer, resourceType = 'image', originalName = '') =
     const options = {
       folder: 'atelierTextile/designs',
       resource_type: resourceType,
+      timeout: 120000,
     };
     if (resourceType === 'raw') {
       options.type = 'authenticated';
@@ -909,6 +910,7 @@ exports.downloadDesign = async (req, res, next) => {
 
     // Determine which file to download based on query parameter `fileType` (or `type`)
     const requestedType = (req.query.fileType || req.query.type || '').toLowerCase();
+    const safeTitle = (design.title || 'design').replace(/[^a-zA-Z0-9]/g, '_');
     let fileUrl = design.designFile;
 
     if (requestedType === 'pdc' || requestedType === 'tif' || requestedType === 'optional') {
@@ -921,6 +923,21 @@ exports.downloadDesign = async (req, res, next) => {
       fileUrl = design.pdcDesignFile;
     }
 
+    // Helper to check if a URL points to an expired Render ephemeral upload
+    const isExpiredUrl = (url) => typeof url === 'string' && url.includes('/uploads/') && url.includes('onrender.com');
+
+    // If requested file is missing or expired, try fallback to the alternate file (pdcDesignFile <-> designFile)
+    if (!fileUrl || fileUrl.trim() === '' || isExpiredUrl(fileUrl)) {
+      const altFileUrl = (requestedType === 'pdc' || requestedType === 'tif' || requestedType === 'optional')
+        ? design.designFile
+        : design.pdcDesignFile;
+
+      if (altFileUrl && altFileUrl.trim() !== '' && !isExpiredUrl(altFileUrl)) {
+        console.log(`⚠️ Primary file is invalid/expired. Falling back to alternative fileUrl="${altFileUrl}"`);
+        fileUrl = altFileUrl;
+      }
+    }
+
     if (!fileUrl || fileUrl.trim() === '') {
       return res.status(404).json({
         success: false,
@@ -928,14 +945,7 @@ exports.downloadDesign = async (req, res, next) => {
       });
     }
 
-    const safeTitle = design.title.replace(/[^a-zA-Z0-9]/g, '_');
-
-    console.log(`📥 downloadDesign: id=${req.params.id} fileUrl="${fileUrl}"`);
-
-    // Detect expired Render local-storage URLs (e.g. https://ateliertextile-backend.onrender.com/uploads/...)
-    // These files are gone because Render uses ephemeral disks
-    const isExpiredRenderUrl = fileUrl.includes('/uploads/') && fileUrl.includes('onrender.com');
-    if (isExpiredRenderUrl) {
+    if (isExpiredUrl(fileUrl)) {
       return res.status(410).json({
         success: false,
         error: 'This design file was uploaded to a temporary server and has since been deleted. Please ask the seller to re-upload the ZIP/RAR source file.',
