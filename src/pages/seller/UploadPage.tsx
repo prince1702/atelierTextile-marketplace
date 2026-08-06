@@ -220,6 +220,18 @@ export function UploadPage() {
       return;
     }
 
+    // When designFormat is BOTH, both primary and secondary files & prices are mandatory
+    if (designFormat === 'BOTH') {
+      if (!zipFile || !pdcZipFile) {
+        showToast('Design Format is BOTH: Please upload BOTH primary (BMP/PSD) and secondary (PDC/TIF) design files', 'warning');
+        return;
+      }
+      if (!price || !pdcPrice) {
+        showToast('Design Format is BOTH: Please specify prices for BOTH primary and secondary formats', 'warning');
+        return;
+      }
+    }
+
     // At least one design file (BMP or PDC) must be provided
     if (!zipFile && !pdcZipFile) {
       showToast('Please upload at least one design source file (BMP or PDC/TIF)', 'warning');
@@ -977,16 +989,19 @@ export function UploadPage() {
                   <>
                     <option value="BMP">BMP</option>
                     <option value="PDC">PDC</option>
+                    <option value="BOTH">BOTH</option>
                   </>
                 ) : category === 'Digital Print Design' || category === 'Position Print Design' ? (
                   <>
                     <option value="ALL">ALL</option>
                     <option value="PSD">PSD</option>
                     <option value="TIF">TIF</option>
+                    <option value="BOTH">BOTH</option>
                   </>
                 ) : (
                   <>
                     <option value="EMB">EMB</option>
+                    <option value="BOTH">BOTH</option>
                     <option value="DST">DST</option>
                     <option value="JEF">JEF</option>
                     <option value="PES">PES</option>

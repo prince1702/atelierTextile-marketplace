@@ -52,7 +52,7 @@ const SAREE_CONCEPTS = [
   'South Test',
   'Lace Butta'
 ];
-const WEAVING_FORMATS = ['All', 'BMP', 'PDC'];
+const WEAVING_FORMATS = ['All', 'BMP', 'PDC', 'BOTH'];
 const WEAVING_CONCEPTS = [
   'All',
   'jumbo design',
@@ -826,7 +826,7 @@ export function CollectionPage() {
   const formats = category === 'Weaving Design' 
     ? WEAVING_FORMATS 
     : (category === 'Digital Print Design' || category === 'Position Print Design')
-      ? ['All', 'TIF', 'PSD']
+      ? ['All', 'TIF', 'PSD', 'BOTH']
       : DESIGN_FORMATS;
   const concepts = category === 'Weaving Design' ? WEAVING_CONCEPTS : SAREE_CONCEPTS;
 
