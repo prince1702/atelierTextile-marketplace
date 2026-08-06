@@ -24,16 +24,17 @@ export function OrdersPage() {
 
   useEffect(() => { fetchOrders(); }, []);
 
-  const handleDownload = async (designTitle: string, designId: string) => {
+  const handleDownload = async (designTitle: string, designId: string, fileType?: string) => {
     if (!designId) {
       showToast('No file available for download', 'error');
       return;
     }
 
     const token = localStorage.getItem('atelier_token') || '';
-    const downloadUrl = `${API_URL}/api/designs/${designId}/download?token=${encodeURIComponent(token)}`;
+    const typeParam = fileType ? `&fileType=${fileType}` : '';
+    const downloadUrl = `${API_URL}/api/designs/${designId}/download?token=${encodeURIComponent(token)}${typeParam}`;
 
-    showToast(`Downloading: ${designTitle}...`, 'success');
+    showToast(`Downloading ${fileType ? fileType.toUpperCase() : ''}: ${designTitle}...`, 'success');
 
     try {
       const response = await fetch(downloadUrl);
@@ -46,10 +47,9 @@ export function OrdersPage() {
       const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = blobUrl;
-      // Try to get filename from Content-Disposition header
       const disposition = response.headers.get('Content-Disposition') || '';
       const match = disposition.match(/filename="?([^"\n]+)"?/);
-      link.download = match ? match[1] : `${designTitle}.zip`;
+      link.download = match ? match[1] : `${designTitle}${fileType ? `_${fileType}` : ''}.zip`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -179,25 +179,43 @@ export function OrdersPage() {
                 </div>
 
                 <div className="flex gap-2">
-                  {order.status === 'completed' && (
-                    <button
-                      onClick={() => handleDownload(
-                        order.designTitle,
-                        (() => {
-                          // order.design is populated by the backend, so it may be a
-                          // full Design object or just a string ID. Handle all cases.
-                          const d = order.design as any;
-                          if (!d) return '';
-                          if (typeof d === 'string') return d;
-                          return d.id || d._id?.toString() || '';
-                        })()
-                      )}
-                      className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
-                    >
-                      <span className="material-symbols-outlined text-[14px]">download</span>
-                      Download Files
-                    </button>
-                  )}
+                  {order.status === 'completed' && (() => {
+                    const d = order.design as any;
+                    const designId = typeof d === 'string' ? d : (d?.id || d?._id?.toString() || '');
+                    const hasPdcFile = d && typeof d === 'object' && d.pdcDesignFile && d.pdcDesignFile.trim() !== '';
+                    const isOptionalLicense = order.licenseType === 'PDC' || order.licenseType === 'TIF';
+
+                    if (hasPdcFile || isOptionalLicense) {
+                      return (
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleDownload(order.designTitle, designId, 'primary')}
+                            className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">download</span>
+                            Download Main
+                          </button>
+                          <button
+                            onClick={() => handleDownload(order.designTitle, designId, order.licenseType === 'TIF' ? 'tif' : 'pdc')}
+                            className="px-3 py-1.5 bg-secondary-container text-on-secondary rounded-lg text-xs font-semibold hover:bg-secondary-container/80 transition-colors shadow-sm inline-flex items-center gap-1"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">folder_zip</span>
+                            Download {order.licenseType === 'TIF' ? 'TIF' : 'PDC'}
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <button
+                        onClick={() => handleDownload(order.designTitle, designId)}
+                        className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">download</span>
+                        Download File
+                      </button>
+                    );
+                  })()}
                   {(order.status === 'pending' && !order.paymentScreenshot) && (
                     <button
                       onClick={() => handleUploadScreenshot(order.id)}

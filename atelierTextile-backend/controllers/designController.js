@@ -404,10 +404,12 @@ exports.createDesign = async (req, res, next) => {
 
     const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
     const designFile = req.files && req.files['designFile'] ? req.files['designFile'][0] : null;
+    const pdcDesignFile = req.files && req.files['pdcDesignFile'] ? req.files['pdcDesignFile'][0] : null;
     const additionalImageFiles = req.files && req.files['additionalImages'] ? req.files['additionalImages'] : [];
 
     let imageUrl = '';
     let designFileUrl = '';
+    let pdcDesignFileUrl = '';
     const additionalImageUrls = [];
 
     const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
@@ -518,16 +520,49 @@ exports.createDesign = async (req, res, next) => {
       }
     }
 
+    // 3. Process PDC design source file (ZIP/RAR/PDC) if uploaded
+    if (pdcDesignFile) {
+      let uploadSuccess = false;
+      if (isCloudinaryConfigured) {
+        try {
+          const result = await uploadToCloudinary(pdcDesignFile.buffer, 'raw', pdcDesignFile.originalname);
+          pdcDesignFileUrl = result.secure_url;
+          uploadSuccess = true;
+        } catch (cloudinaryError) {
+          console.warn('⚠️ Cloudinary raw pdc file upload failed, using local fallback:', cloudinaryError.message);
+        }
+      }
+
+      if (!uploadSuccess) {
+        try {
+          const uploadsDir = path.join(__dirname, '../public/uploads');
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+          const filename = `pdcDesignFile-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(pdcDesignFile.originalname) || '.zip'}`;
+          const filePath = path.join(uploadsDir, filename);
+          fs.writeFileSync(filePath, pdcDesignFile.buffer);
+          
+          const host = req.get('host');
+          pdcDesignFileUrl = `${req.protocol}://${host}/uploads/${filename}`;
+        } catch (localError) {
+          console.error('❌ Local PDC design file write failed:', localError);
+        }
+      }
+    }
+
     const areaRange = parseRangeNumbers(req.body.area);
     const needleRange = parseRangeNumbers(req.body.needle);
 
-    console.log('📥 createDesign req.body keys:', Object.keys(req.body), '| image:', imageFile?.originalname, '| designFile:', designFile?.originalname);
+    console.log('📥 createDesign req.body keys:', Object.keys(req.body), '| image:', imageFile?.originalname, '| designFile:', designFile?.originalname, '| pdcDesignFile:', pdcDesignFile?.originalname);
     const design = await Design.create({
       ...req.body,
       areaMin: areaRange.min,
       areaMax: areaRange.max,
       needleMin: needleRange.min,
       needleMax: needleRange.max,
+      designFile: designFileUrl || req.body.designFile || '',
+      pdcDesignFile: pdcDesignFileUrl || req.body.pdcDesignFile || '',
 
       tags: req.body.tags
         ? typeof req.body.tags === 'string'
@@ -578,6 +613,7 @@ exports.updateDesign = async (req, res, next) => {
 
     const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
     const designFile = req.files && req.files['designFile'] ? req.files['designFile'][0] : null;
+    const pdcDesignFile = req.files && req.files['pdcDesignFile'] ? req.files['pdcDesignFile'][0] : null;
     const additionalImageFiles = req.files && req.files['additionalImages'] ? req.files['additionalImages'] : [];
 
     const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
@@ -645,6 +681,37 @@ exports.updateDesign = async (req, res, next) => {
           req.body.designFile = `${req.protocol}://${host}/uploads/${filename}`;
         } catch (localError) {
           console.error('❌ Local design file write failed during edit:', localError);
+        }
+      }
+    }
+
+    // Upload new pdcDesignFile if provided
+    if (pdcDesignFile) {
+      let uploadSuccess = false;
+      if (isCloudinaryConfigured) {
+        try {
+          const result = await uploadToCloudinary(pdcDesignFile.buffer, 'raw', pdcDesignFile.originalname);
+          req.body.pdcDesignFile = result.secure_url;
+          uploadSuccess = true;
+        } catch (cloudinaryError) {
+          console.warn('⚠️ Cloudinary raw pdc upload failed during edit, using local fallback:', cloudinaryError.message);
+        }
+      }
+
+      if (!uploadSuccess) {
+        try {
+          const uploadsDir = path.join(__dirname, '../public/uploads');
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+          const filename = `pdcDesignFile-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(pdcDesignFile.originalname) || '.zip'}`;
+          const filePath = path.join(uploadsDir, filename);
+          fs.writeFileSync(filePath, pdcDesignFile.buffer);
+          
+          const host = req.get('host');
+          req.body.pdcDesignFile = `${req.protocol}://${host}/uploads/${filename}`;
+        } catch (localError) {
+          console.error('❌ Local PDC design file write failed during edit:', localError);
         }
       }
     }
@@ -840,8 +907,19 @@ exports.downloadDesign = async (req, res, next) => {
       });
     }
 
-    // Only use designFile — do NOT fall back to display image (display image is preview only)
-    const fileUrl = design.designFile;
+    // Determine which file to download based on query parameter `fileType` (or `type`)
+    const requestedType = (req.query.fileType || req.query.type || '').toLowerCase();
+    let fileUrl = design.designFile;
+
+    if (requestedType === 'pdc' || requestedType === 'tif' || requestedType === 'optional') {
+      if (!design.pdcDesignFile || design.pdcDesignFile.trim() === '') {
+        return res.status(404).json({
+          success: false,
+          error: 'Optional PDC/TIF design file is not available for this design.',
+        });
+      }
+      fileUrl = design.pdcDesignFile;
+    }
 
     if (!fileUrl || fileUrl.trim() === '') {
       return res.status(404).json({

@@ -41,8 +41,8 @@ export function CartPage() {
   };
 
   const getPrice = (design: Design, license: string) => {
-    if (license === 'Extended' || license === 'Other' || license === 'OTHER' || license === 'TIF') return design.price * 2.5;
-    if (license === 'PDC') return design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
+    if (license === 'Extended' || license === 'Other' || license === 'OTHER') return design.price * 2.5;
+    if (license === 'PDC' || license === 'TIF') return design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
     if (license === 'Exclusive Buyout' || license === 'Exclusive Global') return design.price * 8;
     return design.price;
   };

@@ -43,6 +43,7 @@ export function UploadPage() {
   const [additionalFiles, setAdditionalFiles] = useState<(File | null)[]>([null, null, null, null]);
   const [additionalPreviews, setAdditionalPreviews] = useState<(string | null)[]>([null, null, null, null]);
   const [zipFile, setZipFile] = useState<File | null>(null);
+  const [pdcZipFile, setPdcZipFile] = useState<File | null>(null);
  
   // Dynamically update subcategory when category changes
   useEffect(() => {
@@ -193,6 +194,25 @@ export function UploadPage() {
     }
   };
 
+  const handlePdcZipFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (category === 'Digital Print Design' || category === 'Position Print Design') {
+        if (ext !== 'zip' && ext !== 'rar' && ext !== 'tif' && ext !== 'tiff') {
+          showToast('Please upload a ZIP, RAR, or TIF file only', 'warning');
+          return;
+        }
+      } else {
+        if (ext !== 'zip' && ext !== 'rar' && ext !== 'pdc') {
+          showToast('Please upload a ZIP, RAR, or PDC file only', 'warning');
+          return;
+        }
+      }
+      setPdcZipFile(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !price || !imageFile || !zipFile) {
@@ -202,6 +222,10 @@ export function UploadPage() {
 
     if (designFormat === 'PDC' && !pdcPrice) {
       showToast('Please specify the price for PDC format', 'warning');
+      return;
+    }
+    if (designFormat === 'TIF' && !pdcPrice) {
+      showToast('Please specify the price for TIF format', 'warning');
       return;
     }
 
@@ -251,6 +275,9 @@ export function UploadPage() {
         }
       });
       formData.append('designFile', zipFile);
+      if (pdcZipFile) {
+        formData.append('pdcDesignFile', pdcZipFile);
+      }
       formData.append('designType', designType);
       if (category === 'Digital Print Design' || category === 'Position Print Design') {
         formData.append('height', height);
@@ -261,7 +288,7 @@ export function UploadPage() {
         formData.append('needle', needle);
       }
       formData.append('designFormat', designFormat);
-      if (designFormat === 'PDC') {
+      if (pdcPrice) {
         formData.append('pdcPrice', pdcPrice);
       }
       formData.append('sareeConcept', sareeConcept);
@@ -397,6 +424,62 @@ export function UploadPage() {
             </div>
           </div>
 
+          {/* PDC / TIF Source File (ZIP / RAR) Upload Area */}
+          {(category === 'Weaving Design' || category === 'Digital Print Design' || category === 'Position Print Design') && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                  {category === 'Weaving Design' 
+                    ? `PDC Design Source File (ZIP / RAR) ${designFormat === 'PDC' || pdcPrice ? '*' : '(Optional)'}`
+                    : `TIF Design Source File (ZIP / RAR) ${designFormat === 'TIF' || pdcPrice ? '*' : '(Optional)'}`
+                  }
+                </label>
+                {pdcZipFile && (
+                  <button
+                    type="button"
+                    onClick={() => setPdcZipFile(null)}
+                    className="text-xs text-red-600 font-semibold hover:underline flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">close</span>
+                    Remove File
+                  </button>
+                )}
+              </div>
+              <div className="border-2 border-dashed border-outline-variant hover:border-primary/50 transition-colors rounded-xl p-4 flex items-center justify-between bg-surface/10 cursor-pointer relative">
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-[32px] text-primary">folder_zip</span>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-on-surface">
+                      {pdcZipFile 
+                        ? pdcZipFile.name 
+                        : (category === 'Weaving Design' ? 'Select ZIP or RAR file for PDC' : 'Select ZIP, RAR, or TIF file for TIF')
+                      }
+                    </p>
+                    <p className="text-xs text-on-surface-variant">
+                      {pdcZipFile 
+                        ? `${(pdcZipFile.size / 1024 / 1024).toFixed(2)} MB` 
+                        : (category === 'Weaving Design' ? 'Supports ZIP, RAR, PDC (Max 50MB)' : 'Supports ZIP, RAR, TIF (Max 50MB)')
+                      }
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  className="text-xs font-bold text-primary hover:text-primary-dark uppercase px-3 py-1.5 border border-primary/20 rounded-lg bg-white animate-fade-in"
+                >
+                  Browse
+                </button>
+                <input 
+                  type="file" 
+                  accept={category === 'Weaving Design' ? ".zip,.rar,.pdc" : ".zip,.rar,.tif,.tiff"}
+                  onChange={handlePdcZipFileChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  required={(designFormat === 'PDC' || designFormat === 'TIF') && !pdcZipFile}
+                />
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Title */}
@@ -412,9 +495,16 @@ export function UploadPage() {
               />
             </div>
 
-            {/* Price */}
+            {/* Main Price */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Price (INR) *</label>
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                {category === 'Weaving Design' 
+                  ? 'Price for BMP (INR) *' 
+                  : (category === 'Digital Print Design' || category === 'Position Print Design')
+                    ? 'Price for PSD (INR) *'
+                    : 'Price (INR) *'
+                }
+              </label>
               <input 
                 type="number" 
                 value={price} 
@@ -425,6 +515,27 @@ export function UploadPage() {
                 required
               />
             </div>
+
+            {/* Secondary Price (PDC / TIF) */}
+            {(category === 'Weaving Design' || category === 'Digital Print Design' || category === 'Position Print Design') && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                  {category === 'Weaving Design'
+                    ? `Price for PDC (INR) ${designFormat === 'PDC' ? '*' : '(Optional)'}`
+                    : `Price for TIF (INR) ${designFormat === 'TIF' ? '*' : '(Optional)'}`
+                  }
+                </label>
+                <input 
+                  type="number" 
+                  value={pdcPrice} 
+                  onChange={(e) => setPdcPrice(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
+                  placeholder="e.g. 1250"
+                  min="0"
+                  required={designFormat === 'PDC' || designFormat === 'TIF'}
+                />
+              </div>
+            )}
 
             {/* Category */}
             <div className="space-y-1">
@@ -829,10 +940,7 @@ export function UploadPage() {
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design Format *</label>
               <select 
                 value={designFormat} 
-                onChange={(e) => {
-                  setDesignFormat(e.target.value);
-                  if (e.target.value !== 'PDC') setPdcPrice('');
-                }}
+                onChange={(e) => setDesignFormat(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
               >
                 {category === 'Weaving Design' ? (
@@ -863,22 +971,6 @@ export function UploadPage() {
                 )}
               </select>
             </div>
-
-            {/* PDC Price */}
-            {designFormat === 'PDC' && (
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">PDC Price (INR) *</label>
-                <input 
-                  type="number" 
-                  value={pdcPrice} 
-                  onChange={(e) => setPdcPrice(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest"
-                  placeholder="e.g. 1250"
-                  min="0"
-                  required
-                />
-              </div>
-            )}
 
             {/* Saree Concept / Design Concept */}
             <div className="space-y-1">

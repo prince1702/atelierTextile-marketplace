@@ -46,6 +46,7 @@ export interface Design {
   sareeConcept?: string;
   pdcPrice?: number;
   designFile?: string;
+  pdcDesignFile?: string;
   additionalImages?: string[];
 }
 

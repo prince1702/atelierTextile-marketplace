@@ -106,6 +106,10 @@ const designSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  pdcDesignFile: {
+    type: String,
+    default: '',
+  },
   rating: {
     type: Number,
     default: 0,

@@ -8,18 +8,25 @@ const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
   
   if (file.fieldname === 'designFile') {
-    const allowedExts = ['.zip', '.rar'];
-    if (allowedExts.includes(ext)) {
+    const allowedExts = ['.zip', '.rar', '.emb', '.dst', '.bmp', '.psd', '.tif', '.tiff', '.pdc', '.7z'];
+    if (allowedExts.includes(ext) || ext === '') {
       cb(null, true);
     } else {
-      cb(new Error('Only ZIP and RAR archive files are allowed for the design file'), false);
+      cb(new Error('Only ZIP, RAR, or valid design archive files are allowed for the main design file'), false);
+    }
+  } else if (file.fieldname === 'pdcDesignFile') {
+    const allowedExts = ['.zip', '.rar', '.pdc', '.tif', '.tiff', '.7z'];
+    if (allowedExts.includes(ext) || ext === '') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only ZIP, RAR, PDC, or TIF files are allowed for the PDC/TIF design file'), false);
     }
   } else {
     const allowedExts = ['.jpeg', '.jpg', '.png', '.webp', '.svg'];
     if (allowedExts.includes(ext)) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files (jpeg, jpg, png, webp, svg) are allowed for the pattern image'), false);
+      cb(new Error('Only image files (jpeg, jpg, png, webp, svg) are allowed for display images'), false);
     }
   }
 };

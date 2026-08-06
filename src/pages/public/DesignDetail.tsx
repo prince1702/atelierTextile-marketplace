@@ -157,8 +157,8 @@ export function DesignDetail() {
   };
 
   const getPrice = (price: number, license: string) => {
-    if (license === 'Extended' || license === 'Other' || license === 'OTHER' || license === 'TIF') return price * 2.5;
-    if (license === 'PDC') {
+    if (license === 'Extended' || license === 'Other' || license === 'OTHER') return price * 2.5;
+    if (license === 'PDC' || license === 'TIF') {
       return design && design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : price * 2.5;
     }
     if (license === 'Exclusive Buyout') return price * 8;
@@ -188,13 +188,11 @@ export function DesignDetail() {
 
   const licenseOptions = (() => {
     if (design.category === 'Weaving Design') {
-      const options = [
-        { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' }
+      const pdcPriceVal = design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
+      return [
+        { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' },
+        { name: 'PDC', price: pdcPriceVal, desc: 'PDC format. Extended production license.' }
       ];
-      if (design.pdcPrice && design.pdcPrice > 0) {
-        options.push({ name: 'PDC', price: design.pdcPrice, desc: 'PDC format. Extended production license.' });
-      }
-      return options;
     } else if (design.category === 'Digital Print Design' || design.category === 'Position Print Design') {
       const options = [];
       const format = design.designFormat ? design.designFormat.toUpperCase() : 'ALL';
@@ -202,7 +200,8 @@ export function DesignDetail() {
         options.push({ name: 'PSD', price: design.price, desc: 'PSD format. Standard print license.' });
       }
       if (format === 'ALL' || format === 'TIF') {
-        options.push({ name: 'TIF', price: design.price * 2.5, desc: 'TIF format. High-resolution print format.' });
+        const tifPrice = design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
+        options.push({ name: 'TIF', price: tifPrice, desc: 'TIF format. High-resolution print format.' });
       }
       return options;
     } else {

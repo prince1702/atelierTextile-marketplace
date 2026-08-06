@@ -22,6 +22,7 @@ router.get('/category/:category', getDesignsByCategory);
 const cpUpload = upload.fields([
   { name: 'image', maxCount: 1 },
   { name: 'designFile', maxCount: 1 },
+  { name: 'pdcDesignFile', maxCount: 1 },
   { name: 'additionalImages', maxCount: 4 }
 ]);
 
