@@ -182,37 +182,30 @@ export function OrdersPage() {
                   {order.status === 'completed' && (() => {
                     const d = order.design as any;
                     const designId = typeof d === 'string' ? d : (d?.id || d?._id?.toString() || '');
-                    const hasPdcFile = d && typeof d === 'object' && d.pdcDesignFile && d.pdcDesignFile.trim() !== '';
-                    const isOptionalLicense = order.licenseType === 'PDC' || order.licenseType === 'TIF';
+                    const lt = order.licenseType || '';
+                    const isOptionalFormat = lt === 'PDC' || lt === 'TIF';
 
-                    if (hasPdcFile || isOptionalLicense) {
+                    // Customer bought PDC or TIF → download the optional file
+                    if (isOptionalFormat) {
                       return (
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleDownload(order.designTitle, designId, 'primary')}
-                            className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1"
-                          >
-                            <span className="material-symbols-outlined text-[14px]">download</span>
-                            Download Main
-                          </button>
-                          <button
-                            onClick={() => handleDownload(order.designTitle, designId, order.licenseType === 'TIF' ? 'tif' : 'pdc')}
-                            className="px-3 py-1.5 bg-secondary-container text-on-secondary rounded-lg text-xs font-semibold hover:bg-secondary-container/80 transition-colors shadow-sm inline-flex items-center gap-1"
-                          >
-                            <span className="material-symbols-outlined text-[14px]">folder_zip</span>
-                            Download {order.licenseType === 'TIF' ? 'TIF' : 'PDC'}
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => handleDownload(order.designTitle, designId, lt.toLowerCase())}
+                          className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
+                        >
+                          <span className="material-symbols-outlined text-[14px]">download</span>
+                          Download {lt}
+                        </button>
                       );
                     }
 
+                    // Customer bought BMP / PSD / EMB → download the main file
                     return (
                       <button
                         onClick={() => handleDownload(order.designTitle, designId)}
                         className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
                       >
                         <span className="material-symbols-outlined text-[14px]">download</span>
-                        Download File
+                        Download {lt || 'File'}
                       </button>
                     );
                   })()}
