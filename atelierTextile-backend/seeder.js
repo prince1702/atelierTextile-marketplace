@@ -22,6 +22,10 @@ const DESIGN_IMAGES = [
 
 const seedDataWithoutExit = async () => {
   try {
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(process.env.MONGODB_URI);
+      console.log('✅ Connected to MongoDB');
+    }
     // Clear all collections
     await User.deleteMany();
     await Design.deleteMany();
