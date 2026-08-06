@@ -1005,29 +1005,43 @@ exports.downloadDesign = async (req, res, next) => {
         streamFrom(targetUrl, 5);
       };
 
-      // If it is a Cloudinary authenticated raw file URL
-      if (fileUrl.includes('cloudinary.com') && fileUrl.includes('/raw/upload/')) {
+      // If it is a Cloudinary raw file URL (authenticated or upload)
+      if (fileUrl.includes('cloudinary.com') && (fileUrl.includes('/raw/authenticated/') || fileUrl.includes('/raw/upload/'))) {
         try {
           const urlObj = new URL(fileUrl);
           const pathParts = urlObj.pathname.split('/');
-          const uploadIdx = pathParts.indexOf('upload');
-          let publicIdParts = pathParts.slice(uploadIdx + 1);
+          
+          // Find the upload or authenticated index
+          let typeIdx = pathParts.indexOf('authenticated');
+          if (typeIdx === -1) typeIdx = pathParts.indexOf('upload');
+          
+          let publicIdParts = pathParts.slice(typeIdx + 1);
+          
+          // Strip signature segment (s--xxxxx--)
+          publicIdParts = publicIdParts.filter(p => !p.startsWith('s--'));
+          
+          // Strip version segment (v12345...)
           if (/^v\d+$/.test(publicIdParts[0])) {
             publicIdParts = publicIdParts.slice(1);
           }
           const publicId = publicIdParts.join('/');
 
-          const signedUrl = cloudinary.utils.private_download_url(publicId, '', {
+          console.log(`📥 Cloudinary download: publicId="${publicId}", fileUrl="${fileUrl}"`);
+
+          // Use cloudinary.url() with sign_url to generate a proper signed URL
+          const signedUrl = cloudinary.url(publicId, {
             resource_type: 'raw',
             type: 'authenticated',
-            expires_at: Math.floor(Date.now() / 1000) + 3600,
-            attachment: downloadFilename,
+            sign_url: true,
+            flags: 'attachment:' + safeTitle,
           });
+
+          console.log(`📥 Cloudinary signed URL: "${signedUrl}"`);
 
           streamDirectUrl(signedUrl, downloadFilename);
           return;
         } catch (err) {
-          console.warn('⚠️ Cloudinary signed URL error, streaming directly:', err.message);
+          console.warn('⚠️ Cloudinary signed URL error, falling back to direct stream:', err.message);
         }
       }
 
