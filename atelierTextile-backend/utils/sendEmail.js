@@ -5,19 +5,45 @@ const nodemailer = require('nodemailer');
  * @param {{ to: string, subject: string, html: string }} options
  */
 const sendEmail = async ({ to, subject, html }) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT, 10) || 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    // Timeouts to prevent hanging on slow/blocked SMTP connections
-    connectionTimeout: 10000, // 10 seconds to establish connection
-    greetingTimeout: 10000,   // 10 seconds for SMTP greeting
-    socketTimeout: 15000,     // 15 seconds for socket inactivity
-  });
+  const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+  const isGmail = host.includes('gmail');
+
+  let transportConfig;
+
+  if (isGmail) {
+    transportConfig = {
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000,
+    };
+  } else {
+    const port = parseInt(process.env.EMAIL_PORT, 10) || 465;
+    transportConfig = {
+      host,
+      port,
+      secure: port === 465,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000,
+    };
+  }
+
+  const transporter = nodemailer.createTransport(transportConfig);
 
   const mailOptions = {
     from: process.env.EMAIL_FROM || `TexDesigner <${process.env.EMAIL_USER}>`,
@@ -27,8 +53,9 @@ const sendEmail = async ({ to, subject, html }) => {
   };
 
   const info = await transporter.sendMail(mailOptions);
-  console.log(`📧 Email sent: ${info.messageId} → ${to}`);
+  console.log(`📧 Email sent successfully: ${info.messageId} → ${to}`);
   return info;
 };
 
 module.exports = sendEmail;
+

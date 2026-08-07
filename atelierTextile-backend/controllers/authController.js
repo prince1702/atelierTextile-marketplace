@@ -222,7 +222,7 @@ exports.forgotPassword = async (req, res, next) => {
 
       return res.status(500).json({
         success: false,
-        error: 'Email could not be sent. Please try again later.',
+        error: emailError.message ? `Email could not be sent: ${emailError.message}` : 'Email could not be sent. Please try again later.',
       });
     }
   } catch (error) {
