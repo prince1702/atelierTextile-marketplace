@@ -12,7 +12,30 @@ const sendEmail = async ({ to, subject, html }) => {
   const fromEmail = process.env.EMAIL_USER || 'sojitraprince172@gmail.com';
   const fromName = 'TexDesigner';
 
-  // 1. Try Resend HTTP API (Recommended for Render)
+  // 1. Try Brevo HTTP API (Sendinblue — allows sending to any recipient email)
+  if (process.env.BREVO_API_KEY) {
+    console.log(`📧 Sending email via Brevo API (HTTPS) to ${to}...`);
+    const response = await axios.post(
+      'https://api.brevo.com/v3/smtp/email',
+      {
+        sender: { name: fromName, email: fromEmail },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html,
+      },
+      {
+        headers: {
+          'api-key': process.env.BREVO_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000,
+      }
+    );
+    console.log(`📧 Brevo email sent successfully: ${response.data.messageId} → ${to}`);
+    return response.data;
+  }
+
+  // 2. Try Resend HTTP API
   if (process.env.RESEND_API_KEY) {
     try {
       console.log(`📧 Sending email via Resend API (HTTPS) to ${to}...`);
@@ -37,33 +60,10 @@ const sendEmail = async ({ to, subject, html }) => {
     } catch (resendErr) {
       const errMsg = resendErr.response?.data?.message || resendErr.message;
       console.error(`❌ Resend API failed: ${errMsg}`);
-      if (!process.env.BREVO_API_KEY && !process.env.SENDGRID_API_KEY) {
+      if (!process.env.SENDGRID_API_KEY) {
         throw new Error(errMsg);
       }
     }
-  }
-
-  // 2. Try Brevo HTTP API (Sendinblue)
-  if (process.env.BREVO_API_KEY) {
-    console.log('📧 Sending email via Brevo API (HTTPS)...');
-    const response = await axios.post(
-      'https://api.brevo.com/v3/smtp/email',
-      {
-        sender: { name: fromName, email: fromEmail },
-        to: [{ email: to }],
-        subject,
-        htmlContent: html,
-      },
-      {
-        headers: {
-          'api-key': process.env.BREVO_API_KEY,
-          'Content-Type': 'application/json',
-        },
-        timeout: 10000,
-      }
-    );
-    console.log(`📧 Brevo email sent successfully: ${response.data.messageId} → ${to}`);
-    return response.data;
   }
 
   // 3. Try SendGrid HTTP API
