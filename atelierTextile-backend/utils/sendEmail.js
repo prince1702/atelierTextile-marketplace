@@ -14,25 +14,33 @@ const sendEmail = async ({ to, subject, html }) => {
 
   // 1. Try Resend HTTP API (Recommended for Render)
   if (process.env.RESEND_API_KEY) {
-    console.log('📧 Sending email via Resend API (HTTPS)...');
-    const response = await axios.post(
-      'https://api.resend.com/emails',
-      {
-        from: `${fromName} <onboarding@resend.dev>`,
-        to: [to],
-        subject,
-        html,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
+    try {
+      console.log(`📧 Sending email via Resend API (HTTPS) to ${to}...`);
+      const response = await axios.post(
+        'https://api.resend.com/emails',
+        {
+          from: `${fromName} <onboarding@resend.dev>`,
+          to: [to],
+          subject,
+          html,
         },
-        timeout: 10000,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          timeout: 10000,
+        }
+      );
+      console.log(`📧 Resend email sent successfully: ${response.data.id} → ${to}`);
+      return response.data;
+    } catch (resendErr) {
+      const errMsg = resendErr.response?.data?.message || resendErr.message;
+      console.error(`❌ Resend API failed: ${errMsg}`);
+      if (!process.env.BREVO_API_KEY && !process.env.SENDGRID_API_KEY) {
+        throw new Error(errMsg);
       }
-    );
-    console.log(`📧 Resend email sent successfully: ${response.data.id} → ${to}`);
-    return response.data;
+    }
   }
 
   // 2. Try Brevo HTTP API (Sendinblue)

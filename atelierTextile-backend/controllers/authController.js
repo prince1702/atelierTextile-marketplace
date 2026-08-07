@@ -152,13 +152,13 @@ exports.forgotPassword = async (req, res, next) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const cleanEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: cleanEmail });
 
     if (!user) {
-      // Don't reveal whether email exists — return success either way
-      return res.status(200).json({
-        success: true,
-        data: { message: 'If that email is registered, a password reset link has been sent.' },
+      return res.status(404).json({
+        success: false,
+        error: 'No account found with this email address. Please register first.',
       });
     }
 
