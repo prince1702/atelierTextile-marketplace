@@ -1,7 +1,7 @@
 {
   "name": "ateliertextile-backend",
   "version": "1.0.0",
-  "description": "AtelierTextile Marketplace REST API — Node.js + Express + MongoDB",
+  "description": "TexDesigner Marketplace REST API — Node.js + Express + MongoDB",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

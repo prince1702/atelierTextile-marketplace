@@ -28,7 +28,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { user, isAuthenticated } = useAuth();
   
   const [items, setItems] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('atelier_cart');
+    const saved = localStorage.getItem('texdesigner_cart') || localStorage.getItem('atelier_cart');
     return saved ? JSON.parse(saved) : [];
   });
   const [wishlist, setWishlist] = useState<Design[]>([]);
@@ -36,7 +36,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Save cart items to localStorage on change
   useEffect(() => {
-    localStorage.setItem('atelier_cart', JSON.stringify(items));
+    localStorage.setItem('texdesigner_cart', JSON.stringify(items));
   }, [items]);
 
   // Sync cart and wishlist when user logs in/out
@@ -91,9 +91,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
       } else {
         // Only clear if the user is truly logged out (no token in localStorage)
-        if (!localStorage.getItem('atelier_token')) {
+        if (!localStorage.getItem('texdesigner_token') && !localStorage.getItem('atelier_token')) {
           setItems([]);
           setWishlist([]);
+          localStorage.removeItem('texdesigner_cart');
           localStorage.removeItem('atelier_cart');
         }
       }

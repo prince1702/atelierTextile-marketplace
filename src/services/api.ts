@@ -26,7 +26,7 @@ const client = axios.create({
 
 // Attach JWT token and fix Content-Type for FormData uploads
 client.interceptors.request.use((config) => {
-  const token = localStorage.getItem('atelier_token');
+  const token = localStorage.getItem('texdesigner_token') || localStorage.getItem('atelier_token');
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }

@@ -5,7 +5,7 @@ export function RewardsPage() {
   const { showToast } = useNotification();
   
   const couponOptions = [
-    { code: 'ATELIER15', desc: '15% Off any OTHER Format', cost: 350 },
+    { code: 'TEXDESIGNER15', desc: '15% Off any OTHER Format', cost: 350 },
     { code: 'BUYOUT200', desc: '₹200 Off any OTHER Format', cost: 800 },
     { code: 'ARTISANFREE', desc: 'Free EMB Format of ₹490 or less', cost: 1200 },
   ];
@@ -38,7 +38,7 @@ export function RewardsPage() {
           <div>
             <span className="material-symbols-outlined text-[36px] text-primary mb-2 filled">workspace_premium</span>
             <p className="text-xs text-on-surface-variant uppercase font-semibold tracking-wider">Membership Tier</p>
-            <h3 className="text-xl font-bold text-on-surface mt-1">Gold Atelier Member</h3>
+            <h3 className="text-xl font-bold text-on-surface mt-1">Gold TexDesigner Member</h3>
           </div>
           <div className="mt-4 space-y-1.5">
             <div className="flex justify-between text-xs text-on-surface-variant">
@@ -56,10 +56,10 @@ export function RewardsPage() {
           <div>
             <span className="material-symbols-outlined text-[36px] text-tertiary mb-2">share</span>
             <p className="text-xs text-on-surface-variant uppercase font-semibold tracking-wider">Referral Code</p>
-            <h3 className="text-lg font-bold text-on-surface mt-1">ATELIER-REF-MREED</h3>
+            <h3 className="text-lg font-bold text-on-surface mt-1">TEXDESIGNER-REF-MREED</h3>
           </div>
           <button 
-            onClick={() => { navigator.clipboard.writeText('ATELIER-REF-MREED'); showToast('Referral code copied to clipboard!', 'success'); }}
+            onClick={() => { navigator.clipboard.writeText('TEXDESIGNER-REF-MREED'); showToast('Referral code copied to clipboard!', 'success'); }}
             className="w-full mt-4 py-2 border border-outline-variant hover:border-primary rounded-lg text-xs font-semibold text-primary transition-colors flex items-center justify-center gap-1.5"
           >
             <span className="material-symbols-outlined text-[16px]">content_copy</span>

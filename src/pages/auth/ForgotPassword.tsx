@@ -23,7 +23,7 @@ export function ForgotPassword() {
         <div className="px-8 py-6 border-b border-outline-variant text-center">
           <Link to="/" className="inline-flex items-center justify-center gap-2 text-primary mb-4 hover:opacity-80 transition-opacity">
             <span className="material-symbols-outlined text-[24px]">texture</span>
-            <span className="font-bold text-lg">AtelierTextile</span>
+            <span className="font-bold text-lg">TexDesigner</span>
           </Link>
           <h1 className="text-2xl font-bold text-on-surface mb-2">Reset Password</h1>
           <p className="text-sm text-on-surface-variant">

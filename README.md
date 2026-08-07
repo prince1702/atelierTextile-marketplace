@@ -1,4 +1,4 @@
-# AtelierTextile Marketplace
+# TexDesigner Marketplace
 
 A premium, full-stack B2B textile design marketplace where designers list patterns and buyers purchase commercial print/digital licenses.
 

@@ -30,7 +30,7 @@ export function OrdersPage() {
       return;
     }
 
-    const token = localStorage.getItem('atelier_token') || '';
+    const token = localStorage.getItem('texdesigner_token') || localStorage.getItem('atelier_token') || '';
     const typeParam = fileType ? `&fileType=${fileType}` : '';
     const downloadUrl = `${API_URL}/api/designs/${designId}/download?token=${encodeURIComponent(token)}${typeParam}`;
 

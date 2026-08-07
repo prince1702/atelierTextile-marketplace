@@ -24,7 +24,7 @@ export function Navbar() {
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-2 text-primary">
             <span className="material-symbols-outlined text-[28px]">texture</span>
-            <span className="font-bold text-xl tracking-tight">AtelierTextile</span>
+            <span className="font-bold text-xl tracking-tight">TexDesigner</span>
           </Link>
           <div className="hidden md:flex gap-6">
             <Link to="/" className={`text-sm font-medium py-4 relative group ${(isActive('/') || isActive('/marketplace')) ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}>

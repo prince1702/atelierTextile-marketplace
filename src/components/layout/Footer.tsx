@@ -9,7 +9,7 @@ export function Footer() {
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 text-primary mb-4">
               <span className="material-symbols-outlined text-[24px]">texture</span>
-              <span className="font-bold text-lg">AtelierTextile</span>
+              <span className="font-bold text-lg">TexDesigner</span>
             </div>
             <p className="text-sm text-on-surface-variant max-w-xs leading-relaxed">
               The premier destination for high-end textile design. Connecting artisans with enterprises globally.
@@ -33,7 +33,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-outline-variant pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <span className="text-sm text-on-surface-variant">© 2024 Atelier Textile Marketplace. All rights reserved.</span>
+          <span className="text-sm text-on-surface-variant">© 2024 TexDesigner Marketplace. All rights reserved.</span>
           <div className="flex gap-6">
             <a href="#" className="text-sm text-on-surface-variant hover:text-primary transition-colors">Privacy Policy</a>
             <a href="#" className="text-sm text-on-surface-variant hover:text-primary transition-colors">Terms of Service</a>
