@@ -24,13 +24,14 @@ const allowedOrigins = [
   `http://127.0.0.1:${PORT}`,
   'http://localhost:5173',
   'http://localhost:3000',
-  process.env.FRONTEND_URL
+  'https://texdesigner.com',
+  'https://www.texdesigner.com',
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.endsWith('texdesigner.com')) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
