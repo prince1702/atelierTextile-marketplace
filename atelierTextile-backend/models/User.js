@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -50,6 +51,12 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  resetPasswordToken: {
+    type: String,
+  },
+  resetPasswordExpire: {
+    type: Date,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -74,6 +81,24 @@ userSchema.pre('save', async function (next) {
 // Compare entered password with hashed password
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Generate and hash password reset token
+userSchema.methods.getResetPasswordToken = function () {
+  // Generate a random 32-byte token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  // Hash it and store in the DB (we never store the raw token)
+  this.resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // Set expiry to 1 hour from now
+  this.resetPasswordExpire = Date.now() + 60 * 60 * 1000;
+
+  // Return the unhashed token (this is what goes in the email link)
+  return resetToken;
 };
 
 module.exports = mongoose.model('User', userSchema);

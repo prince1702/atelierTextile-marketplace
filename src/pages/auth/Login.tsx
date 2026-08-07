@@ -27,7 +27,7 @@ export function Login() {
       showToast('Welcome back to TexDesigner!');
       // Navigate is handled by ProtectedRoute once auth state updates, 
       // but we can force it here for UX flow.
-      const storedUserStr = localStorage.getItem('atelier_user');
+      const storedUserStr = localStorage.getItem('texdesigner_user') || localStorage.getItem('atelier_user');
       let targetPath = '/profile';
       if (storedUserStr) {
         try {

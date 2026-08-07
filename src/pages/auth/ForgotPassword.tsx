@@ -1,20 +1,32 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';
+import { api } from '../../services/api';
 
 export function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useNotification();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
       showToast('Please enter your email', 'error');
       return;
     }
-    setSubmitted(true);
-    showToast('Reset link sent to your email');
+
+    setIsLoading(true);
+    try {
+      await api.auth.forgotPassword(email);
+      setSubmitted(true);
+      showToast('Reset link sent to your email');
+    } catch (error: any) {
+      const message = error.response?.data?.error || 'Failed to send reset email. Please try again.';
+      showToast(message, 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -48,11 +60,23 @@ export function ForgotPassword() {
                     onChange={e => setEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 bg-transparent rounded-lg text-sm outline-none" 
                     placeholder="Enter your email" 
+                    disabled={isLoading}
                   />
                 </div>
               </div>
-              <button type="submit" className="w-full flex justify-center py-3 px-4 rounded-lg font-semibold text-sm text-white bg-primary-container hover:bg-primary transition-colors shadow-sm">
-                Send Reset Link
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-lg font-semibold text-sm text-white bg-primary-container hover:bg-primary transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <>
+                    <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+                    Sending...
+                  </>
+                ) : (
+                  'Send Reset Link'
+                )}
               </button>
             </form>
           ) : (

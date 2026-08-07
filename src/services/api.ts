@@ -86,6 +86,13 @@ export const api = {
         message: response.data.data?.message || 'Instructions sent',
       };
     },
+    resetPassword: async (token: string, password: string): Promise<{ success: boolean; message: string }> => {
+      const response = await client.put(`/auth/reset-password/${token}`, { password });
+      return {
+        success: response.data.success,
+        message: response.data.data?.message || 'Password reset successfully',
+      };
+    },
     getMe: async (): Promise<User> => {
       const response = await client.get('/auth/me');
       return normalize<User>(response.data.data);
