@@ -66,11 +66,8 @@ export function Profile() {
     }
     setIsSaving(true);
     try {
-      await api.users.update(user.id, { 
-        currentPassword: currentPassword.trim() || undefined,
-        password: newPassword.trim() 
-      });
-      showToast('Password updated directly in database!', 'success');
+      await api.auth.changePassword(newPassword.trim(), currentPassword.trim() || undefined);
+      showToast('Password updated directly in database! You can log in with your new password.', 'success');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');

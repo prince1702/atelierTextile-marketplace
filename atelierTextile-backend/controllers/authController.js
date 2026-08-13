@@ -317,3 +317,42 @@ exports.logout = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Change password directly for logged-in user
+// @route   PUT /api/auth/change-password
+// @access  Private
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { password, currentPassword } = req.body;
+
+    if (!password || password.trim().length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: 'Password must be at least 6 characters long',
+      });
+    }
+
+    const user = await User.findById(req.user.id).select('+password');
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    // If non-admin user provided currentPassword, verify it
+    if (req.user.role !== 'admin' && currentPassword && currentPassword.trim().length > 0) {
+      const isMatch = await user.comparePassword(currentPassword);
+      if (!isMatch) {
+        return res.status(400).json({ success: false, error: 'Current password is incorrect' });
+      }
+    }
+
+    user.password = password.trim();
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -3,15 +3,14 @@ import type { User, Design, Order, Ticket } from '../types';
 
 const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (import.meta.env.PROD) return 'https://ateliertextile-backend.onrender.com';
   if (typeof window !== 'undefined' && window.location) {
-    const { hostname, origin } = window.location;
+    const { hostname } = window.location;
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.') || hostname.startsWith('172.')) {
       return `http://${hostname}:5000`;
     }
-    // On production/Vercel, use current domain origin for serverless API
-    return origin;
   }
-  return 'https://ateliertextile-backend.onrender.com';
+  return 'http://localhost:5000';
 };
 
 export const API_URL = getApiUrl();
@@ -92,6 +91,13 @@ export const api = {
       return {
         success: response.data.success,
         message: response.data.data?.message || 'Password reset successfully',
+      };
+    },
+    changePassword: async (password: string, currentPassword?: string): Promise<{ success: boolean; message: string }> => {
+      const response = await client.put('/auth/change-password', { password, currentPassword });
+      return {
+        success: response.data.success,
+        message: response.data.message || 'Password changed successfully',
       };
     },
     getMe: async (): Promise<User> => {

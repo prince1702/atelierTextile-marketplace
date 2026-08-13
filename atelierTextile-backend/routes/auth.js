@@ -6,6 +6,7 @@ const {
   login,
   forgotPassword,
   resetPassword,
+  changePassword,
   getMe,
   logout,
   registerValidation,
@@ -16,6 +17,7 @@ router.post('/register', registerValidation, register);
 router.post('/login', loginValidation, login);
 router.post('/forgot-password', forgotPassword);
 router.put('/reset-password/:token', resetPassword);
+router.put('/change-password', auth, changePassword);
 router.get('/me', auth, getMe);
 router.post('/logout', auth, logout);
 
