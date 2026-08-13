@@ -83,7 +83,7 @@ node test-api.js
 
 | Role | Email | Password |
 |------|-------|----------|
-| **Admin** | `admin@atelier.com` | `admin123` |
+| **Admin** | `aonedesigner95@gmail.com` | `Akshay@95` |
 | **Seller** | `seller@atelier.com` | `seller123` |
 | **Customer** | `customer@atelier.com` | `customer123` |
 
