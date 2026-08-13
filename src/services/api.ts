@@ -242,7 +242,7 @@ export const api = {
       const response = await client.get(`/users/${id}`);
       return normalize<User>(response.data.data);
     },
-    update: async (id: string, data: Partial<User>): Promise<User> => {
+    update: async (id: string, data: Partial<User> & { password?: string; currentPassword?: string }): Promise<User> => {
       const response = await client.put(`/users/${id}`, data);
       return normalize<User>(response.data.data);
     },
