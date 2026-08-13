@@ -65,7 +65,7 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    const { name, email, password, role, status, country } = req.body;
+    const { name, email, password, currentPassword, role, status, country } = req.body;
 
     // Check email uniqueness if changing email
     if (email && email.toLowerCase() !== user.email.toLowerCase()) {
@@ -91,6 +91,14 @@ exports.updateUser = async (req, res, next) => {
 
     // Direct password update
     if (password && password.trim().length > 0) {
+      if (currentPassword && currentPassword.trim().length > 0) {
+        const userWithPass = await User.findById(req.params.id).select('+password');
+        const isMatch = await userWithPass.comparePassword(currentPassword);
+        if (!isMatch) {
+          return res.status(400).json({ success: false, error: 'Current password is incorrect' });
+        }
+      }
+
       if (password.trim().length < 6) {
         return res.status(400).json({ success: false, error: 'Password must be at least 6 characters long' });
       }

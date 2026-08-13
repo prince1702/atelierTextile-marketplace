@@ -12,8 +12,14 @@ export function Profile() {
   const [lastName, setLastName] = useState(user?.name.split(' ').slice(1).join(' ') || '');
   const [email, setEmail] = useState(user?.email || '');
   const [bio, setBio] = useState('Textile professional focusing on premium patterns and sustainable materials.');
+  
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [showCurrentPass, setShowCurrentPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
   
   const handleSavePersonal = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,8 +66,12 @@ export function Profile() {
     }
     setIsSaving(true);
     try {
-      await api.users.update(user.id, { password: newPassword });
+      await api.users.update(user.id, { 
+        currentPassword: currentPassword.trim() || undefined,
+        password: newPassword.trim() 
+      });
       showToast('Password updated directly in database!', 'success');
+      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
     } catch (error: any) {
@@ -180,13 +190,71 @@ export function Profile() {
               </h3>
               <form className="space-y-4" onSubmit={handleSaveSecurity}>
                 <div>
-                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">New Password</label>
-                  <input className="w-full bg-white border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" placeholder="••••••••" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}/>
+                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">Current Password</label>
+                  <div className="relative">
+                    <input 
+                      className="w-full bg-white border border-outline-variant rounded-lg pl-4 pr-10 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" 
+                      placeholder="••••••••" 
+                      type={showCurrentPass ? 'text' : 'password'}
+                      value={currentPassword} 
+                      onChange={e => setCurrentPassword(e.target.value)}
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => setShowCurrentPass(!showCurrentPass)}
+                      className="absolute right-3 top-2.5 text-on-surface-variant hover:text-primary transition-colors focus:outline-none"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        {showCurrentPass ? 'visibility' : 'visibility_off'}
+                      </span>
+                    </button>
+                  </div>
                 </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">New Password</label>
+                  <div className="relative">
+                    <input 
+                      className="w-full bg-white border border-outline-variant rounded-lg pl-4 pr-10 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" 
+                      placeholder="••••••••" 
+                      type={showNewPass ? 'text' : 'password'}
+                      value={newPassword} 
+                      onChange={e => setNewPassword(e.target.value)}
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => setShowNewPass(!showNewPass)}
+                      className="absolute right-3 top-2.5 text-on-surface-variant hover:text-primary transition-colors focus:outline-none"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        {showNewPass ? 'visibility' : 'visibility_off'}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">Confirm Password</label>
-                  <input className="w-full bg-white border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" placeholder="••••••••" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}/>
+                  <div className="relative">
+                    <input 
+                      className="w-full bg-white border border-outline-variant rounded-lg pl-4 pr-10 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" 
+                      placeholder="••••••••" 
+                      type={showConfirmPass ? 'text' : 'password'}
+                      value={confirmPassword} 
+                      onChange={e => setConfirmPassword(e.target.value)}
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => setShowConfirmPass(!showConfirmPass)}
+                      className="absolute right-3 top-2.5 text-on-surface-variant hover:text-primary transition-colors focus:outline-none"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        {showConfirmPass ? 'visibility' : 'visibility_off'}
+                      </span>
+                    </button>
+                  </div>
                 </div>
+
                 <button className="text-sm font-semibold text-primary border border-primary hover:bg-surface-variant px-4 py-2 rounded-lg transition-colors w-full" type="submit" disabled={isSaving}>
                   Change Password
                 </button>
