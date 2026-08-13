@@ -91,7 +91,8 @@ exports.updateUser = async (req, res, next) => {
 
     // Direct password update
     if (password && password.trim().length > 0) {
-      if (currentPassword && currentPassword.trim().length > 0) {
+      // Verify current password only if provided and user is not admin
+      if (req.user.role !== 'admin' && currentPassword && currentPassword.trim().length > 0) {
         const userWithPass = await User.findById(req.params.id).select('+password');
         const isMatch = await userWithPass.comparePassword(currentPassword);
         if (!isMatch) {

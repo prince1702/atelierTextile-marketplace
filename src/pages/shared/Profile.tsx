@@ -196,6 +196,7 @@ export function Profile() {
                       className="w-full bg-white border border-outline-variant rounded-lg pl-4 pr-10 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" 
                       placeholder="••••••••" 
                       type={showCurrentPass ? 'text' : 'password'}
+                      autoComplete="new-password"
                       value={currentPassword} 
                       onChange={e => setCurrentPassword(e.target.value)}
                     />
@@ -218,6 +219,7 @@ export function Profile() {
                       className="w-full bg-white border border-outline-variant rounded-lg pl-4 pr-10 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" 
                       placeholder="••••••••" 
                       type={showNewPass ? 'text' : 'password'}
+                      autoComplete="new-password"
                       value={newPassword} 
                       onChange={e => setNewPassword(e.target.value)}
                     />
@@ -240,6 +242,7 @@ export function Profile() {
                       className="w-full bg-white border border-outline-variant rounded-lg pl-4 pr-10 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" 
                       placeholder="••••••••" 
                       type={showConfirmPass ? 'text' : 'password'}
+                      autoComplete="new-password"
                       value={confirmPassword} 
                       onChange={e => setConfirmPassword(e.target.value)}
                     />
