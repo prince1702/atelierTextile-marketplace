@@ -29,7 +29,7 @@ const seedDataWithoutExit = async () => {
 
     // --- SEED DEMO USERS SAFELY (Preserve personal accounts) ---
     const usersData = [
-      { name: 'Alex Chen', email: 'admin@atelier.com', password: 'admin123', role: 'admin', status: 'active', country: 'USA' },
+      { name: 'Alex Chen', email: 'admin@atelier.com', password: 'prince123', role: 'admin', status: 'active', country: 'USA' },
       { name: 'Elena Jenkins', email: 'seller@atelier.com', password: 'seller123', role: 'seller', status: 'active', country: 'France', totalRevenue: 42800, totalOrders: 284 },
       { name: 'Marcus Reed', email: 'customer@atelier.com', password: 'customer123', role: 'customer', status: 'active', country: 'USA', totalOrders: 12 },
       { name: 'Sarah Wong', email: 'sarah.w@threadco.com', password: 'password123', role: 'seller', status: 'pending', country: 'Singapore' },
@@ -79,7 +79,7 @@ const seedDataWithoutExit = async () => {
 
     console.log('\n✅ Database seeded successfully!\n');
     console.log('Demo accounts:');
-    console.log('  Admin:    admin@atelier.com    / admin123');
+    console.log('  Admin:    admin@atelier.com    / prince123');
     console.log('  Seller:   seller@atelier.com   / seller123');
     console.log('  Customer: customer@atelier.com / customer123\n');
 
