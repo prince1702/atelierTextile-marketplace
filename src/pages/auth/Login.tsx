@@ -34,6 +34,10 @@ export function Login() {
           const storedUser = JSON.parse(storedUserStr);
           if (storedUser.role === 'customer') {
             targetPath = '/';
+          } else if (storedUser.role === 'seller') {
+            targetPath = '/seller/dashboard';
+          } else if (storedUser.role === 'admin') {
+            targetPath = '/admin/dashboard';
           }
         } catch (e) {
           console.error('Failed to parse user role for login redirect', e);
