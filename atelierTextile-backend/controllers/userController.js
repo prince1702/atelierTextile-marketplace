@@ -65,25 +65,46 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    // Prevent non-admins from changing their own role or status
-    if (req.user.role !== 'admin') {
-      delete req.body.role;
-      delete req.body.status;
-      delete req.body.totalRevenue;
-      delete req.body.totalOrders;
+    const { name, email, password, role, status, country } = req.body;
+
+    // Check email uniqueness if changing email
+    if (email && email.toLowerCase() !== user.email.toLowerCase()) {
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      if (existingUser && existingUser._id.toString() !== user._id.toString()) {
+        return res.status(400).json({ success: false, error: 'Email address is already in use by another user' });
+      }
+      user.email = email.toLowerCase();
     }
 
-    // Don't allow password updates through this route
-    delete req.body.password;
+    if (name) user.name = name;
+    if (country !== undefined) user.country = country;
 
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    // Admin-only fields
+    if (req.user.role === 'admin') {
+      if (role && ['admin', 'seller', 'customer'].includes(role)) {
+        user.role = role;
+      }
+      if (status && ['active', 'pending', 'suspended'].includes(status)) {
+        user.status = status;
+      }
+    }
+
+    // Direct password update
+    if (password && password.trim().length > 0) {
+      if (password.trim().length < 6) {
+        return res.status(400).json({ success: false, error: 'Password must be at least 6 characters long' });
+      }
+      user.password = password.trim();
+    }
+
+    await user.save();
+
+    const userObj = user.toObject();
+    delete userObj.password;
 
     res.status(200).json({
       success: true,
-      data: updatedUser,
+      data: userObj,
     });
   } catch (error) {
     next(error);

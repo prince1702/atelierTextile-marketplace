@@ -2,12 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import type { User } from '../../types';
 import { useNotification } from '../../contexts/NotificationContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 export function UserManagement() {
   const [userList, setUserList] = useState<User[]>([]);
   const [filter, setFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useNotification();
+  const { user: currentUser, updateUserSession } = useAuth();
+
+  // Edit user modal state
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editRole, setEditRole] = useState<'admin' | 'seller' | 'customer'>('customer');
+  const [editPassword, setEditPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -25,6 +35,50 @@ export function UserManagement() {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const handleOpenEdit = (user: User) => {
+    setEditingUser(user);
+    setEditName(user.name);
+    setEditEmail(user.email);
+    setEditRole(user.role);
+    setEditPassword('');
+  };
+
+  const handleSaveEditUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+    setIsSubmitting(true);
+    try {
+      const payload: { name?: string; email?: string; role?: 'admin' | 'seller' | 'customer'; password?: string } = {
+        name: editName,
+        email: editEmail,
+        role: editRole,
+      };
+      if (editPassword.trim()) {
+        if (editPassword.trim().length < 6) {
+          showToast('Password must be at least 6 characters long', 'error');
+          setIsSubmitting(false);
+          return;
+        }
+        payload.password = editPassword.trim();
+      }
+
+      const updated = await api.users.update(editingUser.id, payload);
+      
+      // If updating current logged in admin's profile, sync AuthContext session
+      if (currentUser && currentUser.id === editingUser.id) {
+        updateUserSession(updated);
+      }
+
+      showToast('User email & password updated directly in database!', 'success');
+      setEditingUser(null);
+      fetchUsers();
+    } catch (error: any) {
+      showToast(error.response?.data?.error || 'Failed to update user', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleUpdateStatus = async (id: string, currentStatus: string) => {
     const newStatus = currentStatus === 'suspended' ? 'active' : 'suspended';
@@ -76,7 +130,7 @@ export function UserManagement() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         <div>
           <h2 className="text-2xl font-bold text-primary mb-1">User Management</h2>
-          <p className="text-sm text-on-surface-variant">Manage all registered accounts across the platform.</p>
+          <p className="text-sm text-on-surface-variant">Manage registered accounts and update credentials directly.</p>
         </div>
         <div className="flex gap-2">
           <select 
@@ -136,6 +190,14 @@ export function UserManagement() {
                       </span>
                     </td>
                     <td className="py-4 px-6 text-right space-x-2">
+                      <button
+                        onClick={() => handleOpenEdit(user)}
+                        className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-full transition-colors inline-block"
+                        title="Edit User Email/Password"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                      </button>
+
                       <button 
                         onClick={() => handleUpdateStatus(user.id, user.status)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
@@ -163,6 +225,92 @@ export function UserManagement() {
           
           <div className="px-6 py-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
             <span>Showing {filteredUsers.length} users</span>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {editingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 animate-scale-up">
+            <div className="flex justify-between items-center border-b border-outline-variant pb-3">
+              <h3 className="text-lg font-bold text-primary flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">edit_note</span>
+                Edit User Account
+              </h3>
+              <button 
+                onClick={() => setEditingUser(null)}
+                className="text-on-surface-variant hover:text-primary p-1 rounded-full hover:bg-surface-container-high transition-colors"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEditUser} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Full Name</label>
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Email Address</label>
+                <input
+                  type="email"
+                  required
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  className="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Role</label>
+                <select
+                  value={editRole}
+                  onChange={(e) => setEditRole(e.target.value as any)}
+                  className="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface focus:border-primary outline-none"
+                >
+                  <option value="customer">Customer</option>
+                  <option value="seller">Seller</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">New Password (Optional)</label>
+                <input
+                  type="password"
+                  placeholder="Leave blank to keep existing password"
+                  value={editPassword}
+                  onChange={(e) => setEditPassword(e.target.value)}
+                  className="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
+                />
+                <p className="text-[11px] text-on-surface-variant mt-1">Directly updates user password in MongoDB database upon save.</p>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-outline-variant">
+                <button
+                  type="button"
+                  onClick={() => setEditingUser(null)}
+                  className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-variant rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-5 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary-container rounded-lg transition-colors shadow-sm disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Saving...' : 'Update Account'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

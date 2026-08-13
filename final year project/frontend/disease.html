@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>MediPredict — Disease Prediction System</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+        <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+
+    <!-- AUTH -->
+    <div id="authPage">
+        <div class="auth-box">
+            <div class="auth-left">
+                <div class="auth-brand">Medi<span>Predict</span></div>
+                <p class="auth-tag">AI-powered disease prediction system that helps you understand your symptoms and
+                    take timely medical action.</p>
+                <div class="auth-feat">
+                    <div class="auth-feat-ico">🩺</div>
+                    <div class="auth-feat-txt">Predict 28+ diseases from your symptoms</div>
+                </div>
+                <div class="auth-feat">
+                    <div class="auth-feat-ico">💊</div>
+                    <div class="auth-feat-txt">Get personalised health precautions</div>
+                </div>
+                <div class="auth-feat">
+                    <div class="auth-feat-ico">📋</div>
+                    <div class="auth-feat-txt">Track your prediction history</div>
+                </div>
+                <div class="auth-feat">
+                    <div class="auth-feat-ico">🔒</div>
+                    <div class="auth-feat-txt">Secure and private — your data stays yours</div>
+                </div>
+            </div>
+            <div class="auth-right">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tabLogin">Login</button>
+                    <button class="auth-tab" id="tabReg">Register</button>
+                </div>
+                <div class="auth-form active" id="loginForm">
+                    <div class="auth-title">Welcome back 👋</div>
+                    <div class="auth-sub">Sign in to access your health dashboard</div>
+                    <div class="auth-err" id="loginErr"></div>
+                    <div class="fg"><label>Email Address</label><input type="email" id="lEmail" aria-label="Email address"
+                            placeholder="you@example.com" /></div>
+                    <div class="fg"><label>Password</label><input type="password" id="lPass" aria-label="Password"
+                            placeholder="Your password" /></div>
+                    <button class="auth-btn" id="loginBtn">Sign In →</button>
+                    <div class="demo-hint">Demo: <strong>demo@example.com</strong> / <strong>demo123</strong></div>
+                </div>
+                <div class="auth-form" id="regForm">
+                    <div class="auth-title">Create Account ✨</div>
+                    <div class="auth-sub">Join MediPredict — free forever</div>
+                    <div class="auth-err" id="regErr"></div>
+                    <div class="fg row">
+                        <div><label>First Name</label><input type="text" id="rFirst" aria-label="First Name" placeholder="John" /></div>
+                        <div><label>Last Name</label><input type="text" id="rLast" aria-label="Last Name" placeholder="Doe" /></div>
+                    </div>
+                    <div class="fg"><label>Email</label><input type="email" id="rEmail" aria-label="Email address" placeholder="you@example.com" />
+                    </div>
+                    <div class="fg"><label>Age</label><input type="number" id="rAge" aria-label="Age" placeholder="25" min="1"
+                            max="120" /></div>
+                    <div class="fg"><label>Password (min 6 chars)</label><input type="password" id="rPass" aria-label="Password"
+                            placeholder="Create a password" /></div>
+                    <button class="auth-btn" id="regBtn">Create Account →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="topnav" id="topnav" role="navigation" aria-label="Main navigation" style="display:none">
+        <div class="nav-logo" id="navLogo">Medi<span>Predict</span></div>
+        <ul class="nav-links">
+            <li><button id="nav-home">Home</button></li>
+            <li><button id="nav-checker">Symptom Checker</button></li>
+            <li><button id="nav-diseases">Diseases</button></li>
+        </ul>
+        <div class="nav-user">
+            <button class="dm-toggle" id="dmToggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+                <span id="dmIcon">🌙</span>
+                <div class="dm-track">
+                    <div class="dm-thumb"></div>
+                </div>
+                <span id="dmLabel">Dark</span>
+            </button>
+            <div class="uavatar" id="uAvatar">?</div>
+            <span class="uname" id="uName">User</span>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <div class="page" id="homePage">
+        <section class="hero">
+            <div class="hero-bg"></div>
+            <div class="hero-orb hero-orb-1"></div>
+            <div class="hero-orb hero-orb-2"></div>
+            <div class="hero-content">
+                <div class="hero-badge">Final Year Project — Machine Learning</div>
+                <h1>Disease<br /><em>Prediction</em><br />System</h1>
+                <p class="hero-sub">A machine learning powered web application that predicts possible diseases based on
+                    your symptoms — helping you take timely medical action.</p>
+                <div class="hero-actions">
+                    <button class="btn-primary" id="heroCheckerBtn">🩺 Try Symptom Checker</button>
+                    <button class="btn-secondary" id="heroDisBtn">View All Diseases</button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item"><span class="stat-num">58</span><span class="stat-lbl">Symptoms</span></div>
+                    <div class="stat-item"><span class="stat-num">28</span><span class="stat-lbl">Diseases</span></div>
+                    <div class="stat-item"><span class="stat-num">3</span><span class="stat-lbl">ML Algorithms</span>
+                    </div>
+                    <div class="stat-item"><span class="stat-num">95%</span><span class="stat-lbl">Accuracy</span></div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="float-card float-card-1"><span style="font-size:1.3rem">✅</span>
+                    <div>
+                        <div class="fc-lbl">Prediction Complete</div>
+                        <div class="fc-sub">Dengue Fever · 89% confidence</div>
+                    </div>
+                </div>
+                <div class="float-card float-card-2"><span style="font-size:1.3rem">🛡️</span>
+                    <div>
+                        <div class="fc-lbl">Stay Protected</div>
+                        <div class="fc-sub">3 precautions recommended</div>
+                    </div>
+                </div>
+                <svg viewBox="0 0 480 520" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MediPredict hero illustration"
+                    style="width:100%;max-width:500px;height:auto;filter:drop-shadow(0 24px 48px rgba(15, 110, 86,.18))">
+                    <circle cx="240" cy="260" r="200" fill="url(#bg)" opacity=".5" />
+                    <circle cx="240" cy="260" r="195" stroke="#0F6E56" stroke-width="1" stroke-dasharray="8 6"
+                        opacity=".2" />
+                    <ellipse cx="240" cy="170" rx="52" ry="52" fill="#5DCAA5" opacity=".25" />
+                    <circle cx="240" cy="155" r="34" fill="#f5c5a3" />
+                    <circle cx="240" cy="155" r="34" stroke="#0F6E56" stroke-width="1.5" fill="none" opacity=".4" />
+                    <ellipse cx="240" cy="130" rx="34" ry="18" fill="#0A2E26" />
+                    <ellipse cx="214" cy="144" rx="12" ry="22" fill="#0A2E26" />
+                    <ellipse cx="266" cy="144" rx="12" ry="22" fill="#0A2E26" />
+                    <circle cx="230" cy="158" r="3.5" fill="#0A2E26" />
+                    <circle cx="250" cy="158" r="3.5" fill="#0A2E26" />
+                    <path d="M232 168 Q240 174 248 168" stroke="#0A2E26" stroke-width="2" stroke-linecap="round"
+                        fill="none" />
+                    <path d="M196 210 Q192 260 188 320 L292 320 Q288 260 284 210 Q262 200 240 200 Q218 200 196 210Z"
+                        fill="#ffffff" stroke="#0F6E56" stroke-width="1.5" />
+                    <path d="M218 210 L228 250 L240 245" stroke="#0F6E56" stroke-width="1.5" fill="none" opacity=".6" />
+                    <path d="M262 210 L252 250 L240 245" stroke="#0F6E56" stroke-width="1.5" fill="none" opacity=".6" />
+                    <path d="M220 220 Q208 238 210 258 Q212 278 228 282 Q244 286 252 270 Q258 256 252 244"
+                        stroke="#0A2E26" stroke-width="3" stroke-linecap="round" fill="none" />
+                    <circle cx="252" cy="240" r="8" fill="#0F6E56" stroke="#0A2E26" stroke-width="1.5" />
+                    <circle cx="252" cy="240" r="4" fill="#fff" opacity=".7" />
+                    <path d="M196 220 Q172 240 168 280 Q170 300 182 304" stroke="#ffffff" stroke-width="14"
+                        stroke-linecap="round" fill="none" />
+                    <path d="M284 220 Q308 240 312 280 Q310 300 298 304" stroke="#ffffff" stroke-width="14"
+                        stroke-linecap="round" fill="none" />
+                    <ellipse cx="180" cy="308" rx="14" ry="10" fill="#f5c5a3" />
+                    <ellipse cx="300" cy="308" rx="14" ry="10" fill="#f5c5a3" />
+                    <rect x="295" y="280" width="44" height="58" rx="6" fill="#fff" stroke="#0F6E56"
+                        stroke-width="1.5" />
+                    <rect x="307" y="275" width="20" height="8" rx="3" fill="#0F6E56" />
+                    <line x1="302" y1="298" x2="332" y2="298" stroke="#1D9E75" stroke-width="1.5"
+                        stroke-linecap="round" />
+                    <line x1="302" y1="308" x2="332" y2="308" stroke="#1D9E75" stroke-width="1.5"
+                        stroke-linecap="round" />
+                    <path d="M304 328 L309 333 L318 322" stroke="#2d7d4a" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" fill="none" />
+                    <rect x="210" y="315" width="26" height="80" rx="13" fill="#e8e0d4" />
+                    <rect x="244" y="315" width="26" height="80" rx="13" fill="#e8e0d4" />
+                    <ellipse cx="223" cy="398" rx="20" ry="10" fill="#0A2E26" />
+                    <ellipse cx="257" cy="398" rx="20" ry="10" fill="#0A2E26" />
+                    <circle cx="240" cy="220" r="14" fill="#0F6E56" />
+                    <rect x="236" y="213" width="8" height="14" rx="2" fill="white" />
+                    <rect x="233" y="216" width="14" height="8" rx="2" fill="white" />
+                    <g opacity=".7" transform="translate(60,180)">
+                        <circle cx="0" cy="0" r="10" fill="#F2FAF7" stroke="#0F6E56" stroke-width="1.5" /><text x="0"
+                            y="4" text-anchor="middle" font-size="11">🧬</text>
+                    </g>
+                    <g opacity=".7" transform="translate(400,180)">
+                        <circle cx="0" cy="0" r="10" fill="#F2FAF7" stroke="#0F6E56" stroke-width="1.5" /><text x="0"
+                            y="4" text-anchor="middle" font-size="11">💊</text>
+                    </g>
+                    <g opacity=".65" transform="translate(340,90)">
+                        <circle cx="0" cy="0" r="12" fill="#F2FAF7" stroke="#0F6E56" stroke-width="1.5" /><text x="0"
+                            y="5" text-anchor="middle" font-size="13">❤️</text>
+                    </g>
+                    <g opacity=".65" transform="translate(390,360)">
+                        <circle cx="0" cy="0" r="12" fill="#F2FAF7" stroke="#0F6E56" stroke-width="1.5" /><text x="0"
+                            y="5" text-anchor="middle" font-size="13">📊</text>
+                    </g>
+                    <g opacity=".65" transform="translate(90,360)">
+                        <circle cx="0" cy="0" r="12" fill="#F2FAF7" stroke="#0F6E56" stroke-width="1.5" /><text x="0"
+                            y="5" text-anchor="middle" font-size="13">🔬</text>
+                    </g>
+                    <g opacity=".65" transform="translate(140,90)">
+                        <circle cx="0" cy="0" r="12" fill="#F2FAF7" stroke="#0F6E56" stroke-width="1.5" /><text x="0"
+                            y="5" text-anchor="middle" font-size="13">🧠</text>
+                    </g>
+                    <path d="M80 440 L120 440 L134 415 L146 465 L158 425 L168 440 L400 440" stroke="#0F6E56"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".5" />
+                    <defs>
+                        <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#5DCAA5" stop-opacity=".35" />
+                            <stop offset="100%" stop-color="#F2FAF7" stop-opacity="0" />
+                        </radialGradient>
+                    </defs>
+                </svg>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div style="text-align:center">
+                <div class="sec-lbl">What We Offer</div>
+                <h2 class="sec-ttl" style="color:var(--dark)">Everything You Need</h2>
+                <p style="color:var(--med);font-size:.97rem;max-width:460px;margin:10px auto 0;line-height:1.7">Two
+                    powerful tools to help you understand your health and take informed action.</p>
+            </div>
+            <div class="feat-grid">
+                <div class="feat-card" id="fc1">
+                    <div class="feat-ico">🩺</div>
+                    <div class="feat-title">Symptom Checker</div>
+                    <div class="feat-desc">Select your symptoms from 58 options across 5 categories. Our ML model
+                        instantly predicts the most likely disease with confidence score and severity level.</div>
+                    <button class="feat-link">Open Checker →</button>
+                </div>
+                <div class="feat-card" id="fc2">
+                    <div class="feat-ico">🗂️</div>
+                    <div class="feat-title">Disease Database</div>
+                    <div class="feat-desc">Browse all 28 diseases our system can detect. Click any disease card to see
+                        full details, symptoms, severity info, precautions, and when to see a doctor.</div><button
+                        class="feat-link">Browse Diseases →</button>
+                </div>
+                <div class="feat-card" id="fc3">
+                    <div class="feat-ico">📋</div>
+                    <div class="feat-title">Prediction History</div>
+                    <div class="feat-desc">Every prediction you make is saved in your personal history panel in the
+                        Symptom Checker. Track patterns and monitor changes over time.</div><button
+                        class="feat-link">View History →</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-section">
+            <div style="text-align:center">
+                <div class="sec-lbl">How It Works</div>
+                <h2 class="sec-ttl" style="color:var(--dark)">6 Simple Steps</h2>
+            </div>
+            <div class="steps-row">
+                <div class="step-card">
+                    <div class="step-num">01</div>
+                    <div class="step-ico">🔐</div>
+                    <div class="step-ttl">Register & Login</div>
+                    <div class="step-dsc">Create your account and log in securely to your personal dashboard.</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">02</div>
+                    <div class="step-ico">📋</div>
+                    <div class="step-ttl">Select Symptoms</div>
+                    <div class="step-dsc">Choose from 58 categorised symptoms that match what you are feeling.</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">03</div>
+                    <div class="step-ico">⚙️</div>
+                    <div class="step-ttl">Data Conversion</div>
+                    <div class="step-dsc">Symptoms are converted into binary numerical vectors for the ML model.</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">04</div>
+                    <div class="step-ico">🤖</div>
+                    <div class="step-ttl">Model Processes</div>
+                    <div class="step-dsc">Random Forest / Naive Bayes / SVM analyses your symptom pattern.</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">05</div>
+                    <div class="step-ico">🎯</div>
+                    <div class="step-ttl">Disease Predicted</div>
+                    <div class="step-dsc">The most probable disease is identified with a confidence percentage.</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">06</div>
+                    <div class="step-ico">💊</div>
+                    <div class="step-ttl">Get Guidance</div>
+                    <div class="step-dsc">Receive severity rating, precautions, and guidance on next steps.</div>
+                </div>
+            </div>
+        </section>
+
+        <section style="padding:90px 60px;background:var(--dark);position:relative;overflow:hidden">
+            <div
+                style="position:absolute;inset:0;background:radial-gradient(ellipse 50% 70% at 80% 50%,rgba(15, 110, 86,.18),transparent 65%);pointer-events:none">
+            </div>
+            <div style="position:relative;z-index:1">
+                <div class="sec-lbl" style="color:var(--orp)">System Design</div>
+                <h2 class="sec-ttl" style="color:var(--cream)">Project Modules</h2>
+            </div>
+            <div
+                style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:48px;position:relative;z-index:1">
+                <div
+                    style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:30px">
+                    <div
+                        style="width:46px;height:46px;border-radius:12px;background:rgba(15, 110, 86,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:14px">
+                        👤</div>
+                    <div
+                        style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--cream);margin-bottom:12px">
+                        User Module</div>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+                        <li style="font-size:.83rem;color:rgba(242, 250, 247,.62);padding-left:16px;position:relative">
+                            <span style="position:absolute;left:0;color:var(--orl)">→</span>Secure registration and
+                            login</li>
+                        <li style="font-size:.83rem;color:rgba(242, 250, 247,.62);padding-left:16px;position:relative">
+                            <span style="position:absolute;left:0;color:var(--orl)">→</span>Symptom selection with
+                            filters</li>
+                        <li style="font-size:.83rem;color:rgba(242, 250, 247,.62);padding-left:16px;position:relative">
+                            <span style="position:absolute;left:0;color:var(--orl)">→</span>View predicted disease and
+                            severity</li>
+                        <li style="font-size:.83rem;color:rgba(242, 250, 247,.62);padding-left:16px;position:relative">
+                            <span style="position:absolute;left:0;color:var(--orl)">→</span>Personal prediction history
+                        </li>
+                    </ul>
+                </div>
+                <div
+                    style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:30px">
+                    <div
+                        style="width:46px;height:46px;border-radius:12px;background:rgba(15, 110, 86,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:14px">
+                        🛡️</div>
+                    <div
+                        style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--cream);margin-bottom:12px">
+                        Admin Module</div>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+                        <li style="font-size:.83rem;color:rgba(242, 250, 247,.62);padding-left:16px;position:relative">
+                            <span style="position:absolute;left:0;color:var(--orl)">→</span>Manage disease and symptom
+                            dataset</li>
+                        <li style="font-size:.83rem;color:rgba(242, 250, 247,.62);padding-left:16px;position:relative">
+                            <span style="position:absolute;left:0;color:var(--orl)">→</span>Retrain and update ML model
+                        </li>
+                        <li style="font-size:.83rem;color:rgba(242, 250, 247,.62);padding-left:16px;position:relative">
+                            <span style="position:absolute;left:0;color:var(--orl)">→</span>Monitor performance metrics
+                        </li>
+                        <li style="font-size:.83rem;color:rgba(242, 250, 247,.62);padding-left:16px;position:relative">
+                            <span style="position:absolute;left:0;color:var(--orl)">→</span>Audit user activity logs
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section style="padding:70px 60px;background:var(--cream)">
+            <div style="text-align:center">
+                <div class="sec-lbl">Built With</div>
+                <h2 class="sec-ttl" style="color:var(--dark);font-size:2rem">Technology Stack</h2>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:11px;margin-top:36px;justify-content:center">
+                <div
+                    style="display:flex;align-items:center;gap:8px;padding:11px 19px;border-radius:50px;background:white;border:2px solid rgba(10, 46, 38,.1);font-size:.86rem;font-weight:600;color:var(--dark);box-shadow:0 2px 12px rgba(10, 46, 38,.05)">
+                    🐍 Python</div>
+                <div
+                    style="display:flex;align-items:center;gap:8px;padding:11px 19px;border-radius:50px;background:white;border:2px solid rgba(10, 46, 38,.1);font-size:.86rem;font-weight:600;color:var(--dark);box-shadow:0 2px 12px rgba(10, 46, 38,.05)">
+                    🌶️ Flask</div>
+                <div
+                    style="display:flex;align-items:center;gap:8px;padding:11px 19px;border-radius:50px;background:white;border:2px solid rgba(10, 46, 38,.1);font-size:.86rem;font-weight:600;color:var(--dark);box-shadow:0 2px 12px rgba(10, 46, 38,.05)">
+                    🤖 Scikit-learn</div>
+                <div
+                    style="display:flex;align-items:center;gap:8px;padding:11px 19px;border-radius:50px;background:white;border:2px solid rgba(10, 46, 38,.1);font-size:.86rem;font-weight:600;color:var(--dark);box-shadow:0 2px 12px rgba(10, 46, 38,.05)">
+                    🗄️ MySQL / MongoDB</div>
+                <div
+                    style="display:flex;align-items:center;gap:8px;padding:11px 19px;border-radius:50px;background:white;border:2px solid rgba(10, 46, 38,.1);font-size:.86rem;font-weight:600;color:var(--dark);box-shadow:0 2px 12px rgba(10, 46, 38,.05)">
+                    🌐 HTML & CSS</div>
+                <div
+                    style="display:flex;align-items:center;gap:8px;padding:11px 19px;border-radius:50px;background:white;border:2px solid rgba(10, 46, 38,.1);font-size:.86rem;font-weight:600;color:var(--dark);box-shadow:0 2px 12px rgba(10, 46, 38,.05)">
+                    ⚡ JavaScript</div>
+                <div
+                    style="display:flex;align-items:center;gap:8px;padding:11px 19px;border-radius:50px;background:white;border:2px solid rgba(10, 46, 38,.1);font-size:.86rem;font-weight:600;color:var(--dark);box-shadow:0 2px 12px rgba(10, 46, 38,.05)">
+                    🌲 Random Forest</div>
+                <div
+                    style="display:flex;align-items:center;gap:8px;padding:11px 19px;border-radius:50px;background:white;border:2px solid rgba(10, 46, 38,.1);font-size:.86rem;font-weight:600;color:var(--dark);box-shadow:0 2px 12px rgba(10, 46, 38,.05)">
+                    📊 Naive Bayes</div>
+                <div
+                    style="display:flex;align-items:center;gap:8px;padding:11px 19px;border-radius:50px;background:white;border:2px solid rgba(10, 46, 38,.1);font-size:.86rem;font-weight:600;color:var(--dark);box-shadow:0 2px 12px rgba(10, 46, 38,.05)">
+                    📐 SVM Classifier</div>
+            </div>
+        </section>
+        <div class="footer">
+            <div class="footer-brand">Medi<span>Predict</span></div>Disease Prediction System Using Machine Learning —
+            Final Year Project<br />Built with <span>Flask</span> · <span>Scikit-learn</span> · <span>Python</span>
+            <div style="margin-top:11px;font-size:.72rem;opacity:.3">⚠️ For educational purposes only. Does not replace
+                professional medical advice.</div>
+        </div>
+    </div>
+
+    <!-- CHECKER PAGE -->
+    <div class="page" id="checkerPage">
+        <div class="checker-bg"></div>
+        <div class="checker-pg-hdr">
+            <div class="sec-lbl" style="color:var(--orp)">Interactive Demo</div>
+            <h1
+                style="font-family:'Playfair Display',serif;font-size:clamp(1.9rem,3.5vw,3rem);font-weight:700;color:var(--cream)">
+                Symptom Checker</h1>
+            <p style="color:rgba(242, 250, 247,.6);font-size:.97rem;max-width:500px;margin:10px auto 0;line-height:1.7">
+                Select your symptoms by category. Our ML model will analyse the pattern and predict the most likely
+                disease.</p>
+        </div>
+        <div class="checker-main">
+            <div class="checker-left">
+                <div class="info-card">
+                    <div class="info-card-title">How to use</div>
+                    <div class="step-row">
+                        <div class="step-bubble">1</div>
+                        <div>
+                            <div class="step-t">Filter by Category</div>
+                            <div class="step-s">Use the category tabs to narrow symptoms</div>
+                        </div>
+                    </div>
+                    <div class="step-row">
+                        <div class="step-bubble">2</div>
+                        <div>
+                            <div class="step-t">Select Symptoms</div>
+                            <div class="step-s">Tap all symptoms you are experiencing</div>
+                        </div>
+                    </div>
+                    <div class="step-row" style="margin-bottom:0">
+                        <div class="step-bubble">3</div>
+                        <div>
+                            <div class="step-t">Hit Predict</div>
+                            <div class="step-s">Get disease, severity and precautions</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="history-card">
+                    <div class="hist-title">📋 Prediction History</div>
+                    <div id="histList">
+                        <div class="no-hist">No predictions yet</div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="sym-card">
+                    <div class="sym-card-ttl">Select Your Symptoms</div>
+                    <div class="sym-card-sub">Search or browse by category — choose all symptoms you are experiencing
+                    </div>
+
+                    <!-- SEARCH BAR -->
+                    <div class="sym-search-wrap">
+                        <span class="sym-search-ico">🔍</span>
+                        <input class="sym-search" id="symSearch" type="text" aria-label="Search symptoms"
+                            placeholder="Search symptom... e.g. fever, headache, cough" autocomplete="off" />
+                        <button class="sym-search-clear" id="symSearchClear" title="Clear search" aria-label="Clear symptom search">✕</button>
+                    </div>
+
+                    <div class="cat-tabs" id="catTabsRow">
+                        <button class="cat-tab active" data-cat="all">All</button>
+                        <button class="cat-tab" data-cat="general">General</button>
+                        <button class="cat-tab" data-cat="respiratory">Respiratory</button>
+                        <button class="cat-tab" data-cat="gastro">Digestive</button>
+                        <button class="cat-tab" data-cat="neuro">Neuro</button>
+                        <button class="cat-tab" data-cat="skin">Skin</button>
+                    </div>
+                    <div class="sel-count">Selected: <span id="selCount">0</span> symptoms</div>
+                    <div class="sym-grid" id="symGrid" role="list"></div>
+
+                    <!-- SEVERITY PANEL -->
+                    <div class="sev-panel" id="sevPanel">
+                        <div class="sev-panel-head"><span></span>Set Severity for Each Symptom</div>
+                        <div id="sevRows"></div>
+                    </div>
+
+                    <button class="predict-btn" id="predictBtn">🔍 Predict Disease</button>
+                    <button class="clear-btn" id="clearBtn">✕ Clear All Selections</button>
+                    <div class="result-box" id="resultBox">
+                        <div class="res-tag">Prediction Result</div>
+                        <div class="res-disease" id="resDis"></div>
+                        <div id="resSev"></div>
+                        <div class="res-conf" id="resConf"></div>
+                        <div class="res-prec" id="resPrec"></div>
+                        <div id="resMeds"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer" style="margin-top:60px">
+            <div class="footer-brand">Medi<span>Predict</span></div>⚠️ For educational purposes only. Always consult a
+            qualified doctor.
+        </div>
+    </div>
+
+    <!-- DISEASES PAGE -->
+    <div class="page" id="diseasesPage">
+        <div class="diseases-hdr">
+            <div class="sec-lbl" style="color:var(--or)">Disease Database</div>
+            <h1
+                style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:900;color:var(--dark)">
+                All Diseases We Predict</h1>
+            <p style="color:var(--med);font-size:.97rem;max-width:500px;margin:10px auto 0;line-height:1.7">Click any
+                disease card to see full details, symptoms, severity and precautions.</p>
+        </div>
+        <div class="legend">
+            <span><span
+                    style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--gr)"></span>Low
+                Severity</span>
+            <span><span
+                    style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--or)"></span>Medium
+                Severity</span>
+            <span><span
+                    style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--re)"></span>High
+                Severity</span>
+        </div>
+        <div class="dis-filter-bar">
+            <button class="df-btn active" data-sev="all">All (28)</button>
+            <button class="df-btn" data-sev="low">🟢 Low Risk</button>
+            <button class="df-btn" data-sev="medium">🟡 Medium Risk</button>
+            <button class="df-btn" data-sev="high">🔴 High Risk</button>
+        </div>
+        <div class="dis-grid" id="disGrid"></div>
+        <div class="footer" style="margin-top:60px">
+            <div class="footer-brand">Medi<span>Predict</span></div>⚠️ For educational purposes only. Always consult a
+            qualified doctor.
+        </div>
+    </div>
+
+    <!-- DISEASE DETAIL PAGE -->
+    <div class="page" id="detailPage">
+        <div class="detail-wrap">
+            <button class="detail-back" id="detailBackBtn">← Back to Diseases</button>
+            <div class="detail-hero">
+                <div class="detail-hero-inner">
+                    <div class="detail-icon" id="dIcon"></div>
+                    <div>
+                        <div class="detail-sev-pill" id="dSevPill"></div>
+                        <div class="detail-title" id="dName"></div>
+                        <div class="detail-conf-txt" id="dConf"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="detail-grid">
+                <div class="dcard">
+                    <div class="dcard-head">🩺 Key Symptoms</div>
+                    <div id="dSyms"></div>
+                </div>
+                <div class="dcard">
+                    <div class="dcard-head">💊 Precautions &amp; Treatment</div>
+                    <div id="dPrecs"></div>
+                </div>
+                <div class="dcard">
+                    <div class="dcard-head">⚠️ Severity Information</div>
+                    <div id="dSevInfo"></div>
+                </div>
+                <div class="dcard">
+                    <div class="dcard-head">🏥 When to See a Doctor</div>
+                    <div id="dDoctor"></div>
+                </div>
+                <div class="dcard" style="grid-column:1/-1">
+                    <div class="dcard-head">💉 Suggested Medicines</div>
+                    <div id="dMeds"></div>
+                    <p
+                        style="font-size:.75rem;color:var(--text-med,var(--med));font-style:italic;margin-top:14px;opacity:.7">
+                        ⚠️ These are general over-the-counter suggestions only. Always consult a qualified doctor before
+                        taking any medication.</p>
+                </div>
+            </div>
+            <div class="detail-cta">
+                <p>Think you have these symptoms?</p>
+                <button class="btn-primary" id="detailCheckerBtn">🩺 Check Your Symptoms</button>
+            </div>
+        </div>
+        <div class="footer" style="margin-top:60px">
+            <div class="footer-brand">Medi<span>Predict</span></div>⚠️ For educational purposes only. Always consult a
+            qualified doctor.
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+        <script src="script.js"></script>
+
+</body>
+
+</html>

@@ -4,7 +4,7 @@ import { useNotification } from '../../contexts/NotificationContext';
 import { api } from '../../services/api';
 
 export function Profile() {
-  const { user } = useAuth();
+  const { user, updateUserSession } = useAuth();
   const { showToast } = useNotification();
   const [isSaving, setIsSaving] = useState(false);
   
@@ -12,18 +12,21 @@ export function Profile() {
   const [lastName, setLastName] = useState(user?.name.split(' ').slice(1).join(' ') || '');
   const [email, setEmail] = useState(user?.email || '');
   const [bio, setBio] = useState('Textile professional focusing on premium patterns and sustainable materials.');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   
   const handleSavePersonal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
     setIsSaving(true);
     try {
-      await api.users.update(user.id, {
+      const updated = await api.users.update(user.id, {
         name: `${firstName} ${lastName}`.trim(),
       });
+      updateUserSession(updated);
       showToast('Personal information updated successfully!', 'success');
-    } catch (error) {
-      showToast('Failed to update personal information', 'error');
+    } catch (error: any) {
+      showToast(error.response?.data?.error || 'Failed to update personal information', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -34,18 +37,38 @@ export function Profile() {
     if (!user) return;
     setIsSaving(true);
     try {
-      await api.users.update(user.id, { email });
-      showToast('Contact email saved!', 'success');
-    } catch (error) {
-      showToast('Failed to update contact details', 'error');
+      const updated = await api.users.update(user.id, { email });
+      updateUserSession(updated);
+      showToast('Contact email updated successfully!', 'success');
+    } catch (error: any) {
+      showToast(error.response?.data?.error || 'Failed to update contact details', 'error');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleSaveSecurity = (e: React.FormEvent) => {
+  const handleSaveSecurity = async (e: React.FormEvent) => {
     e.preventDefault();
-    showToast('Password changed successfully! (Demo)', 'success');
+    if (!user) return;
+    if (!newPassword || newPassword.length < 6) {
+      showToast('New password must be at least 6 characters', 'error');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      showToast('Passwords do not match', 'error');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await api.users.update(user.id, { password: newPassword });
+      showToast('Password updated directly in database!', 'success');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error: any) {
+      showToast(error.response?.data?.error || 'Failed to update password', 'error');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (!user) return null;
@@ -133,7 +156,7 @@ export function Profile() {
             <div className="bg-white rounded-xl border border-outline-variant p-6 shadow-sm">
               <h3 className="text-base font-bold text-primary mb-5 flex items-center gap-2">
                 <span className="material-symbols-outlined text-[18px]">contact_page</span>
-                Contact
+                Contact Email
               </h3>
               <form className="space-y-4" onSubmit={handleSaveContact}>
                 <div>
@@ -144,7 +167,7 @@ export function Profile() {
                   </div>
                 </div>
                 <button className="text-sm font-semibold text-primary border border-primary hover:bg-surface-variant px-4 py-2 rounded-lg transition-colors w-full" type="submit" disabled={isSaving}>
-                  Update Contact
+                  Update Email
                 </button>
               </form>
             </div>
@@ -157,14 +180,14 @@ export function Profile() {
               </h3>
               <form className="space-y-4" onSubmit={handleSaveSecurity}>
                 <div>
-                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">Current Password</label>
-                  <input className="w-full bg-white border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" placeholder="••••••••" type="password"/>
+                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">New Password</label>
+                  <input className="w-full bg-white border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" placeholder="••••••••" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}/>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">New Password</label>
-                  <input className="w-full bg-white border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" placeholder="••••••••" type="password"/>
+                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">Confirm Password</label>
+                  <input className="w-full bg-white border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" placeholder="••••••••" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}/>
                 </div>
-                <button className="text-sm font-semibold text-primary border border-primary hover:bg-surface-variant px-4 py-2 rounded-lg transition-colors w-full" type="submit">
+                <button className="text-sm font-semibold text-primary border border-primary hover:bg-surface-variant px-4 py-2 rounded-lg transition-colors w-full" type="submit" disabled={isSaving}>
                   Change Password
                 </button>
               </form>

@@ -1,0 +1,878 @@
+[
+  {
+    "name": "Influenza (Flu)",
+    "icon": "🤧",
+    "sev": "medium",
+    "syms": [
+      "fever",
+      "fatigue",
+      "body_ache",
+      "chills",
+      "headache",
+      "cough",
+      "sore_throat"
+    ],
+    "prec": "Rest and stay hydrated. Take paracetamol for fever. Avoid contact with others. Consult a doctor if symptoms persist beyond 3 days.",
+    "conf": 92,
+    "sevDesc": "Influenza is a medium-severity illness that typically resolves in 1–2 weeks with proper rest. It can become serious in elderly people, infants, and those with weakened immune systems.",
+    "doctor": [
+      "Fever above 103°F (39.4°C) that does not reduce",
+      "Difficulty breathing or shortness of breath",
+      "Symptoms that improve then return with fever and worsening cough",
+      "Persistent vomiting or dehydration"
+    ],
+    "meds": [
+      "Paracetamol (Calpol)",
+      "Oseltamivir (Tamiflu)",
+      "Ibuprofen",
+      "ORS / Electrolytes",
+      "Vitamin C",
+      "Nasal Decongestant"
+    ]
+  },
+  {
+    "name": "Common Cold",
+    "icon": "😤",
+    "sev": "low",
+    "syms": [
+      "runny_nose",
+      "sore_throat",
+      "cough",
+      "headache",
+      "fatigue",
+      "fever"
+    ],
+    "prec": "Drink warm fluids. Take paracetamol. Steam inhalation helps. Vitamin C supplements. Resolves in 7–10 days.",
+    "conf": 95,
+    "sevDesc": "The common cold is a mild viral infection of the upper respiratory tract. It is self-limiting and usually clears up on its own within a week to ten days with rest and hydration.",
+    "doctor": [
+      "Fever above 101°F lasting more than 3 days",
+      "Severe headache or sinus pain",
+      "Earache or discharge from ears",
+      "Symptoms lasting more than 10 days without improvement"
+    ],
+    "meds": [
+      "Paracetamol",
+      "Cetirizine (Antihistamine)",
+      "Nasal Decongestant Spray",
+      "Throat Lozenges",
+      "Vitamin C",
+      "Steam Inhalation"
+    ]
+  },
+  {
+    "name": "Dengue Fever",
+    "icon": "🦟",
+    "sev": "high",
+    "syms": [
+      "fever",
+      "joint_pain",
+      "rash",
+      "headache",
+      "nausea",
+      "body_ache",
+      "fatigue"
+    ],
+    "prec": "See a doctor immediately for blood platelet tests. Avoid aspirin/NSAIDs. Stay hydrated with ORS. Use mosquito repellent.",
+    "conf": 89,
+    "sevDesc": "Dengue is a high-severity mosquito-borne viral illness. Severe dengue can cause internal bleeding and organ failure, making early medical attention critical.",
+    "doctor": [
+      "Sudden severe headache or pain behind the eyes",
+      "Any sign of bleeding (nose, gums, skin bruising)",
+      "Persistent vomiting more than 3 times in 24 hours",
+      "Rapid drop in platelet count on blood test"
+    ],
+    "meds": [
+      "Paracetamol (avoid Aspirin/NSAIDs)",
+      "ORS / Oral Rehydration",
+      "Papaya Leaf Extract",
+      "IV Fluids (hospital)",
+      "Platelet Transfusion (if needed)"
+    ]
+  },
+  {
+    "name": "Malaria",
+    "icon": "🌡️",
+    "sev": "high",
+    "syms": [
+      "fever",
+      "chills",
+      "sweating",
+      "headache",
+      "fatigue",
+      "body_ache",
+      "nausea"
+    ],
+    "prec": "Get a blood smear test urgently. Take prescribed antimalarials. Use mosquito nets and repellent. Complete full treatment course.",
+    "conf": 87,
+    "sevDesc": "Malaria is a life-threatening high-severity disease caused by Plasmodium parasites. Cerebral malaria can cause coma and death if untreated.",
+    "doctor": [
+      "High fever with shivering that comes in cycles",
+      "Severe headache, vomiting or jaundice",
+      "Confusion, drowsiness or seizures",
+      "Any symptoms after travel to a malaria-endemic region"
+    ],
+    "meds": [
+      "Chloroquine / Hydroxychloroquine",
+      "Artemisinin Combination Therapy (ACT)",
+      "Primaquine",
+      "Paracetamol (for fever)",
+      "ORS / Hydration",
+      "Quinine (severe cases)"
+    ]
+  },
+  {
+    "name": "Typhoid Fever",
+    "icon": "🦠",
+    "sev": "high",
+    "syms": [
+      "fever",
+      "headache",
+      "abdominal",
+      "weakness",
+      "loss_appetite",
+      "constipation",
+      "rash"
+    ],
+    "prec": "Take prescribed antibiotics. Drink only purified water. Eat light digestible food. Maintain strict hygiene. Widal test recommended.",
+    "conf": 85,
+    "sevDesc": "Typhoid is a serious high-severity bacterial infection spread through contaminated food and water. Without treatment, it can lead to intestinal perforation.",
+    "doctor": [
+      "Persistent fever lasting more than 5 days",
+      "Rose-coloured spots appearing on the abdomen",
+      "Severe abdominal pain or distension",
+      "Blood in stools or signs of internal bleeding"
+    ],
+    "meds": [
+      "Ciprofloxacin (Antibiotic)",
+      "Azithromycin",
+      "Ceftriaxone (IV)",
+      "Paracetamol (fever)",
+      "ORS / Hydration",
+      "Typhoid Vaccine (prevention)"
+    ]
+  },
+  {
+    "name": "COVID-19",
+    "icon": "😷",
+    "sev": "high",
+    "syms": [
+      "fever",
+      "cough",
+      "breathless",
+      "fatigue",
+      "body_ache",
+      "loss_appetite",
+      "headache"
+    ],
+    "prec": "Isolate immediately. Get RT-PCR tested. Monitor oxygen levels. Stay hydrated. Seek emergency care if O2 falls below 95%.",
+    "conf": 88,
+    "sevDesc": "COVID-19 ranges from mild to severe. High-risk individuals including elderly, diabetics, and immunocompromised patients may develop severe pneumonia requiring hospitalisation.",
+    "doctor": [
+      "Oxygen saturation dropping below 95%",
+      "Severe chest pain or persistent pressure in the chest",
+      "Difficulty breathing or inability to complete sentences",
+      "Bluish tinge on lips or fingertips"
+    ],
+    "meds": [
+      "Paracetamol (fever & pain)",
+      "Dexamethasone (severe cases)",
+      "Remdesivir (antiviral)",
+      "Vitamin D & Zinc",
+      "ORS / Hydration",
+      "Pulse Oximeter monitoring"
+    ]
+  },
+  {
+    "name": "Pneumonia",
+    "icon": "🫁",
+    "sev": "high",
+    "syms": [
+      "cough",
+      "fever",
+      "breathless",
+      "chest_pain",
+      "fatigue",
+      "chills",
+      "wheezing"
+    ],
+    "prec": "Seek immediate medical attention. Chest X-ray required. Take prescribed antibiotics. Rest completely. Hospitalisation may be needed.",
+    "conf": 86,
+    "sevDesc": "Pneumonia is a high-severity infection of the lungs. It can be bacterial, viral, or fungal. Without prompt antibiotic treatment, it can become life-threatening.",
+    "doctor": [
+      "Breathing rate above 30 breaths per minute",
+      "Oxygen levels below 94% on pulse oximeter",
+      "Confusion or altered mental state",
+      "Coughing up rust-coloured or bloody mucus"
+    ],
+    "meds": [
+      "Amoxicillin (Antibiotic)",
+      "Azithromycin",
+      "Ceftriaxone (IV, hospital)",
+      "Paracetamol / Ibuprofen",
+      "Oxygen Therapy",
+      "Bronchodilators (if wheezing)"
+    ]
+  },
+  {
+    "name": "Tuberculosis (TB)",
+    "icon": "🫀",
+    "sev": "high",
+    "syms": [
+      "cough",
+      "night_sweats",
+      "weight_loss",
+      "fatigue",
+      "fever",
+      "chest_pain"
+    ],
+    "prec": "Start DOTS therapy immediately. Complete full 6-month treatment. Isolate initially. Regular sputum tests. Nutritious diet essential.",
+    "conf": 84,
+    "sevDesc": "TB is a highly contagious high-severity bacterial infection primarily affecting the lungs. Drug-resistant TB (MDR-TB) is a growing global concern requiring long specialised treatment.",
+    "doctor": [
+      "Persistent cough lasting more than 3 weeks",
+      "Coughing up blood or blood-streaked mucus",
+      "Unexplained weight loss of more than 5 kg",
+      "Drenching night sweats with evening fever"
+    ],
+    "meds": [
+      "Isoniazid (INH)",
+      "Rifampicin",
+      "Pyrazinamide",
+      "Ethambutol",
+      "Vitamin B6 (Pyridoxine)",
+      "DOTS Therapy (6 months)"
+    ]
+  },
+  {
+    "name": "Asthma",
+    "icon": "🌬️",
+    "sev": "medium",
+    "syms": [
+      "wheezing",
+      "breathless",
+      "cough",
+      "chest_pain",
+      "fatigue"
+    ],
+    "prec": "Use prescribed inhaler. Identify and avoid triggers. Carry rescue inhaler always. Avoid dusty or polluted environments.",
+    "conf": 88,
+    "sevDesc": "Asthma is a medium-severity chronic airway condition. While manageable with inhalers and lifestyle changes, severe asthma attacks can be life-threatening if not treated immediately.",
+    "doctor": [
+      "Reliever inhaler not working after 10 puffs",
+      "Breathing difficulty that prevents speaking in full sentences",
+      "Blue or grey tinge on lips or fingernails",
+      "Asthma attack lasting more than 15–20 minutes"
+    ],
+    "meds": [
+      "Salbutamol Inhaler (Reliever)",
+      "Budesonide Inhaler (Preventer)",
+      "Montelukast",
+      "Prednisolone (severe attacks)",
+      "Ipratropium Bromide",
+      "Avoid Triggers"
+    ]
+  },
+  {
+    "name": "Gastroenteritis",
+    "icon": "🤮",
+    "sev": "medium",
+    "syms": [
+      "nausea",
+      "vomiting",
+      "diarrhea",
+      "abdominal",
+      "fatigue",
+      "fever"
+    ],
+    "prec": "Stay hydrated with ORS. Eat BRAT diet. Avoid dairy and spicy food. See doctor if vomiting persists over 24 hours.",
+    "conf": 91,
+    "sevDesc": "Gastroenteritis is a medium-severity gut inflammation usually caused by viruses or bacteria. It typically resolves in 2–3 days but can cause dangerous dehydration.",
+    "doctor": [
+      "Signs of severe dehydration: sunken eyes, no urination for 8+ hours",
+      "Blood or mucus in stools",
+      "Vomiting that prevents keeping any fluids down",
+      "Fever above 39°C (102°F)"
+    ],
+    "meds": [
+      "ORS (Oral Rehydration Salts)",
+      "Ondansetron (anti-nausea)",
+      "Metronidazole (bacterial)",
+      "Zinc Supplements",
+      "Probiotics (Lactobacillus)",
+      "BRAT Diet"
+    ]
+  },
+  {
+    "name": "Hepatitis",
+    "icon": "🟡",
+    "sev": "high",
+    "syms": [
+      "jaundice",
+      "yellow_skin",
+      "fatigue",
+      "abdominal",
+      "nausea",
+      "fever",
+      "loss_appetite"
+    ],
+    "prec": "Liver function tests required. Avoid alcohol completely. Antiviral medication for Hep B/C. Regular liver checkups.",
+    "conf": 87,
+    "sevDesc": "Hepatitis is a high-severity inflammation of the liver. Hepatitis B and C can become chronic and lead to liver cirrhosis or liver cancer.",
+    "doctor": [
+      "Yellowing of the eyes and skin (jaundice)",
+      "Dark cola-coloured urine or pale chalky stools",
+      "Severe fatigue that prevents daily activity",
+      "Swelling or severe pain in the upper right abdomen"
+    ],
+    "meds": [
+      "Tenofovir / Entecavir (Hep B)",
+      "Sofosbuvir / Daclatasvir (Hep C)",
+      "Paracetamol (low dose only)",
+      "Vitamin K (if bleeding)",
+      "Lactulose (liver encephalopathy)",
+      "Avoid Alcohol completely"
+    ]
+  },
+  {
+    "name": "Diabetes",
+    "icon": "🩸",
+    "sev": "medium",
+    "syms": [
+      "freq_urine",
+      "thirst",
+      "blur_vis",
+      "fatigue",
+      "weight_loss",
+      "weakness"
+    ],
+    "prec": "Monitor blood sugar daily. Follow diabetic diet. Exercise regularly. Take prescribed medication. Regular HbA1c checkups.",
+    "conf": 83,
+    "sevDesc": "Diabetes is a medium-severity chronic condition requiring lifelong management. Uncontrolled diabetes leads to kidney failure, blindness, nerve damage, and cardiovascular disease.",
+    "doctor": [
+      "Blood sugar consistently above 300 mg/dL",
+      "Signs of diabetic ketoacidosis: fruity breath, rapid breathing, vomiting",
+      "Non-healing wounds or ulcers on the feet",
+      "Sudden blurring of vision or loss of feeling in feet"
+    ],
+    "meds": [
+      "Metformin (Type 2)",
+      "Insulin (Type 1 & severe Type 2)",
+      "Glipizide / Glibenclamide",
+      "Empagliflozin (SGLT2)",
+      "Vitamin D & B12",
+      "Blood Glucose Monitor"
+    ]
+  },
+  {
+    "name": "Hypertension",
+    "icon": "❤️",
+    "sev": "medium",
+    "syms": [
+      "headache",
+      "dizziness",
+      "chest_pain",
+      "blur_vis",
+      "fatigue",
+      "weakness"
+    ],
+    "prec": "Monitor BP regularly. Reduce salt intake. Exercise 30 min daily. Avoid smoking. Take prescribed antihypertensives.",
+    "conf": 80,
+    "sevDesc": "Hypertension (high blood pressure) is a medium-severity silent condition that significantly raises the risk of heart attack, stroke, and kidney disease if not managed long-term.",
+    "doctor": [
+      "Blood pressure reading above 180/120 mmHg",
+      "Sudden severe headache with vision changes",
+      "Chest pain, shortness of breath, or irregular heartbeat",
+      "Sudden weakness or numbness in the face, arm, or leg"
+    ],
+    "meds": [
+      "Amlodipine (Calcium Channel Blocker)",
+      "Lisinopril (ACE Inhibitor)",
+      "Losartan (ARB)",
+      "Atenolol (Beta Blocker)",
+      "Hydrochlorothiazide (Diuretic)",
+      "Low-Sodium Diet"
+    ]
+  },
+  {
+    "name": "Meningitis",
+    "icon": "🧠",
+    "sev": "high",
+    "syms": [
+      "fever",
+      "headache",
+      "neck_stiff",
+      "sensitivity",
+      "nausea",
+      "vomiting",
+      "seizures",
+      "confusion"
+    ],
+    "prec": "EMERGENCY — Seek immediate care. Antibiotic treatment must start within hours. Life-threatening if untreated.",
+    "conf": 93,
+    "sevDesc": "Meningitis is a high-severity emergency. Bacterial meningitis can cause death within 24 hours and causes permanent disability in survivors.",
+    "doctor": [
+      "Sudden severe headache unlike any experienced before",
+      "Stiff neck that prevents touching chin to chest",
+      "Rash that does not fade when a glass is pressed against it",
+      "Sensitivity to light and sound with high fever"
+    ],
+    "meds": [
+      "Benzylpenicillin (IV, emergency)",
+      "Ceftriaxone (IV antibiotic)",
+      "Dexamethasone (reduce inflammation)",
+      "Paracetamol (fever & pain)",
+      "IV Fluids",
+      "Diazepam (if seizures)"
+    ]
+  },
+  {
+    "name": "Chickenpox",
+    "icon": "🔴",
+    "sev": "low",
+    "syms": [
+      "fever",
+      "rash",
+      "itching",
+      "blisters",
+      "fatigue",
+      "loss_appetite",
+      "headache"
+    ],
+    "prec": "Isolate for 7–10 days. Calamine lotion for itching. Avoid scratching. Take antihistamines. Keep skin clean.",
+    "conf": 94,
+    "sevDesc": "Chickenpox is a low-severity viral illness in healthy children and adults. However it can be severe in newborns, pregnant women, and immunocompromised individuals.",
+    "doctor": [
+      "Blisters spreading to eyes, mouth, or genitals",
+      "Signs of bacterial skin infection: increasing redness and pus",
+      "Severe headache, stiff neck, or confusion",
+      "Blisters in an adult who has never had chickenpox before"
+    ],
+    "meds": [
+      "Calamine Lotion (itching)",
+      "Cetirizine / Chlorphenamine (antihistamine)",
+      "Paracetamol (fever, avoid Aspirin)",
+      "Acyclovir (antiviral, early stage)",
+      "Trimethoprim (if skin infection)",
+      "Varicella Vaccine (prevention)"
+    ]
+  },
+  {
+    "name": "Migraine",
+    "icon": "🤯",
+    "sev": "medium",
+    "syms": [
+      "headache",
+      "nausea",
+      "sensitivity",
+      "blur_vis",
+      "dizziness",
+      "fatigue"
+    ],
+    "prec": "Rest in a dark quiet room. Take prescribed triptans. Cold compress on forehead. Identify and avoid triggers.",
+    "conf": 86,
+    "sevDesc": "Migraine is a medium-severity neurological condition causing intense throbbing headaches, often on one side. Chronic migraines (15+ days per month) significantly impact quality of life.",
+    "doctor": [
+      "Sudden worst headache of your life (thunderclap headache)",
+      "Headache with fever, stiff neck, rash, confusion, or vision loss",
+      "New severe headache after age 50 or after a head injury",
+      "Migraine lasting more than 72 hours continuously"
+    ],
+    "meds": [
+      "Sumatriptan (Triptan)",
+      "Ibuprofen / Naproxen",
+      "Paracetamol + Caffeine (Migraleve)",
+      "Metoclopramide (anti-nausea)",
+      "Propranolol (prevention)",
+      "Topiramate (prevention)"
+    ]
+  },
+  {
+    "name": "UTI",
+    "icon": "🚿",
+    "sev": "medium",
+    "syms": [
+      "freq_urine",
+      "abdominal",
+      "fever",
+      "fatigue",
+      "back_pain",
+      "weakness"
+    ],
+    "prec": "Complete prescribed antibiotic course. Drink 3+ litres of water daily. Avoid caffeine. Urine culture test recommended.",
+    "conf": 89,
+    "sevDesc": "A urinary tract infection is a medium-severity bacterial infection. Simple bladder UTIs respond well to antibiotics, but if infection spreads to the kidneys it becomes serious.",
+    "doctor": [
+      "Fever above 38.5°C with back or flank pain (kidney infection)",
+      "Blood visible in the urine",
+      "Symptoms not improving after 2 days of antibiotic treatment",
+      "Third UTI or more within 12 months (recurrent UTI evaluation needed)"
+    ],
+    "meds": [
+      "Nitrofurantoin (antibiotic)",
+      "Trimethoprim",
+      "Ciprofloxacin (if resistant)",
+      "Phenazopyridine (pain relief)",
+      "Cranberry Extract",
+      "ORS / High Fluid Intake"
+    ]
+  },
+  {
+    "name": "Anaemia",
+    "icon": "🩸",
+    "sev": "medium",
+    "syms": [
+      "fatigue",
+      "weakness",
+      "pale_skin",
+      "dizziness",
+      "breathless",
+      "headache",
+      "blur_vis"
+    ],
+    "prec": "Iron-rich diet (spinach, lentils). Iron and folic acid supplements. Complete blood count test. Treat underlying cause.",
+    "conf": 82,
+    "sevDesc": "Anaemia is a medium-severity condition with many possible causes including iron deficiency, vitamin B12 deficiency, and chronic disease. Severe anaemia can cause heart failure.",
+    "doctor": [
+      "Extreme fatigue making it impossible to carry out daily tasks",
+      "Rapid or irregular heartbeat while resting",
+      "Chest pain, shortness of breath, or fainting spells",
+      "Haemoglobin level below 8 g/dL on blood test"
+    ],
+    "meds": [
+      "Ferrous Sulphate (Iron supplement)",
+      "Folic Acid",
+      "Vitamin B12 injection",
+      "Vitamin C (aids iron absorption)",
+      "Erythropoietin (severe anaemia)",
+      "Iron-rich Diet (spinach, lentils)"
+    ]
+  },
+  {
+    "name": "Arthritis",
+    "icon": "🦴",
+    "sev": "medium",
+    "syms": [
+      "joint_pain",
+      "swollen_lymph",
+      "fatigue",
+      "weakness",
+      "back_pain",
+      "fever"
+    ],
+    "prec": "Physiotherapy and gentle exercise. Anti-inflammatory medication. Hot/cold therapy. Regular rheumatology checkups.",
+    "conf": 78,
+    "sevDesc": "Arthritis is a medium-severity chronic condition causing joint pain and stiffness. Rheumatoid arthritis is an autoimmune disease that can cause systemic damage to organs.",
+    "doctor": [
+      "Joint swelling, warmth, and redness that does not improve",
+      "Morning stiffness lasting more than 1 hour daily",
+      "Joints becoming visibly deformed or losing range of motion",
+      "Systemic symptoms: fatigue, fever, weight loss alongside joint pain"
+    ],
+    "meds": [
+      "Ibuprofen / Naproxen (NSAID)",
+      "Methotrexate (RA)",
+      "Hydroxychloroquine (RA)",
+      "Prednisolone (flare-ups)",
+      "Calcium + Vitamin D",
+      "Physiotherapy"
+    ]
+  },
+  {
+    "name": "Malnutrition",
+    "icon": "⚖️",
+    "sev": "medium",
+    "syms": [
+      "weight_loss",
+      "fatigue",
+      "weakness",
+      "pale_skin",
+      "swollen_lymph",
+      "loss_appetite"
+    ],
+    "prec": "Balanced nutrient-rich diet. Protein and vitamin supplements. Gradual refeeding program. Dietitian consultation.",
+    "conf": 80,
+    "sevDesc": "Malnutrition is a medium-severity condition resulting from inadequate nutrient intake or absorption. Severe malnutrition is life-threatening and requires urgent medical nutrition therapy.",
+    "doctor": [
+      "Significant unintentional weight loss over a short period",
+      "Swelling (oedema) in the legs, feet, or abdomen",
+      "Child not growing or gaining weight as expected",
+      "Extreme weakness, hair loss, and skin changes occurring together"
+    ],
+    "meds": [
+      "Multivitamin Supplement",
+      "Protein Supplement (Whey / PEM formula)",
+      "Zinc Supplement",
+      "Iron + Folic Acid",
+      "Ready-to-Use Therapeutic Food (RUTF)",
+      "Vitamin A (if deficient)"
+    ]
+  },
+  {
+    "name": "Seasonal Allergies",
+    "icon": "🌸",
+    "sev": "low",
+    "syms": [
+      "sneezing",
+      "runny_nose",
+      "watery_eyes",
+      "itching",
+      "nasal_cong",
+      "throat_itch",
+      "eye_redness"
+    ],
+    "prec": "Avoid known allergens. Take antihistamines (cetirizine). Use nasal sprays if needed. Stay indoors during high pollen seasons.",
+    "conf": 93,
+    "sevDesc": "Seasonal allergies are low-severity and non-contagious. They occur when the immune system overreacts to pollen, dust, or animal dander. They are manageable with antihistamines and avoidance.",
+    "doctor": [
+      "Wheezing or difficulty breathing along with allergy symptoms",
+      "Symptoms not improving with over-the-counter antihistamines",
+      "Severe swelling of the face, lips, or throat (anaphylaxis risk)",
+      "Recurring sinus infections triggered by allergies"
+    ],
+    "meds": [
+      "Cetirizine (Antihistamine)",
+      "Loratadine / Fexofenadine",
+      "Fluticasone Nasal Spray",
+      "Montelukast (Singulair)",
+      "Azelastine Eye Drops",
+      "Epinephrine (anaphylaxis emergency)"
+    ]
+  },
+  {
+    "name": "Mouth Ulcers",
+    "icon": "🦷",
+    "sev": "low",
+    "syms": [
+      "mouth_sore",
+      "fatigue",
+      "loss_appetite",
+      "mild_fever"
+    ],
+    "prec": "Use antiseptic mouthwash. Apply topical gels (Bonjela). Eat soft, non-spicy food. Avoid acidic drinks. Ulcers usually heal in 1–2 weeks.",
+    "conf": 96,
+    "sevDesc": "Mouth ulcers are low-severity, small sores that form on the soft tissue inside the mouth. They are usually harmless and heal within 1–2 weeks. Recurrent ulcers may indicate a nutritional deficiency.",
+    "doctor": [
+      "Ulcers larger than 1 cm that do not heal after 3 weeks",
+      "Multiple ulcers appearing at the same time repeatedly",
+      "Ulcers accompanied by high fever or skin rash",
+      "Difficulty swallowing or speaking due to ulcer pain"
+    ],
+    "meds": [
+      "Bonjela Gel (topical)",
+      "Benzydamine Mouthwash",
+      "Triamcinolone Paste (steroid)",
+      "Vitamin B12 Supplement",
+      "Zinc Lozenges",
+      "Chlorhexidine Mouthwash"
+    ]
+  },
+  {
+    "name": "Dehydration",
+    "icon": "💧",
+    "sev": "low",
+    "syms": [
+      "thirst",
+      "fatigue",
+      "dizziness",
+      "headache",
+      "weakness",
+      "cracked_lips"
+    ],
+    "prec": "Drink 8–10 glasses of water daily. Have ORS or electrolyte drinks. Avoid caffeine and alcohol. Rest in a cool environment.",
+    "conf": 95,
+    "sevDesc": "Mild dehydration is low-severity and easily treated by drinking fluids. However, severe dehydration can cause kidney failure, seizures, and death, especially in infants and the elderly.",
+    "doctor": [
+      "No urination for more than 8 hours",
+      "Sunken eyes, dry mouth, and extreme thirst",
+      "Rapid heartbeat or rapid breathing",
+      "Confusion, dizziness, or fainting"
+    ],
+    "meds": [
+      "ORS (Oral Rehydration Salts)",
+      "Electrolyte Sachets (Dioralyte)",
+      "Coconut Water",
+      "IV Normal Saline (severe)",
+      "Potassium Chloride (if low K+)",
+      "Pedialyte (children)"
+    ]
+  },
+  {
+    "name": "Indigestion",
+    "icon": "🫃",
+    "sev": "low",
+    "syms": [
+      "indigestion",
+      "heartburn",
+      "bloating",
+      "nausea",
+      "abdominal"
+    ],
+    "prec": "Eat smaller, frequent meals. Avoid fatty and spicy foods. Do not lie down right after eating. Antacids can provide quick relief.",
+    "conf": 94,
+    "sevDesc": "Indigestion is a low-severity, common digestive discomfort. Occasional indigestion is normal, but frequent episodes may indicate GERD, gastritis, or peptic ulcers.",
+    "doctor": [
+      "Heartburn more than twice a week for several weeks",
+      "Difficulty or pain when swallowing food",
+      "Vomiting blood or passing black tarry stools",
+      "Unexplained weight loss alongside digestive symptoms"
+    ],
+    "meds": [
+      "Antacid (Gaviscon / Eno)",
+      "Omeprazole (PPI)",
+      "Ranitidine / Famotidine (H2 blocker)",
+      "Metoclopramide (motility)",
+      "Simethicone (gas / bloating)",
+      "Domperidone"
+    ]
+  },
+  {
+    "name": "Vitamin Deficiency",
+    "icon": "🥦",
+    "sev": "low",
+    "syms": [
+      "fatigue",
+      "weakness",
+      "pale_skin",
+      "cracked_lips",
+      "muscle_cramp",
+      "hair_loss",
+      "dry_skin"
+    ],
+    "prec": "Eat a balanced diet rich in fruits and vegetables. Take a multivitamin supplement. Get 15–20 min of sunlight for Vitamin D. Blood test to identify specific deficiency.",
+    "conf": 85,
+    "sevDesc": "Vitamin and mineral deficiencies are low-severity conditions that develop gradually. Severe deficiencies can lead to anaemia, rickets, scurvy, and nerve damage if left untreated.",
+    "doctor": [
+      "Extreme fatigue that does not improve with rest",
+      "Numbness or tingling in hands and feet (B12 deficiency)",
+      "Bone pain or muscle weakness (Vitamin D deficiency)",
+      "Hair falling out in patches or brittle nails"
+    ],
+    "meds": [
+      "Vitamin D3 Supplement",
+      "Vitamin B12 (Methylcobalamin)",
+      "Folic Acid",
+      "Iron (Ferrous Sulphate)",
+      "Multivitamin Tablet",
+      "Calcium + Magnesium"
+    ]
+  },
+  {
+    "name": "Eye Strain",
+    "icon": "👁️",
+    "sev": "low",
+    "syms": [
+      "eye_strain",
+      "headache",
+      "blur_vis",
+      "eye_redness",
+      "fatigue",
+      "dizziness"
+    ],
+    "prec": "Follow the 20-20-20 rule (every 20 min, look 20 ft away for 20 sec). Reduce screen brightness. Use lubricating eye drops. Ensure proper lighting while reading.",
+    "conf": 92,
+    "sevDesc": "Eye strain is a low-severity condition caused by prolonged screen use, reading, or driving. It is usually temporary and resolves with rest. Persistent cases may indicate an uncorrected vision problem.",
+    "doctor": [
+      "Headaches that persist even after resting from screens",
+      "Double or blurred vision that does not clear up",
+      "Eye pain or seeing flashes of light or floaters",
+      "No improvement after reducing screen time for 1 week"
+    ],
+    "meds": [
+      "Lubricating Eye Drops (Refresh / Systane)",
+      "Carboxymethylcellulose Drops",
+      "Blue-light Blocking Glasses",
+      "Vitamin A Supplement",
+      "Omega-3 Fatty Acids",
+      "20-20-20 Rule (no medicine)"
+    ]
+  },
+  {
+    "name": "Dandruff",
+    "icon": "❄️",
+    "sev": "low",
+    "syms": [
+      "dandruff",
+      "itching",
+      "dry_skin",
+      "peeling"
+    ],
+    "prec": "Use an anti-dandruff shampoo (ketoconazole or zinc pyrithione). Avoid oily hair products. Manage stress levels. Stay hydrated.",
+    "conf": 97,
+    "sevDesc": "Dandruff is a low-severity chronic scalp condition caused by excess oil, skin cell shedding, or a yeast called Malassezia. It is not contagious and is manageable with medicated shampoos.",
+    "doctor": [
+      "Scalp becoming red, inflamed, or very itchy",
+      "Dandruff spreading to eyebrows, nose, or ears",
+      "Large greasy yellow flakes with skin irritation",
+      "No improvement after 4 weeks of using anti-dandruff shampoo"
+    ],
+    "meds": [
+      "Ketoconazole Shampoo (Nizoral)",
+      "Zinc Pyrithione Shampoo (Head & Shoulders)",
+      "Selenium Sulphide Shampoo",
+      "Coal Tar Shampoo",
+      "Salicylic Acid Shampoo",
+      "Tea Tree Oil (diluted)"
+    ]
+  },
+  {
+    "name": "Heat Exhaustion",
+    "icon": "☀️",
+    "sev": "low",
+    "syms": [
+      "fatigue",
+      "weakness",
+      "headache",
+      "nausea",
+      "sweating",
+      "dizziness",
+      "muscle_cramp"
+    ],
+    "prec": "Move to a cool shaded area immediately. Drink cool water or sports drinks. Apply cold wet cloth to neck and forehead. Rest completely.",
+    "conf": 91,
+    "sevDesc": "Heat exhaustion is a low-to-medium severity condition caused by prolonged exposure to high temperatures. If not treated promptly, it can progress to heat stroke, which is life-threatening.",
+    "doctor": [
+      "Skin becomes hot, dry, and you stop sweating (heat stroke warning)",
+      "Body temperature rises above 40°C (104°F)",
+      "Confusion, loss of consciousness, or seizures",
+      "Symptoms do not improve after 30 minutes of cooling measures"
+    ],
+    "meds": [
+      "ORS / Electrolyte Drinks",
+      "Sports Drinks (Gatorade)",
+      "IV Normal Saline (hospital)",
+      "Paracetamol (fever if present)",
+      "Cool Water / Ice Packs (first aid)",
+      "Potassium Supplement"
+    ]
+  },
+  {
+    "name": "Insomnia",
+    "icon": "🌙",
+    "sev": "low",
+    "syms": [
+      "fatigue",
+      "headache",
+      "weakness",
+      "eye_strain",
+      "confusion"
+    ],
+    "prec": "Maintain a consistent sleep schedule. Avoid screens 1 hour before bed. Reduce caffeine intake. Practice relaxation techniques.",
+    "conf": 83,
+    "sevDesc": "Insomnia is a low-severity sleep disorder that affects quality of life significantly. Chronic insomnia lasting more than 3 months can increase the risk of depression, anxiety, and cardiovascular disease.",
+    "doctor": [
+      "Unable to sleep despite being exhausted for more than 3 weeks",
+      "Sleeplessness causing serious impact on daily work or mood",
+      "Sleep problems accompanied by chest pain or breathing difficulty",
+      "Dependence on sleeping pills or alcohol to fall asleep"
+    ],
+    "meds": [
+      "Melatonin (sleep hormone)",
+      "Diphenhydramine (Nytol)",
+      "Zolpidem (short-term, prescription)",
+      "Chamomile Tea / Valerian Root",
+      "Magnesium Glycinate",
+      "Cognitive Behavioural Therapy (CBT-I)"
+    ]
+  }
+]

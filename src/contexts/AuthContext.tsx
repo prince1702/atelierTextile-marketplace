@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (name: string, email: string, password: string, role: 'seller' | 'customer') => Promise<void>;
+  updateUserSession: (updatedUser: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -39,6 +40,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     initAuth();
+  }, []);
+
+  const updateUserSession = useCallback((updatedUser: User) => {
+    setUser(updatedUser);
+    localStorage.setItem('texdesigner_user', JSON.stringify(updatedUser));
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
@@ -81,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, register }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, register, updateUserSession }}>
       {children}
     </AuthContext.Provider>
   );
