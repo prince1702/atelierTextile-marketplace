@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import type { Design } from '../../types';
 import { useCart } from '../../contexts/CartContext';
 
+import { WatermarkOverlay } from './WatermarkOverlay';
+
 interface DesignCardProps {
   design: Design;
 }
@@ -30,6 +32,7 @@ export function DesignCard({ design }: DesignCardProps) {
           alt={design.title} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
+        <WatermarkOverlay text="TexDesigner" density="compact" />
         {design.badge && (
           <div className="absolute top-2.5 left-2.5 z-10">
             <span className={`${getBadgeColor(design.badgeColor)} text-[9px] sm:text-[11px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider`}>

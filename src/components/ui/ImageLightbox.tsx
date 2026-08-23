@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { WatermarkOverlay } from './WatermarkOverlay';
 
 interface ImageLightboxProps {
   images: string[];
@@ -249,7 +250,7 @@ export function ImageLightbox({
         )}
 
         {/* Display Image */}
-        <div className="relative max-w-full max-h-full flex items-center justify-center">
+        <div className="relative max-w-full max-h-full flex items-center justify-center overflow-hidden rounded-lg">
           <img
             src={currentImage}
             alt={`${title} - view ${safeIndex + 1}`}
@@ -260,6 +261,7 @@ export function ImageLightbox({
             }}
             className="max-h-[80vh] max-w-[90vw] object-contain rounded-lg shadow-2xl cursor-pointer"
           />
+          <WatermarkOverlay text="TexDesigner" density="dense" />
         </div>
 
         {/* Navigation Button Right */}

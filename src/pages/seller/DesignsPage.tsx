@@ -4,6 +4,8 @@ import type { Design } from '../../types';
 import { useNotification } from '../../contexts/NotificationContext';
 import { Link } from 'react-router-dom';
 
+import { WatermarkOverlay } from '../../components/ui/WatermarkOverlay';
+
 export function DesignsPage() {
   const [designs, setDesigns] = useState<Design[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -97,11 +99,14 @@ export function DesignsPage() {
                   <tr key={design.id} className="hover:bg-surface-container-low transition-colors">
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
-                        <img 
-                          src={design.image} 
-                          alt={design.title} 
-                          className="w-10 h-10 rounded object-cover bg-surface-container shrink-0" 
-                        />
+                        <div className="relative w-10 h-10 rounded overflow-hidden bg-surface-container shrink-0">
+                          <img 
+                            src={design.image} 
+                            alt={design.title} 
+                            className="w-full h-full object-cover" 
+                          />
+                          <WatermarkOverlay text="TexDesigner" density="compact" />
+                        </div>
                         <div>
                           <p className="font-semibold text-on-surface">{design.title}</p>
                           <p className="text-[11px] text-on-surface-variant">ID: {design.id}</p>
