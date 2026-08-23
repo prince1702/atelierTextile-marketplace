@@ -116,12 +116,22 @@ export function DesignsPage() {
                       </span>
                     </td>
                     <td className="py-4 px-6 text-right">
-                      <button 
-                        onClick={() => handleDelete(design.id)}
-                        className="text-on-surface-variant hover:text-error p-1.5 rounded-full hover:bg-error-container/20 transition-colors"
-                      >
-                        <span className="material-symbols-outlined text-[18px]">delete</span>
-                      </button>
+                      <div className="flex items-center justify-end gap-1">
+                        <Link 
+                          to={`/seller/edit/${design.id}`}
+                          className="text-on-surface-variant hover:text-primary p-1.5 rounded-full hover:bg-primary-fixed/20 transition-colors inline-flex items-center justify-center"
+                          title="Edit Design"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                        </Link>
+                        <button 
+                          onClick={() => handleDelete(design.id)}
+                          className="text-on-surface-variant hover:text-error p-1.5 rounded-full hover:bg-error-container/20 transition-colors inline-flex items-center justify-center"
+                          title="Delete Design"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

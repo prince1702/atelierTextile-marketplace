@@ -105,6 +105,7 @@ export default function App() {
                     <Route path="dashboard" element={<SellerDashboard />} />
                     <Route path="designs" element={<DesignsPage />} />
                     <Route path="upload" element={<UploadPage />} />
+                    <Route path="edit/:id" element={<UploadPage />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />
                   </Routes>
                 </ProtectedRoute>

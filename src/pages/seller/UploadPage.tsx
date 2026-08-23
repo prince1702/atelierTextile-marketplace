@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../../services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';
 
 export function UploadPage() {
   const navigate = useNavigate();
+  const { id } = useParams<{ id?: string }>();
+  const isEditMode = !!id;
+
   const { showToast } = useNotification();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingDesign, setIsLoadingDesign] = useState(false);
+  const isInitialMount = useRef(true);
 
   // Form Fields
   const [title, setTitle] = useState('');
@@ -44,9 +49,58 @@ export function UploadPage() {
   const [additionalPreviews, setAdditionalPreviews] = useState<(string | null)[]>([null, null, null, null]);
   const [zipFile, setZipFile] = useState<File | null>(null);
   const [pdcZipFile, setPdcZipFile] = useState<File | null>(null);
- 
-  // Dynamically update subcategory when category changes
+
+  // Fetch existing design data if in edit mode
   useEffect(() => {
+    if (!id) return;
+    const fetchExistingDesign = async () => {
+      setIsLoadingDesign(true);
+      try {
+        const design = await api.designs.getById(id);
+        if (design) {
+          setTitle(design.title || '');
+          setDescription(design.description || '');
+          setCategory(design.category || 'Weaving Design');
+          setSubcategory(design.subcategory || '');
+          setDesignType(design.designType || '');
+          setArea(design.area || '');
+          setNeedle(design.needle || '');
+          setHeight(design.height || '');
+          setWidth(design.width || '');
+          setColor(design.color || '');
+          setDesignFormat(design.designFormat || 'BMP');
+          setSareeConcept(design.sareeConcept || '');
+          setPrice(design.price ? String(design.price) : '');
+          setPdcPrice(design.pdcPrice ? String(design.pdcPrice) : '');
+          setTags(Array.isArray(design.tags) ? design.tags.join(', ') : (design.tags || ''));
+          setDimensions(design.dimensions || '');
+          setColorways(Array.isArray(design.colorways) ? design.colorways.join(', ') : (design.colorways || ''));
+          setLicenseType(design.licenseType || 'Standard Regional');
+          if (design.image) setImagePreview(design.image);
+          if (design.additionalImages && Array.isArray(design.additionalImages)) {
+            const prevs: (string | null)[] = [null, null, null, null];
+            design.additionalImages.forEach((imgUrl, i) => {
+              if (i < 4) prevs[i] = imgUrl;
+            });
+            setAdditionalPreviews(prevs);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load design for editing:', err);
+        showToast('Failed to load design data for editing', 'error');
+      } finally {
+        setIsLoadingDesign(false);
+      }
+    };
+    fetchExistingDesign();
+  }, [id, showToast]);
+ 
+  // Dynamically update subcategory when category changes manually
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      if (isEditMode) return;
+    }
     if (category === 'Weaving Design') {
       setSubcategory('Saree Design');
       setSareeType('Saree Design');
@@ -93,7 +147,7 @@ export function UploadPage() {
       setSareeConcept('Box Pallu');
       setPdcPrice('');
     }
-  }, [category]);
+  }, [category, isEditMode]);
 
   const getSubcategories = () => {
     switch (category) {
@@ -215,39 +269,19 @@ export function UploadPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !imageFile) {
-      showToast('Please fill out all required fields, including a display image', 'warning');
+    if (!title.trim()) {
+      showToast('Please fill out the design title', 'warning');
       return;
     }
 
-    // When designFormat is BOTH, both primary and secondary files & prices are mandatory
-    if (designFormat === 'BOTH') {
-      if (!zipFile || !pdcZipFile) {
-        showToast('Design Format is BOTH: Please upload BOTH primary (BMP/PSD) and secondary (PDC/TIF) design files', 'warning');
-        return;
-      }
-      if (!price || !pdcPrice) {
-        showToast('Design Format is BOTH: Please specify prices for BOTH primary and secondary formats', 'warning');
-        return;
-      }
+    if (!isEditMode && !imageFile && !imagePreview) {
+      showToast('Please upload a display image for the design', 'warning');
+      return;
     }
 
-    // At least one design file (BMP or PDC) must be provided
-    if (!zipFile && !pdcZipFile) {
+    // In create mode, at least one design file must be provided
+    if (!isEditMode && !zipFile && !pdcZipFile) {
       showToast('Please upload at least one design source file (BMP or PDC/TIF)', 'warning');
-      return;
-    }
-
-    // If BMP file is provided, BMP price is required
-    if (zipFile && !price) {
-      showToast('Please specify the price for BMP file', 'warning');
-      return;
-    }
-
-    // If PDC/TIF file is provided, PDC/TIF price is required
-    if (pdcZipFile && !pdcPrice) {
-      const label = category === 'Weaving Design' ? 'PDC' : 'TIF';
-      showToast(`Please specify the price for ${label} file`, 'warning');
       return;
     }
 
@@ -260,37 +294,27 @@ export function UploadPage() {
       
       let finalSubcategory = subcategory;
       if (category === 'Weaving Design') {
-        if (subcategory === 'Saree Design') {
-          finalSubcategory = sareeType;
-        } else if (subcategory === 'Lehengha Design') {
-          finalSubcategory = lehenghaType;
-        } else if (subcategory === 'Suit Design') {
-          finalSubcategory = suitType;
-        } else if (subcategory === 'Dupatta Design') {
-          finalSubcategory = dupattaType;
-        } else if (subcategory === 'Mekhena + Chadar Design') {
-          finalSubcategory = mekhenaChadarType;
-        }
+        if (subcategory === 'Saree Design' && sareeType) finalSubcategory = sareeType;
+        else if (subcategory === 'Lehengha Design' && lehenghaType) finalSubcategory = lehenghaType;
+        else if (subcategory === 'Suit Design' && suitType) finalSubcategory = suitType;
+        else if (subcategory === 'Dupatta Design' && dupattaType) finalSubcategory = dupattaType;
+        else if (subcategory === 'Mekhena + Chadar Design' && mekhenaChadarType) finalSubcategory = mekhenaChadarType;
       } else if (category === 'Embroidery Design') {
-        if (subcategory === 'Multi Design') {
-          finalSubcategory = multiType;
-        } else if (subcategory === 'Sequin Design') {
-          finalSubcategory = sequinType;
-        } else if (subcategory === 'Cording Design') {
-          finalSubcategory = cordingType;
-        } else if (subcategory === 'Chain Design') {
-          finalSubcategory = chainType;
-        } else if (subcategory === 'Beads Design') {
-          finalSubcategory = beadsType;
-        }
+        if (subcategory === 'Multi Design' && multiType) finalSubcategory = multiType;
+        else if (subcategory === 'Sequin Design' && sequinType) finalSubcategory = sequinType;
+        else if (subcategory === 'Cording Design' && cordingType) finalSubcategory = cordingType;
+        else if (subcategory === 'Chain Design' && chainType) finalSubcategory = chainType;
+        else if (subcategory === 'Beads Design' && beadsType) finalSubcategory = beadsType;
       }
       formData.append('subcategory', finalSubcategory);
-      formData.append('price', price);
+      if (price) formData.append('price', price);
       formData.append('tags', tags);
       formData.append('dimensions', dimensions);
       formData.append('colorways', colorways);
       formData.append('licenseType', licenseType);
-      formData.append('image', imageFile);
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
       additionalFiles.forEach((file) => {
         if (file) {
           formData.append('additionalImages', file);
@@ -317,22 +341,42 @@ export function UploadPage() {
       }
       formData.append('sareeConcept', sareeConcept);
 
-      await api.designs.create(formData);
-      showToast('Design uploaded successfully! It is pending admin review.', 'success');
+      if (isEditMode && id) {
+        await api.designs.update(id, formData);
+        showToast('Design updated successfully!', 'success');
+      } else {
+        await api.designs.create(formData);
+        showToast('Design uploaded successfully! It is pending admin review.', 'success');
+      }
       navigate('/seller/designs');
     } catch (error: any) {
       console.error(error);
-      showToast(error.response?.data?.error || 'Failed to upload design', 'error');
+      showToast(error.response?.data?.error || 'Failed to save design', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  if (isLoadingDesign) {
+    return (
+      <div className="flex justify-center items-center py-20 bg-white border border-outline-variant rounded-xl shadow-sm max-w-3xl mx-auto">
+        <div className="w-10 h-10 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 max-w-3xl mx-auto animate-fade-in">
       <div>
-        <h2 className="text-2xl font-bold text-primary mb-1">Upload New Design</h2>
-        <p className="text-sm text-on-surface-variant">Submit your textile design to the marketplace. Designs are reviewed by admins before activation.</p>
+        <h2 className="text-2xl font-bold text-primary mb-1">
+          {isEditMode ? 'Edit Design' : 'Upload New Design'}
+        </h2>
+        <p className="text-sm text-on-surface-variant">
+          {isEditMode 
+            ? 'Update design details, pricing, categories, or upload replacement design files.'
+            : 'Submit your textile design to the marketplace. Designs are reviewed by admins before activation.'
+          }
+        </p>
       </div>
 
       <div className="bg-white border border-outline-variant rounded-2xl p-6 md:p-8 shadow-sm">
@@ -1152,9 +1196,9 @@ export function UploadPage() {
               {isSubmitting ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Uploading to Cloudinary...
+                  {isEditMode ? 'Saving Changes...' : 'Uploading to Cloudinary...'}
                 </>
-              ) : 'Submit Design'}
+              ) : (isEditMode ? 'Update Design' : 'Submit Design')}
             </button>
           </div>
 
