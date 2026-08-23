@@ -3,30 +3,28 @@ import { StatCard } from '../../components/ui/StatCard';
 import { useAuth } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
 import type { Design, Order } from '../../types';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';
 
 export function SellerDashboard() {
   const { user } = useAuth();
   const { showToast } = useNotification();
+  const navigate = useNavigate();
   
   const [designs, setDesigns] = useState<Design[]>([]);
   const [sales, setSales] = useState<Order[]>([]);
-  const [sellerProfile, setSellerProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       if (!user) return;
       try {
-        const [listingsData, salesData, profileData] = await Promise.all([
+        const [listingsData, salesData] = await Promise.all([
           api.designs.getMyListings(),
-          api.orders.getSellerOrders(),
-          api.users.getById(user.id)
+          api.orders.getSellerOrders()
         ]);
         setDesigns(listingsData);
         setSales(salesData);
-        setSellerProfile(profileData);
       } catch (error) {
         console.error('Failed to load seller dashboard data:', error);
         showToast('Failed to load dashboard data', 'error');
@@ -46,10 +44,6 @@ export function SellerDashboard() {
   }
 
   const activeDesignsCount = designs.filter(d => d.status === 'active').length;
-  const topDesigns = [...designs]
-    .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 3);
-  const recentSales = sales.slice(0, 4);
 
   return (
     <div className="space-y-6 animate-fade-up animate-sans">
@@ -88,7 +82,7 @@ export function SellerDashboard() {
             <p className="text-xs text-on-surface-variant text-center py-6">No designs uploaded yet</p>
           ) : (
             designs.slice(0, 4).map((design) => (
-              <div key={design.id} className="flex items-center gap-4 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:border-primary/30 transition-colors cursor-pointer group" onClick={() => window.location.href=`/design/${design.id}`}>
+              <div key={design.id} className="flex items-center gap-4 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:border-primary/30 transition-colors cursor-pointer group" onClick={() => navigate(`/design/${design.id}`)}>
                 <img src={design.image} alt={design.title} className="w-16 h-16 rounded-md object-cover bg-surface-container shrink-0" />
                 <div className="flex-1 min-w-0">
                   <h4 className="font-semibold text-on-surface truncate group-hover:text-primary transition-colors">{design.title}</h4>

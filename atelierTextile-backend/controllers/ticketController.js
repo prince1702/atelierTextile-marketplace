@@ -53,10 +53,8 @@ exports.getTicket = async (req, res, next) => {
     }
 
     // Only admin or the ticket creator
-    if (
-      req.user.role !== 'admin' &&
-      ticket.user._id.toString() !== req.user.id.toString()
-    ) {
+    const isOwner = ticket.user && ticket.user._id.toString() === req.user.id.toString();
+    if (req.user.role !== 'admin' && !isOwner) {
       return res.status(403).json({
         success: false,
         error: 'Not authorized to view this ticket',

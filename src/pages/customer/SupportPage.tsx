@@ -138,7 +138,7 @@ export function SupportPage() {
               </p>
 
               <div className="flex justify-between items-center text-xs text-on-surface-variant pt-3 border-t border-outline-variant/30">
-                <span>Created on: {ticket.createdAt.split('T')[0]}</span>
+                <span>Created on: {ticket.createdAt ? String(ticket.createdAt).split('T')[0] : 'N/A'}</span>
                 <span className="font-semibold text-primary">{ticket.responses} response(s) from team</span>
               </div>
             </div>

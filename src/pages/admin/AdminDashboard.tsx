@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { StatCard } from '../../components/ui/StatCard';
 import { useAuth } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
@@ -75,12 +76,14 @@ export function AdminDashboard() {
     );
   }
 
+  const firstName = user?.name ? user.name.split(' ')[0] : 'Admin';
+
   return (
     <div className="space-y-6 animate-fade-up">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-primary mb-1">Welcome back, {user?.name.split(' ')[0]} 👋</h2>
-          <p className="text-sm text-on-surface-variant">Here is the latest data for the TexDesigner Marketplace.</p>
+          <h2 className="text-2xl font-bold text-primary mb-1">Welcome back, {firstName} 👋</h2>
+          <p className="text-sm text-on-surface-variant">Here is the latest data for the Atelier Textile Marketplace.</p>
         </div>
         <div className="flex items-center gap-2 bg-white border border-outline-variant rounded-lg px-4 py-2 shadow-sm">
           <span className="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_today</span>
@@ -90,19 +93,19 @@ export function AdminDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard 
-          title="Total Users" value={stats.totalUsers} icon="group" trend="up" trendValue="+12% this month"
+          title="Total Users" value={stats?.totalUsers || 0} icon="group" trend="up" trendValue="+12% this month"
           colorClass={{ bg: 'bg-primary-fixed', iconBg: 'bg-primary-fixed/50', iconText: 'text-primary' }}
         />
         <StatCard 
-          title="Total Sellers" value={stats.totalSellers} icon="storefront" trend="up" trendValue="+5% this month"
+          title="Total Sellers" value={stats?.totalSellers || 0} icon="storefront" trend="up" trendValue="+5% this month"
           colorClass={{ bg: 'bg-secondary-fixed', iconBg: 'bg-secondary-container/20', iconText: 'text-secondary-container' }}
         />
         <StatCard 
-          title="Total Orders" value={stats.totalOrders} icon="how_to_reg" trend="neutral" trendValue="Stable this week"
+          title="Total Orders" value={stats?.totalOrders || 0} icon="how_to_reg" trend="neutral" trendValue="Stable this week"
           colorClass={{ bg: 'bg-tertiary-fixed', iconBg: 'bg-tertiary-container/20', iconText: 'text-tertiary-container' }}
         />
         <StatCard 
-          title="Platform Revenue" value={`₹${stats.totalRevenue.toLocaleString()}`} icon="payments" trend="up" trendValue="+22% vs last month"
+          title="Platform Revenue" value={`₹${(stats?.totalRevenue || 0).toLocaleString()}`} icon="payments" trend="up" trendValue="+22% vs last month"
           colorClass={{ bg: 'bg-surface-variant', iconBg: 'bg-surface-variant', iconText: 'text-on-surface-variant' }}
         />
       </div>
@@ -120,34 +123,34 @@ export function AdminDashboard() {
         <div className="bg-white border border-outline-variant rounded-xl shadow-sm p-6 flex flex-col">
           <h3 className="text-base font-bold text-primary mb-5">Quick Actions</h3>
           <div className="space-y-3 flex-1">
-            <a href="/admin/inventory" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">
+            <Link to="/admin/inventory" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">
               <span className="material-symbols-outlined text-[24px] text-primary">pending_actions</span>
               <div className="text-left">
                 <p className="text-sm font-bold text-on-surface">Design Approvals</p>
                 <p className="text-xs text-on-surface-variant">Review new design submissions</p>
               </div>
-            </a>
-            <a href="/admin/payments" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-amber-500 transition-all bg-amber-50/50">
+            </Link>
+            <Link to="/admin/payments" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-amber-500 transition-all bg-amber-50/50">
               <span className="material-symbols-outlined text-[24px] text-amber-600">qr_code_2</span>
               <div className="text-left">
                 <p className="text-sm font-bold text-on-surface">Payment Approvals</p>
                 <p className="text-xs text-on-surface-variant">Review UPI payment screenshots</p>
               </div>
-            </a>
-            <a href="/admin/users" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">
+            </Link>
+            <Link to="/admin/users" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">
               <span className="material-symbols-outlined text-[24px] text-secondary">group</span>
               <div className="text-left">
                 <p className="text-sm font-bold text-on-surface">Manage Users</p>
                 <p className="text-xs text-on-surface-variant">Suspend, activate, or view members</p>
               </div>
-            </a>
-            <a href="/admin/analytics" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">
+            </Link>
+            <Link to="/admin/analytics" className="flex items-center gap-3 p-4 rounded-xl border border-outline-variant hover:border-primary transition-all bg-surface-container-lowest">
               <span className="material-symbols-outlined text-[24px] text-tertiary">analytics</span>
               <div className="text-left">
                 <p className="text-sm font-bold text-on-surface">Detailed Analytics</p>
                 <p className="text-xs text-on-surface-variant">Platform orders and user growth reports</p>
               </div>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

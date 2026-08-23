@@ -27,8 +27,8 @@ export function CustomerDashboard() {
           api.designs.getAll({ limit: 3 }),
           api.users.getById(user.id)
         ]);
-        setOrders(ordersData);
-        setRecommended(recommendedData.designs);
+        setOrders(ordersData || []);
+        setRecommended(recommendedData?.designs || []);
         setCustomerProfile(profileData);
       } catch (error) {
         console.error('Failed to load customer dashboard data:', error);
@@ -48,14 +48,15 @@ export function CustomerDashboard() {
     );
   }
 
-  const recentOrders = orders.slice(0, 3);
-  const activeLicensesCount = orders.filter(o => o.status === 'completed').length;
+  const recentOrders = (orders || []).slice(0, 3);
+  const activeLicensesCount = (orders || []).filter(o => o.status === 'completed').length;
+  const firstName = user?.name ? user.name.split(' ')[0] : 'Customer';
 
   return (
     <div className="space-y-6 animate-fade-up animate-sans">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-primary mb-1">Welcome back, {user?.name.split(' ')[0]} 👋</h2>
+          <h2 className="text-2xl font-bold text-primary mb-1">Welcome back, {firstName} 👋</h2>
           <p className="text-sm text-on-surface-variant">Manage your orders, licenses, and discover new patterns.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">

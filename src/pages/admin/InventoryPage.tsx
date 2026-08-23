@@ -123,7 +123,7 @@ export function InventoryPage() {
                         />
                         <div>
                           <p className="font-semibold text-on-surface">{design.title}</p>
-                          <p className="text-[11px] text-on-surface-variant">Uploaded: {design.createdAt.split('T')[0]}</p>
+                          <p className="text-[11px] text-on-surface-variant">Uploaded: {design.createdAt ? String(design.createdAt).split('T')[0] : 'N/A'}</p>
                         </div>
                       </div>
                     </td>

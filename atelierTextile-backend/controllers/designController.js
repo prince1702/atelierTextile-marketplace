@@ -76,6 +76,10 @@ exports.getDesigns = async (req, res, next) => {
           let token;
           if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
             token = req.headers.authorization.split(' ')[1];
+          } else if (req.query.token) {
+            token = req.query.token;
+          }
+          if (token) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             const user = await User.findById(decoded.id);
             if (user && user.role === 'admin') {
@@ -593,7 +597,6 @@ exports.createDesign = async (req, res, next) => {
       designerAvatar: seller.initials,
       image: imageUrl,
       additionalImages: additionalImageUrls,
-      designFile: designFileUrl,
       status: 'pending', // Admin must approve
     });
 

@@ -217,23 +217,23 @@ exports.approveOrder = async (req, res, next) => {
     // Update design sales/revenue
     const design = await Design.findById(order.design);
     if (design) {
-      design.sales += 1;
-      design.revenue += order.amount;
+      design.sales = (design.sales || 0) + 1;
+      design.revenue = (design.revenue || 0) + order.amount;
       await design.save();
     }
 
     // Update buyer stats
     const buyer = await User.findById(order.buyer);
     if (buyer) {
-      buyer.totalOrders += 1;
+      buyer.totalOrders = (buyer.totalOrders || 0) + 1;
       await buyer.save();
     }
 
     // Update seller stats
     const seller = await User.findById(order.seller);
     if (seller) {
-      seller.totalOrders += 1;
-      seller.totalRevenue += order.amount;
+      seller.totalOrders = (seller.totalOrders || 0) + 1;
+      seller.totalRevenue = (seller.totalRevenue || 0) + order.amount;
       await seller.save();
     }
 

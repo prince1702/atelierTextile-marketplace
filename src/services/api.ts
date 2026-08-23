@@ -44,6 +44,7 @@ client.interceptors.request.use((config) => {
 // Helper to recursively normalize MongoDB _id to frontend id
 export const normalize = <T>(item: any): T => {
   if (!item) return item;
+  if (item instanceof Date) return item as any;
   if (Array.isArray(item)) {
     return item.map(i => normalize(i)) as any;
   }
@@ -54,7 +55,7 @@ export const normalize = <T>(item: any): T => {
     }
     // Traverse properties
     for (const key in newItem) {
-      if (newItem[key] && typeof newItem[key] === 'object') {
+      if (newItem[key] && typeof newItem[key] === 'object' && !(newItem[key] instanceof Date)) {
         newItem[key] = normalize(newItem[key]);
       }
     }
