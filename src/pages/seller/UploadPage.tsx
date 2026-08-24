@@ -382,6 +382,21 @@ export function UploadPage() {
       <div className="bg-white border border-outline-variant rounded-2xl p-6 md:p-8 shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
           
+          {/* Category */}
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Category *</label>
+            <select 
+              value={category} 
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
+            >
+              <option>Weaving Design</option>
+              <option>Embroidery Design</option>
+              <option>Digital Print Design</option>
+              <option>Position Print Design</option>
+            </select>
+          </div>
+
           {/* File Upload Area */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design File / Pattern Image *</label>
@@ -623,20 +638,7 @@ export function UploadPage() {
               </div>
             )}
 
-            {/* Category */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Category *</label>
-              <select 
-                value={category} 
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:outline-none text-sm bg-surface-container-lowest cursor-pointer"
-              >
-                <option>Weaving Design</option>
-                <option>Embroidery Design</option>
-                <option>Digital Print Design</option>
-                <option>Position Print Design</option>
-              </select>
-            </div>
+
 
             {/* Subcategory */}
             <div className="space-y-1">
