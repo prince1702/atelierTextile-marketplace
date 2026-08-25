@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { WatermarkOverlay } from './WatermarkOverlay';
+import { createWatermarkedCanvasUrl } from '../../utils/watermark';
 
 interface ImageLightboxProps {
   images: string[];
@@ -40,11 +41,23 @@ export function ImageLightbox({
     [onSelectImage, onIndexChange]
   );
 
-  // Reset zoom & pan when image changes or modal opens
+  const [bakedSrc, setBakedSrc] = useState<string>(currentImage || '');
+
+  // Reset zoom & pan and update baked canvas image when image changes or modal opens
   useEffect(() => {
     setZoom(1);
     setPosition({ x: 0, y: 0 });
-  }, [currentIndex, isOpen]);
+    if (!currentImage) return;
+
+    let isMounted = true;
+    createWatermarkedCanvasUrl(currentImage, 'TexDesigner', 'dense').then((res) => {
+      if (isMounted) setBakedSrc(res);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentIndex, currentImage, isOpen]);
 
   const handleNext = useCallback(() => {
     if (images.length === 0) return;
@@ -250,16 +263,18 @@ export function ImageLightbox({
         )}
 
         {/* Display Image */}
-        <div className="relative max-w-full max-h-full flex items-center justify-center overflow-hidden rounded-lg">
+        <div className="relative max-w-full max-h-full flex items-center justify-center overflow-hidden rounded-lg select-none">
           <img
-            src={currentImage}
+            src={bakedSrc || currentImage}
             alt={`${title} - view ${safeIndex + 1}`}
             onDoubleClick={handleToggleZoom}
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
             style={{
               transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
               transition: isDragging ? 'none' : 'transform 0.25s ease-out',
             }}
-            className="max-h-[80vh] max-w-[90vw] object-contain rounded-lg shadow-2xl cursor-pointer"
+            className="max-h-[80vh] max-w-[90vw] object-contain rounded-lg shadow-2xl cursor-pointer select-none"
           />
           <WatermarkOverlay text="TexDesigner" density="dense" />
         </div>
