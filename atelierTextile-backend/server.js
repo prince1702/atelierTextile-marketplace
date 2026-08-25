@@ -81,10 +81,14 @@ if (fs.existsSync(frontendDir)) {
 // Global error handler (must be after routes and static serving)
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`\n🚀 TexDesigner API Server running on port ${PORT}`);
-  console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`   Frontend:    ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
-  console.log(`   Health:      http://localhost:${PORT}/api/health\n`);
-});
+// Start server if run directly
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n🚀 TexDesigner API Server running on port ${PORT}`);
+    console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`   Frontend:    ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+    console.log(`   Health:      http://localhost:${PORT}/api/health\n`);
+  });
+}
+
+module.exports = app;

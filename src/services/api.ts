@@ -3,12 +3,13 @@ import type { User, Design, Order, Ticket } from '../types';
 
 const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-  if (import.meta.env.PROD) return 'https://ateliertextile-backend.onrender.com';
   if (typeof window !== 'undefined' && window.location) {
-    const { hostname } = window.location;
+    const { hostname, origin } = window.location;
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.') || hostname.startsWith('172.')) {
       return `http://${hostname}:5000`;
     }
+    // On Vercel or deployed origin, relative /api requests route directly to serverless Express backend
+    return origin;
   }
   return 'http://localhost:5000';
 };
