@@ -244,6 +244,10 @@ export function UploadPage() {
         showToast('Please upload a ZIP or RAR archive file only', 'warning');
         return;
       }
+      if (file.size > 200 * 1024 * 1024) {
+        showToast('File size exceeds the 200MB limit', 'warning');
+        return;
+      }
       setZipFile(file);
     }
   };
@@ -262,6 +266,10 @@ export function UploadPage() {
           showToast('Please upload a ZIP, RAR, or PDC file only', 'warning');
           return;
         }
+      }
+      if (file.size > 200 * 1024 * 1024) {
+        showToast('File size exceeds the 200MB limit', 'warning');
+        return;
       }
       setPdcZipFile(file);
     }
@@ -506,7 +514,7 @@ export function UploadPage() {
                     {zipFile ? zipFile.name : (category === 'Weaving Design' ? 'Select ZIP or RAR file for BMP' : 'Select ZIP or RAR file')}
                   </p>
                   <p className="text-xs text-on-surface-variant">
-                    {zipFile ? `${(zipFile.size / 1024 / 1024).toFixed(2)} MB` : 'Supports ZIP, RAR (Max 50MB)'}
+                    {zipFile ? `${(zipFile.size / 1024 / 1024).toFixed(2)} MB` : 'Supports ZIP, RAR (Max 200MB)'}
                   </p>
                 </div>
               </div>
@@ -559,7 +567,7 @@ export function UploadPage() {
                     <p className="text-xs text-on-surface-variant">
                       {pdcZipFile 
                         ? `${(pdcZipFile.size / 1024 / 1024).toFixed(2)} MB` 
-                        : (category === 'Weaving Design' ? 'Supports ZIP, RAR, PDC (Max 50MB)' : 'Supports ZIP, RAR, TIF (Max 50MB)')
+                        : (category === 'Weaving Design' ? 'Supports ZIP, RAR, PDC (Max 200MB)' : 'Supports ZIP, RAR, TIF (Max 200MB)')
                       }
                     </p>
                   </div>
