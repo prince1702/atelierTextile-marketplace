@@ -4,7 +4,7 @@ import type { Design } from '../../types';
 import { useNotification } from '../../contexts/NotificationContext';
 import { Link } from 'react-router-dom';
 
-import { WatermarkOverlay } from '../../components/ui/WatermarkOverlay';
+import { WatermarkedImage } from '../../components/ui/WatermarkedImage';
 
 export function DesignsPage() {
   const [designs, setDesigns] = useState<Design[]>([]);
@@ -100,12 +100,12 @@ export function DesignsPage() {
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <div className="relative w-10 h-10 rounded overflow-hidden bg-surface-container shrink-0">
-                          <img 
+                          <WatermarkedImage 
                             src={design.image} 
                             alt={design.title} 
+                            density="compact"
                             className="w-full h-full object-cover" 
                           />
-                          <WatermarkOverlay text="TexDesigner" density="compact" />
                         </div>
                         <div>
                           <p className="font-semibold text-on-surface">{design.title}</p>

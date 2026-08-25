@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';
-import { WatermarkOverlay } from '../../components/ui/WatermarkOverlay';
+import { WatermarkedImage } from '../../components/ui/WatermarkedImage';
 import { api } from '../../services/api';
 import type { Design, Order } from '../../types';
 
@@ -317,12 +317,12 @@ export function CartPage() {
                 return (
                   <div key={item.design.id} className="bg-white border border-outline-variant rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row gap-5 relative group overflow-hidden">
                     <div className="relative w-full sm:w-36 h-36 rounded-xl overflow-hidden bg-surface-container shrink-0">
-                      <img
+                      <WatermarkedImage
                         src={item.design.image}
                         alt={item.design.title}
+                        density="compact"
                         className="w-full h-full object-cover"
                       />
-                      <WatermarkOverlay text="TexDesigner" density="compact" />
                     </div>
 
                     <div className="flex-1 flex flex-col justify-between">

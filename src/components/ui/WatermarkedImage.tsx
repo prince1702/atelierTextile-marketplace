@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { WatermarkOverlay } from './WatermarkOverlay';
-import { createWatermarkedCanvasUrl } from '../../utils/watermark';
+import { createWatermarkedCanvasUrl, createSvgCompositeDataUrl } from '../../utils/watermark';
 
 interface WatermarkedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   containerClassName?: string;
@@ -19,7 +19,11 @@ export function WatermarkedImage({
   src = '',
   ...props
 }: WatermarkedImageProps) {
-  const [bakedSrc, setBakedSrc] = useState<string>(src);
+  // Synchronously initialize to SVG composite Data URL so raw URL is NEVER exposed
+  const [bakedSrc, setBakedSrc] = useState<string>(() => {
+    if (!src || !showWatermark) return src;
+    return createSvgCompositeDataUrl(src, watermarkText, density);
+  });
 
   useEffect(() => {
     if (!src || !showWatermark) {
@@ -27,9 +31,12 @@ export function WatermarkedImage({
       return;
     }
 
+    // Set synchronous composite URL immediately
+    setBakedSrc(createSvgCompositeDataUrl(src, watermarkText, density));
+
     let isMounted = true;
     createWatermarkedCanvasUrl(src, watermarkText, density).then((res) => {
-      if (isMounted) setBakedSrc(res);
+      if (isMounted && res) setBakedSrc(res);
     });
 
     return () => {
@@ -38,13 +45,17 @@ export function WatermarkedImage({
   }, [src, watermarkText, density, showWatermark]);
 
   return (
-    <div className={`relative overflow-hidden ${containerClassName}`}>
+    <div 
+      className={`relative overflow-hidden select-none ${containerClassName}`}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <img
-        src={bakedSrc || src}
-        className={className}
+        src={bakedSrc}
+        className={`select-none ${className}`}
         alt={alt}
         draggable={false}
         onDragStart={(e) => e.preventDefault()}
+        onContextMenu={(e) => e.preventDefault()}
         {...props}
       />
       {showWatermark && <WatermarkOverlay text={watermarkText} density={density} />}

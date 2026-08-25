@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { WatermarkOverlay } from './WatermarkOverlay';
-import { createWatermarkedCanvasUrl } from '../../utils/watermark';
+import { createWatermarkedCanvasUrl, createSvgCompositeDataUrl } from '../../utils/watermark';
 
 interface ImageLightboxProps {
   images: string[];
@@ -41,7 +41,7 @@ export function ImageLightbox({
     [onSelectImage, onIndexChange]
   );
 
-  const [bakedSrc, setBakedSrc] = useState<string>(currentImage || '');
+  const [bakedSrc, setBakedSrc] = useState<string>(() => createSvgCompositeDataUrl(currentImage, 'TexDesigner', 'dense'));
 
   // Reset zoom & pan and update baked canvas image when image changes or modal opens
   useEffect(() => {
@@ -49,9 +49,11 @@ export function ImageLightbox({
     setPosition({ x: 0, y: 0 });
     if (!currentImage) return;
 
+    setBakedSrc(createSvgCompositeDataUrl(currentImage, 'TexDesigner', 'dense'));
+
     let isMounted = true;
     createWatermarkedCanvasUrl(currentImage, 'TexDesigner', 'dense').then((res) => {
-      if (isMounted) setBakedSrc(res);
+      if (isMounted && res) setBakedSrc(res);
     });
 
     return () => {
@@ -263,13 +265,17 @@ export function ImageLightbox({
         )}
 
         {/* Display Image */}
-        <div className="relative max-w-full max-h-full flex items-center justify-center overflow-hidden rounded-lg select-none">
+        <div 
+          className="relative max-w-full max-h-full flex items-center justify-center overflow-hidden rounded-lg select-none"
+          onContextMenu={(e) => e.preventDefault()}
+        >
           <img
-            src={bakedSrc || currentImage}
+            src={bakedSrc}
             alt={`${title} - view ${safeIndex + 1}`}
             onDoubleClick={handleToggleZoom}
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
+            onContextMenu={(e) => e.preventDefault()}
             style={{
               transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
               transition: isDragging ? 'none' : 'transform 0.25s ease-out',
