@@ -44,6 +44,10 @@ export function SellerDashboard() {
   }
 
   const activeDesignsCount = designs.filter(d => d.status === 'active').length;
+  const totalSoldDesignsCount = Math.max(
+    sales.filter(s => s.status === 'completed' || s.status === 'processing' || s.status === 'pending').length,
+    designs.reduce((sum, d) => sum + (d.sales || 0), 0)
+  );
 
   return (
     <div className="space-y-6 animate-fade-up animate-sans">
@@ -61,18 +65,34 @@ export function SellerDashboard() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <StatCard 
-          title="Active Designs" value={activeDesignsCount} icon="palette" trend="up" trendValue={`${designs.length} designs total`}
+          title="Active Designs" 
+          value={activeDesignsCount} 
+          icon="palette" 
+          trend="up" 
+          trendValue={`${designs.length} designs total`}
           colorClass={{ bg: 'bg-secondary-fixed', iconBg: 'bg-secondary-container/20', iconText: 'text-secondary-container' }}
         />
         <StatCard 
-          title="Pending Review" value={designs.filter(d => d.status === 'pending').length} icon="pending" trend="neutral" trendValue="Awaiting admin approval"
+          title="Designs Sold" 
+          value={totalSoldDesignsCount} 
+          icon="shopping_bag" 
+          trend="up" 
+          trendValue={`${totalSoldDesignsCount} total sales`}
+          colorClass={{ bg: 'bg-tertiary-fixed', iconBg: 'bg-tertiary-container/20', iconText: 'text-tertiary-container' }}
+        />
+        <StatCard 
+          title="Pending Review" 
+          value={designs.filter(d => d.status === 'pending').length} 
+          icon="pending" 
+          trend="neutral" 
+          trendValue="Awaiting admin approval"
           colorClass={{ bg: 'bg-surface-variant', iconBg: 'bg-surface-variant', iconText: 'text-on-surface-variant' }}
         />
       </div>
 
-      <div className="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col max-w-3xl">
+      <div className="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col max-w-4xl">
         <div className="p-5 border-b border-outline-variant flex justify-between items-center bg-surface/50">
           <h3 className="text-base font-bold text-primary">Recent Designs</h3>
           <Link to="/seller/designs" className="text-sm font-semibold text-primary hover:underline">Portfolio</Link>
@@ -88,9 +108,14 @@ export function SellerDashboard() {
                   <h4 className="font-semibold text-on-surface truncate group-hover:text-primary transition-colors">{design.title}</h4>
                   <p className="text-xs text-on-surface-variant mt-1">{design.category} • {design.subcategory}</p>
                 </div>
-                <div className="flex items-center gap-1 bg-surface-container px-2 py-1 rounded text-xs font-semibold text-on-surface">
-                  <span className="material-symbols-outlined text-[14px] text-secondary-container filled">star</span>
-                  {design.rating}
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                    {design.sales || 0} Sold
+                  </span>
+                  <div className="flex items-center gap-1 bg-surface-container px-2 py-1 rounded text-xs font-semibold text-on-surface">
+                    <span className="material-symbols-outlined text-[14px] text-secondary-container filled">star</span>
+                    {design.rating}
+                  </div>
                 </div>
               </div>
             ))
