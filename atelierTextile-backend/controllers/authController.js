@@ -488,3 +488,118 @@ exports.changePassword = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Send OTP code to email for signup verification
+// @route   POST /api/auth/send-otp
+// @access  Public
+exports.sendSignupOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, error: 'Email is required' });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ success: false, error: 'An account with this email already exists' });
+    }
+
+    // Generate 6-digit OTP
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Delete any existing OTP for this email
+    await Otp.deleteMany({ email });
+
+    // Save new OTP (model TTL handles 10-min expiry)
+    await Otp.create({ email, otp: otpCode });
+
+    // Send OTP email
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 32px; background: #f8f8f8; border-radius: 12px;">
+        <h2 style="color: #1a1a2e; margin-bottom: 8px;">Verify Your Email</h2>
+        <p style="color: #555; margin-bottom: 24px;">Use the verification code below to complete your TexDesigner registration:</p>
+        <div style="background: #fff; border: 2px solid #e0e0e0; border-radius: 10px; padding: 24px; text-align: center; margin-bottom: 24px;">
+          <span style="font-size: 40px; font-weight: bold; letter-spacing: 12px; color: #1a1a2e;">${otpCode}</span>
+        </div>
+        <p style="color: #888; font-size: 13px;">This code expires in <strong>10 minutes</strong>. If you did not request this, please ignore this email.</p>
+      </div>
+    `;
+
+    try {
+      await sendEmail({ to: email, subject: 'Your TexDesigner Verification Code', html, fromName: 'TexDesigner' });
+    } catch (emailErr) {
+      console.warn('Email send warning:', emailErr.message);
+      // Don't fail — OTP is saved, user can request resend
+    }
+
+    console.log(`✅ OTP sent to ${email}: ${otpCode}`);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Verification code sent to your email',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Verify OTP and create account
+// @route   POST /api/auth/verify-otp
+// @access  Public
+exports.verifySignupOtp = async (req, res, next) => {
+  try {
+    const { name, email, password, role, otp } = req.body;
+
+    if (!name || !email || !password || !otp) {
+      return res.status(400).json({ success: false, error: 'All fields are required' });
+    }
+
+    // Find the OTP record
+    const otpRecord = await Otp.findOne({ email });
+    if (!otpRecord) {
+      return res.status(400).json({ success: false, error: 'OTP expired or not found. Please request a new code.' });
+    }
+
+    if (otpRecord.otp !== otp.toString()) {
+      return res.status(400).json({ success: false, error: 'Invalid verification code. Please check and try again.' });
+    }
+
+    // OTP is valid — delete it and create the user
+    await Otp.deleteMany({ email });
+
+    // Check user doesn't already exist
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ success: false, error: 'An account with this email already exists' });
+    }
+
+    const allowedRole = ['customer', 'seller'].includes(role) ? role : 'customer';
+
+    const user = await User.create({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      password,
+      role: allowedRole,
+    });
+
+    const token = generateToken(user._id);
+
+    console.log(`✅ New account created via OTP: ${email} (${allowedRole})`);
+
+    return res.status(201).json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
