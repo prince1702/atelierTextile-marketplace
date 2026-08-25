@@ -42,36 +42,19 @@ const sendEmail = async ({ to, subject, html }) => {
 
   // 2. Try Resend HTTP API
   if (resendKey) {
-    try {
-      console.log(`📧 Sending email via Resend API (HTTPS) to ${to}...`);
-      const fromAddress = process.env.RESEND_FROM_EMAIL || 'TexDesigner <noreply@texdesigner.com>';
-      const response = await axios.post(
-        'https://api.resend.com/emails',
-        {
-          from: fromAddress,
-          to: [to],
-          subject,
-          html,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${resendKey}`,
-            'Content-Type': 'application/json',
-          },
-          timeout: 10000,
-        }
-      );
-      console.log(`📧 Resend email sent successfully: ${response.data.id} → ${to}`);
-      return response.data;
-    } catch (resendErr) {
-      const errMsg = resendErr.response?.data?.message || resendErr.message;
-      console.warn(`⚠️ Resend custom domain attempt: ${errMsg}. Retrying with fallback...`);
-      // Fallback attempt with onboarding@resend.dev if domain verification is pending
+    const senderDomains = [
+      process.env.RESEND_FROM_EMAIL || 'TexDesigner <noreply@send.texdesigner.com>',
+      'TexDesigner <noreply@texdesigner.com>',
+      'TexDesigner <onboarding@resend.dev>',
+    ];
+
+    for (const fromAddress of senderDomains) {
       try {
+        console.log(`📧 Sending email via Resend API from ${fromAddress} to ${to}...`);
         const response = await axios.post(
           'https://api.resend.com/emails',
           {
-            from: `${fromName} <onboarding@resend.dev>`,
+            from: fromAddress,
             to: [to],
             subject,
             html,
@@ -84,12 +67,11 @@ const sendEmail = async ({ to, subject, html }) => {
             timeout: 10000,
           }
         );
-        console.log(`📧 Resend fallback email sent: ${response.data.id} → ${to}`);
+        console.log(`📧 Resend email sent successfully (${fromAddress}): ${response.data.id} → ${to}`);
         return response.data;
-      } catch (fallbackErr) {
-        const fallbackMsg = fallbackErr.response?.data?.message || fallbackErr.message;
-        console.warn(`⚠️ Resend API warning for ${to}: ${fallbackMsg}`);
-        return { success: false, warning: fallbackMsg };
+      } catch (resendErr) {
+        const errMsg = resendErr.response?.data?.message || resendErr.message;
+        console.warn(`⚠️ Resend attempt (${fromAddress}) failed: ${errMsg}`);
       }
     }
   }
