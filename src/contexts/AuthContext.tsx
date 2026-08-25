@@ -9,6 +9,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (name: string, email: string, password: string, role: 'seller' | 'customer') => Promise<void>;
+  sendSignupOtp: (email: string) => Promise<{ success: boolean; message: string }>;
+  verifySignupOtp: (name: string, email: string, password: string, role: 'seller' | 'customer', otp: string) => Promise<void>;
   updateUserSession: (updatedUser: User) => void;
 }
 
@@ -77,6 +79,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const sendSignupOtp = useCallback(async (email: string) => {
+    return await api.auth.sendSignupOtp(email);
+  }, []);
+
+  const verifySignupOtp = useCallback(async (name: string, email: string, password: string, role: 'seller' | 'customer', otp: string) => {
+    setIsLoading(true);
+    try {
+      const { token, user: registeredUser } = await api.auth.verifySignupOtp(name, email, password, role, otp);
+      localStorage.setItem('texdesigner_token', token);
+      localStorage.setItem('texdesigner_user', JSON.stringify(registeredUser));
+      setUser(registeredUser);
+    } catch (error) {
+      setUser(null);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('texdesigner_token');
@@ -87,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, register, updateUserSession }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, register, sendSignupOtp, verifySignupOtp, updateUserSession }}>
       {children}
     </AuthContext.Provider>
   );

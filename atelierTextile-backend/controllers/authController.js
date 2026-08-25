@@ -1,6 +1,7 @@
 const { validationResult, body } = require('express-validator');
 const crypto = require('crypto');
 const User = require('../models/User');
+const Otp = require('../models/Otp');
 const generateToken = require('../utils/generateToken');
 const sendEmail = require('../utils/sendEmail');
 
@@ -52,6 +53,137 @@ exports.register = async (req, res, next) => {
     const user = await User.create({
       name,
       email,
+      password,
+      role: userRole,
+    });
+
+    const token = generateToken(user);
+
+    res.status(201).json({
+      success: true,
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        initials: user.initials,
+        avatar: user.avatar,
+        status: user.status,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Generate and Send OTP to email for signup verification
+// @route   POST /api/auth/send-otp
+// @access  Public
+exports.sendSignupOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, error: 'Please provide an email address' });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+
+    // Check if account already exists
+    const existingUser = await User.findOne({ email: cleanEmail });
+    if (existingUser) {
+      return res.status(409).json({ success: false, error: 'An account with this email address already exists. Please sign in.' });
+    }
+
+    // Generate 6-digit numeric OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Save/update OTP in database (10-minute expiry)
+    await Otp.findOneAndUpdate(
+      { email: cleanEmail },
+      { otp, createdAt: new Date() },
+      { upsert: true, new: true }
+    );
+
+    console.log(`\n==================================================`);
+    console.log(`🔑 [SIGNUP OTP] 6-digit verification code for ${cleanEmail}: [ ${otp} ]`);
+    console.log(`==================================================\n`);
+
+    const html = `
+      <div style="max-width:520px;margin:0 auto;font-family:'Segoe UI',Arial,sans-serif;background:#ffffff;border:1px solid #e0e0e0;border-radius:12px;overflow:hidden;">
+        <div style="background:#1a237e;padding:24px 32px;text-align:center;">
+          <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">TexDesigner</h1>
+        </div>
+        <div style="padding:32px;text-align:center;">
+          <h2 style="margin:0 0 12px;color:#1a237e;font-size:20px;">Email Verification Code</h2>
+          <p style="color:#555;font-size:14px;line-height:1.6;margin:0 0 24px;">
+            Thank you for registering with TexDesigner. Use the 6-digit verification code below to complete your account setup:
+          </p>
+          <div style="display:inline-block;background:#f0f4ff;border:2px dashed #1a237e;color:#1a237e;font-size:32px;font-weight:900;letter-spacing:8px;padding:16px 36px;border-radius:12px;margin:12px 0 24px;">
+            ${otp}
+          </div>
+          <p style="color:#888;font-size:12px;margin:16px 0 0;">
+            This verification code is valid for <strong>10 minutes</strong>. If you did not request this, please ignore this email.
+          </p>
+        </div>
+        <div style="background:#f5f5f5;padding:16px 32px;text-align:center;border-top:1px solid #e0e0e0;">
+          <p style="margin:0;color:#999;font-size:11px;">© ${new Date().getFullYear()} TexDesigner Marketplace. All rights reserved.</p>
+        </div>
+      </div>
+    `;
+
+    try {
+      await sendEmail({
+        to: cleanEmail,
+        subject: `${otp} is your TexDesigner signup verification code`,
+        html,
+      });
+    } catch (emailError) {
+      console.warn('⚠️ Email delivery warning (OTP is logged above):', emailError.message);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Verification code sent to ${cleanEmail}`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Verify OTP and Create User Account
+// @route   POST /api/auth/verify-otp
+// @access  Public
+exports.verifySignupOtp = async (req, res, next) => {
+  try {
+    const { name, email, password, role, otp } = req.body;
+
+    if (!name || !email || !password || !otp) {
+      return res.status(400).json({ success: false, error: 'Please provide name, email, password, and OTP code' });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: cleanEmail });
+    if (existingUser) {
+      return res.status(409).json({ success: false, error: 'An account with this email address already exists' });
+    }
+
+    // Verify OTP from database
+    const otpRecord = await Otp.findOne({ email: cleanEmail, otp: String(otp).trim() });
+    if (!otpRecord) {
+      return res.status(400).json({ success: false, error: 'Invalid or expired verification code. Please request a new code.' });
+    }
+
+    // Delete OTP record after successful verification
+    await Otp.deleteOne({ _id: otpRecord._id });
+
+    // Create user
+    const userRole = role === 'seller' ? 'seller' : 'customer';
+    const user = await User.create({
+      name,
+      email: cleanEmail,
       password,
       role: userRole,
     });

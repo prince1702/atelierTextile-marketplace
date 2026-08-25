@@ -80,6 +80,20 @@ export const api = {
         user: normalize<User>(response.data.user),
       };
     },
+    sendSignupOtp: async (email: string): Promise<{ success: boolean; message: string }> => {
+      const response = await client.post('/auth/send-otp', { email });
+      return {
+        success: response.data.success,
+        message: response.data.message || 'Verification code sent',
+      };
+    },
+    verifySignupOtp: async (name: string, email: string, password: string, role: 'seller' | 'customer', otp: string): Promise<{ token: string; user: User }> => {
+      const response = await client.post('/auth/verify-otp', { name, email, password, role, otp });
+      return {
+        token: response.data.token,
+        user: normalize<User>(response.data.user),
+      };
+    },
     forgotPassword: async (email: string): Promise<{ success: boolean; message: string }> => {
       const response = await client.post('/auth/forgot-password', { email });
       return {
