@@ -13,12 +13,12 @@ export function createSvgCompositeDataUrl(
     <defs>
       <pattern id="wmPattern" width="${tileSize}" height="${tileSize}" patternUnits="userSpaceOnUse">
         <g transform="rotate(-30 ${tileSize / 2} ${tileSize / 2})">
-          <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="rgba(255,255,255,0.65)" stroke="rgba(0,0,0,0.3)" stroke-width="1.5" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="${fontSize}px" letter-spacing="2.5px">${displayText}</text>
+          <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="rgba(255,255,255,0.85)" stroke="rgba(0,0,0,0.55)" stroke-width="1.8" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="${fontSize}px" letter-spacing="2.5px">${displayText}</text>
         </g>
       </pattern>
     </defs>
     <image href="${imageUrl}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"/>
-    <rect width="100%" height="100%" fill="url(#wmPattern)" opacity="0.55"/>
+    <rect width="100%" height="100%" fill="url(#wmPattern)" opacity="0.70"/>
   </svg>`;
 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
@@ -56,7 +56,7 @@ export function createWatermarkedCanvasUrl(
         // 1. Draw base design image
         ctx.drawImage(img, 0, 0, width, height);
 
-        // 2. Prepare watermark pattern SVG (50% density, light color)
+        // 2. Prepare watermark pattern SVG
         const displayText = watermarkText.toUpperCase();
         const tileSize = density === 'compact' ? 260 : density === 'dense' ? 220 : 240;
         const fontSize = Math.max(14, Math.round(tileSize / 15));
@@ -68,9 +68,9 @@ export function createWatermarkedCanvasUrl(
               font-weight: 800;
               font-size: ${fontSize}px;
               letter-spacing: 2.5px;
-              fill: rgba(255, 255, 255, 0.65);
-              stroke: rgba(0, 0, 0, 0.3);
-              stroke-width: 1.5px;
+              fill: rgba(255, 255, 255, 0.85);
+              stroke: rgba(0, 0, 0, 0.55);
+              stroke-width: 1.8px;
               paint-order: stroke fill;
             }
           </style>
@@ -85,7 +85,7 @@ export function createWatermarkedCanvasUrl(
             const pattern = ctx.createPattern(patternImg, 'repeat');
             if (pattern) {
               ctx.fillStyle = pattern;
-              ctx.globalAlpha = 0.55;
+              ctx.globalAlpha = 0.70;
               ctx.fillRect(0, 0, width, height);
             }
             resolve(canvas.toDataURL('image/jpeg', 0.92));

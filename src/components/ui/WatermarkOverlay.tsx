@@ -11,7 +11,7 @@ export function WatermarkOverlay({
   text = 'TexDesigner', 
   className = '',
   density = 'normal',
-  opacity = 0.55
+  opacity = 0.70
 }: WatermarkOverlayProps) {
   const displayUrl = React.useMemo(() => {
     const displayText = text.toUpperCase();
@@ -26,9 +26,9 @@ export function WatermarkOverlay({
           font-weight: 800;
           font-size: ${fontSize}px;
           letter-spacing: 2.5px;
-          fill: rgba(255, 255, 255, 0.65);
-          stroke: rgba(0, 0, 0, 0.3);
-          stroke-width: 1.5px;
+          fill: rgba(255, 255, 255, 0.85);
+          stroke: rgba(0, 0, 0, 0.55);
+          stroke-width: 1.8px;
           paint-order: stroke fill;
           stroke-linejoin: round;
         }
