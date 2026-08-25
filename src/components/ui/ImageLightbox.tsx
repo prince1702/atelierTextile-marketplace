@@ -41,7 +41,7 @@ export function ImageLightbox({
     [onSelectImage, onIndexChange]
   );
 
-  const [bakedSrc, setBakedSrc] = useState<string>(() => createSvgCompositeDataUrl(currentImage, 'TexDesigner', 'dense'));
+  const [bakedSrc, setBakedSrc] = useState<string>(() => createSvgCompositeDataUrl(currentImage, 'TexDesigner', 'dense', title));
 
   // Reset zoom & pan and update baked canvas image when image changes or modal opens
   useEffect(() => {
@@ -49,17 +49,17 @@ export function ImageLightbox({
     setPosition({ x: 0, y: 0 });
     if (!currentImage) return;
 
-    setBakedSrc(createSvgCompositeDataUrl(currentImage, 'TexDesigner', 'dense'));
+    setBakedSrc(createSvgCompositeDataUrl(currentImage, 'TexDesigner', 'dense', title));
 
     let isMounted = true;
-    createWatermarkedCanvasUrl(currentImage, 'TexDesigner', 'dense').then((res) => {
+    createWatermarkedCanvasUrl(currentImage, 'TexDesigner', 'dense', title).then((res) => {
       if (isMounted && res) setBakedSrc(res);
     });
 
     return () => {
       isMounted = false;
     };
-  }, [currentIndex, currentImage, isOpen]);
+  }, [currentIndex, currentImage, isOpen, title]);
 
   const handleNext = useCallback(() => {
     if (images.length === 0) return;
@@ -282,7 +282,7 @@ export function ImageLightbox({
             }}
             className="max-h-[80vh] max-w-[90vw] object-contain rounded-lg shadow-2xl cursor-pointer select-none"
           />
-          <WatermarkOverlay text="TexDesigner" density="dense" />
+          <WatermarkOverlay text="TexDesigner" designId={title} density="dense" />
         </div>
 
         {/* Navigation Button Right */}

@@ -30,6 +30,7 @@ export function DesignCard({ design }: DesignCardProps) {
         <WatermarkedImage 
           src={design.image} 
           alt={design.title} 
+          designId={design.title || design.id}
           density="compact"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />

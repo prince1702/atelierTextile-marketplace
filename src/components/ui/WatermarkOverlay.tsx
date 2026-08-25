@@ -2,6 +2,7 @@ import React from 'react';
 
 interface WatermarkOverlayProps {
   text?: string;
+  designId?: string;
   className?: string;
   density?: 'compact' | 'normal' | 'dense';
   opacity?: number;
@@ -9,6 +10,7 @@ interface WatermarkOverlayProps {
 
 export function WatermarkOverlay({ 
   text = 'TexDesigner', 
+  designId,
   className = '',
   density = 'normal',
   opacity = 0.70
@@ -42,15 +44,24 @@ export function WatermarkOverlay({
   }, [text, density]);
 
   return (
-    <div 
-      aria-hidden="true" 
-      className={`absolute inset-0 pointer-events-none select-none z-20 overflow-hidden ${className}`}
-      style={{
-        backgroundImage: `url("${displayUrl}")`,
-        backgroundRepeat: 'repeat',
-        backgroundPosition: 'center center',
-        opacity: opacity,
-      }}
-    />
+    <>
+      <div 
+        aria-hidden="true" 
+        className={`absolute inset-0 pointer-events-none select-none z-20 overflow-hidden ${className}`}
+        style={{
+          backgroundImage: `url("${displayUrl}")`,
+          backgroundRepeat: 'repeat',
+          backgroundPosition: 'center center',
+          opacity: opacity,
+        }}
+      />
+      {designId && (
+        <div className="absolute top-3 left-3 z-30 pointer-events-none select-none">
+          <span className="bg-black/80 backdrop-blur text-white text-[11px] font-extrabold px-2.5 py-1 rounded border border-white/30 shadow-md tracking-wider uppercase">
+            {designId.startsWith('ID:') ? designId : `ID: ${designId}`}
+          </span>
+        </div>
+      )}
+    </>
   );
 }

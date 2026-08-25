@@ -285,7 +285,7 @@ export function DesignDetail() {
                   className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group cursor-zoom-in shadow-sm hover:shadow-md transition-shadow"
                   title="Click to view full screen image modal or scroll wheel to switch photos"
                 >
-                  <WatermarkedImage src={activeImg} alt={design.title} density="dense" className="w-full h-[600px] object-cover transition-transform duration-300 group-hover:scale-102" />
+                  <WatermarkedImage src={activeImg} alt={design.title} designId={design.title || design.id} density="dense" className="w-full h-[600px] object-cover transition-transform duration-300 group-hover:scale-102" />
                   
                   {/* Click to expand overlay hint */}
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-10">
@@ -325,7 +325,7 @@ export function DesignDetail() {
                       }}
                       className={`relative rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-20 sm:h-24 transition-all duration-200 ${i === activeImageIndex ? 'border-primary ring-2 ring-primary/30 scale-105 opacity-100' : 'border-outline-variant/30 hover:border-primary/50 opacity-70 hover:opacity-100'}`}
                     >
-                      <WatermarkedImage src={img} alt={`Thumbnail ${i + 1}`} density="compact" className="w-full h-full object-cover" />
+                      <WatermarkedImage src={img} alt={`Thumbnail ${i + 1}`} designId={design.title || design.id} density="compact" className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>

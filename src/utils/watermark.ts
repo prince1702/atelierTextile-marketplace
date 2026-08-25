@@ -1,13 +1,16 @@
 export function createSvgCompositeDataUrl(
   imageUrl: string,
   watermarkText = 'TexDesigner',
-  density: 'compact' | 'normal' | 'dense' = 'normal'
+  density: 'compact' | 'normal' | 'dense' = 'normal',
+  designId?: string
 ): string {
   if (!imageUrl) return '';
   
   const displayText = watermarkText.toUpperCase();
   const tileSize = density === 'compact' ? 260 : density === 'dense' ? 220 : 240;
   const fontSize = 15;
+  const badgeText = designId ? (designId.startsWith('ID:') ? designId : `ID: ${designId}`) : '';
+  const badgeWidth = Math.max(84, badgeText.length * 9.5 + 20);
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%">
     <defs>
@@ -19,6 +22,12 @@ export function createSvgCompositeDataUrl(
     </defs>
     <image href="${imageUrl}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"/>
     <rect width="100%" height="100%" fill="url(#wmPattern)" opacity="0.70"/>
+    ${badgeText ? `
+      <g transform="translate(14, 14)">
+        <rect width="${badgeWidth}" height="28" rx="6" fill="rgba(0,0,0,0.82)" stroke="rgba(255,255,255,0.6)" stroke-width="1.2"/>
+        <text x="${badgeWidth / 2}" y="15" text-anchor="middle" dominant-baseline="central" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13px" letter-spacing="0.5px">${badgeText}</text>
+      </g>
+    ` : ''}
   </svg>`;
 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
@@ -27,7 +36,8 @@ export function createSvgCompositeDataUrl(
 export function createWatermarkedCanvasUrl(
   imageUrl: string,
   watermarkText = 'TexDesigner',
-  density: 'compact' | 'normal' | 'dense' = 'normal'
+  density: 'compact' | 'normal' | 'dense' = 'normal',
+  designId?: string
 ): Promise<string> {
   return new Promise((resolve) => {
     if (!imageUrl) return resolve('');
@@ -50,7 +60,7 @@ export function createWatermarkedCanvasUrl(
 
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-          return resolve(createSvgCompositeDataUrl(imageUrl, watermarkText, density));
+          return resolve(createSvgCompositeDataUrl(imageUrl, watermarkText, density, designId));
         }
 
         // 1. Draw base design image
@@ -88,20 +98,50 @@ export function createWatermarkedCanvasUrl(
               ctx.globalAlpha = 0.70;
               ctx.fillRect(0, 0, width, height);
             }
+
+            // 3. Draw Design ID corner badge on canvas
+            if (designId) {
+              const badgeText = designId.startsWith('ID:') ? designId : `ID: ${designId}`;
+              ctx.save();
+              ctx.globalAlpha = 0.95;
+              const badgeWidth = Math.max(90, badgeText.length * 10 + 24);
+              const badgeHeight = Math.max(30, Math.round(height * 0.045));
+              const margin = Math.max(14, Math.round(width * 0.02));
+
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+              ctx.lineWidth = 1.5;
+
+              ctx.beginPath();
+              if (typeof (ctx as any).roundRect === 'function') {
+                (ctx as any).roundRect(margin, margin, badgeWidth, badgeHeight, 6);
+              } else {
+                ctx.rect(margin, margin, badgeWidth, badgeHeight);
+              }
+              ctx.fill();
+              ctx.stroke();
+
+              ctx.fillStyle = '#ffffff';
+              ctx.font = `bold ${Math.max(13, Math.round(badgeHeight * 0.5))}px system-ui, sans-serif`;
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(badgeText, margin + badgeWidth / 2, margin + badgeHeight / 2);
+              ctx.restore();
+            }
+
             resolve(canvas.toDataURL('image/jpeg', 0.92));
           } catch {
-            // If canvas export fails due to CORS, use SVG Composite Data URL fallback
-            resolve(createSvgCompositeDataUrl(imageUrl, watermarkText, density));
+            resolve(createSvgCompositeDataUrl(imageUrl, watermarkText, density, designId));
           }
         };
-        patternImg.onerror = () => resolve(createSvgCompositeDataUrl(imageUrl, watermarkText, density));
+        patternImg.onerror = () => resolve(createSvgCompositeDataUrl(imageUrl, watermarkText, density, designId));
         patternImg.src = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
       } catch {
-        resolve(createSvgCompositeDataUrl(imageUrl, watermarkText, density));
+        resolve(createSvgCompositeDataUrl(imageUrl, watermarkText, density, designId));
       }
     };
 
-    img.onerror = () => resolve(createSvgCompositeDataUrl(imageUrl, watermarkText, density));
+    img.onerror = () => resolve(createSvgCompositeDataUrl(imageUrl, watermarkText, density, designId));
     img.src = imageUrl;
   });
 }
