@@ -4,13 +4,12 @@ import type { User, Design, Order, Ticket } from '../types';
 const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
   if (typeof window !== 'undefined' && window.location) {
-    const { hostname, origin } = window.location;
+    const { hostname } = window.location;
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.') || hostname.startsWith('172.')) {
       return `http://${hostname}:5000`;
     }
-    // Check if origin supports relative /api serverless functions, or use production backend API
-    return origin;
   }
+  // Production: backend is hosted on Render, not Vercel
   return 'https://ateliertextile-backend.onrender.com';
 };
 

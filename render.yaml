@@ -26,3 +26,7 @@ services:
         sync: false
       - key: MONGOMS_DISABLE_POSTINSTALL
         value: "1"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_USER
+        value: aonedesigner95@gmail.com
