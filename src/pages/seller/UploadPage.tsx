@@ -206,22 +206,53 @@ export function UploadPage() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
+      const mainFile = files[0];
+      setImageFile(mainFile);
+      setImagePreview(URL.createObjectURL(mainFile));
+
+      // If user selected multiple files at once (up to 5)
+      if (files.length > 1) {
+        const remainingFiles = files.slice(1, 5);
+        const newFiles = [...additionalFiles];
+        const newPreviews = [...additionalPreviews];
+
+        let fileIdx = 0;
+        for (let i = 0; i < 4 && fileIdx < remainingFiles.length; i++) {
+          newFiles[i] = remainingFiles[fileIdx];
+          newPreviews[i] = URL.createObjectURL(remainingFiles[fileIdx]);
+          fileIdx++;
+        }
+
+        setAdditionalFiles(newFiles);
+        setAdditionalPreviews(newPreviews);
+        showToast(`Loaded main design image + ${remainingFiles.length} sample display image(s)`, 'success');
+      }
     }
   };
 
   const handleAdditionalFileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
       const newFiles = [...additionalFiles];
-      newFiles[index] = file;
-      setAdditionalFiles(newFiles);
-
       const newPreviews = [...additionalPreviews];
-      newPreviews[index] = URL.createObjectURL(file);
+
+      if (files.length === 1) {
+        newFiles[index] = files[0];
+        newPreviews[index] = URL.createObjectURL(files[0]);
+      } else {
+        // Multiple files selected from additional image box
+        let fileIdx = 0;
+        for (let i = index; i < 4 && fileIdx < files.length; i++) {
+          newFiles[i] = files[fileIdx];
+          newPreviews[i] = URL.createObjectURL(files[fileIdx]);
+          fileIdx++;
+        }
+        showToast(`Loaded ${fileIdx} additional display image(s)`, 'success');
+      }
+
+      setAdditionalFiles(newFiles);
       setAdditionalPreviews(newPreviews);
     }
   };
@@ -418,14 +449,15 @@ export function UploadPage() {
                 <div className="text-center space-y-3">
                   <span className="material-symbols-outlined text-[48px] text-outline">upload_file</span>
                   <div>
-                    <p className="text-sm font-semibold text-on-surface">Drag & drop your file or browse</p>
-                    <p className="text-xs text-on-surface-variant mt-1">Supports JPG, PNG, WEBP (Max 20MB)</p>
+                    <p className="text-sm font-semibold text-on-surface">Drag & drop your files or browse (Select up to 5 photos at once)</p>
+                    <p className="text-xs text-on-surface-variant mt-1">Supports JPG, PNG, WEBP — Select multiple photos to auto-fill main and sample slots (Max 20MB per file)</p>
                   </div>
                 </div>
               )}
               <input 
                 type="file" 
                 accept="image/*"
+                multiple
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer"
                 required={!imagePreview}
@@ -437,7 +469,7 @@ export function UploadPage() {
           <div className="space-y-3">
             <div>
               <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Additional Display Images (Up to 4)</label>
-              <p className="text-xs text-on-surface-variant/80 mt-0.5">Add more views or colorways of the design to display to customers.</p>
+              <p className="text-xs text-on-surface-variant/80 mt-0.5">Add more views or colorways of the design. Tip: You can select multiple photos at once in the file browser.</p>
             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -475,6 +507,7 @@ export function UploadPage() {
                     <input 
                       type="file" 
                       accept="image/*"
+                      multiple
                       onChange={(e) => handleAdditionalFileChange(index, e)}
                       className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                     />
