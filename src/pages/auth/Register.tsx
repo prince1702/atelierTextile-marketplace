@@ -55,13 +55,19 @@ export function Register() {
     setIsLoading(true);
     try {
       const res = await sendSignupOtp(email);
-      showToast(res.message || 'Verification code sent to your email!');
+      showToast(res?.message || 'Verification code sent to your email!');
       setStep(4);
       setResendTimer(60);
       setCanResend(false);
     } catch (error: any) {
-      const message = error.response?.data?.error || error.message || 'Error sending verification code';
-      showToast(message, 'error');
+      const message = typeof error?.response?.data?.error === 'string'
+        ? error.response.data.error
+        : error?.response?.data?.message || error?.message || 'Error sending verification code';
+      showToast(String(message), 'error');
+      // Advance to step 4 so user can enter OTP or resend
+      setStep(4);
+      setResendTimer(60);
+      setCanResend(true);
     } finally {
       setIsLoading(false);
     }

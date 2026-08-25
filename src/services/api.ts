@@ -8,10 +8,10 @@ const getApiUrl = () => {
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.') || hostname.startsWith('172.')) {
       return `http://${hostname}:5000`;
     }
-    // On Vercel or deployed origin, relative /api requests route directly to serverless Express backend
+    // Check if origin supports relative /api serverless functions, or use production backend API
     return origin;
   }
-  return 'http://localhost:5000';
+  return 'https://ateliertextile-backend.onrender.com';
 };
 
 export const API_URL = getApiUrl();
