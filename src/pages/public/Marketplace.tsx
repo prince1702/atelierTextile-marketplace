@@ -602,13 +602,22 @@ export function Marketplace() {
       setTotalPages(response.pages);
       setTotalResults(response.total);
 
-      // If user is searching or when search has results, also fetch recommended designs to show below
-      if (searchTrigger.trim() !== '') {
+      // Fetch recommended designs whenever search is active OR when search returns 3 or fewer results
+      if (searchTrigger.trim() !== '' || (response.designs && response.designs.length <= 3)) {
         try {
-          const recRes = await api.designs.getAll({ limit: 8, sort: 'newest' });
+          const recRes = await api.designs.getAll({ limit: 12, sort: 'newest' });
           const matchedIds = new Set((response.designs || []).map((d: Design) => d.id));
-          const filteredRecs = (recRes.designs || []).filter((d: Design) => !matchedIds.has(d.id));
-          setRecommendedDesigns(filteredRecs);
+          let filteredRecs = (recRes.designs || []).filter((d: Design) => !matchedIds.has(d.id));
+
+          if (filteredRecs.length < 4) {
+            const extraRecs = await api.designs.getAll({ limit: 12, sort: 'rating' });
+            const extraFiltered = (extraRecs.designs || []).filter((d: Design) => !matchedIds.has(d.id));
+            const map = new Map();
+            [...filteredRecs, ...extraFiltered].forEach(d => map.set(d.id, d));
+            filteredRecs = Array.from(map.values());
+          }
+
+          setRecommendedDesigns(filteredRecs.slice(0, 8));
         } catch (recErr) {
           console.warn('Failed to fetch recommended designs:', recErr);
         }
@@ -1153,13 +1162,13 @@ export function Marketplace() {
                   </div>
 
                   {/* Recommended Designs below Search Results */}
-                  {searchTrigger.trim() !== '' && recommendedDesigns.length > 0 && (
-                    <div className="mt-14 pt-10 border-t border-outline-variant/60">
+                  {recommendedDesigns.length > 0 && (searchTrigger.trim() !== '' || designs.length <= 3) && (
+                    <div className="mt-14 pt-10 border-t border-outline-variant/60 w-full animate-fade-in">
                       <div className="flex items-center gap-3 mb-6">
                         <span className="material-symbols-outlined text-primary text-[24px]">recommend</span>
                         <div>
                           <h3 className="text-xl font-bold text-on-surface">Recommended Designs You Might Like</h3>
-                          <p className="text-xs text-on-surface-variant">More top-rated textile patterns in our marketplace</p>
+                          <p className="text-xs text-on-surface-variant">Explore other top-rated textile patterns in our marketplace</p>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-6">
