@@ -119,23 +119,10 @@ export function OrdersPage() {
             setPayingOrderId(null);
           }
         },
-        config: {
-          display: {
-            blocks: {
-              upi: {
-                name: 'Pay using UPI / QR Code (Google Pay, PhonePe, Paytm)',
-                instruments: [
-                  {
-                    method: 'upi',
-                  },
-                ],
-              },
-            },
-            sequence: ['block.upi'],
-            preferences: {
-              show_default_blocks: true,
-            },
-          },
+        prefill: {
+          name: 'Customer',
+          email: 'customer@example.com',
+          contact: '9876543210',
         },
         theme: {
           color: '#4F46E5',
