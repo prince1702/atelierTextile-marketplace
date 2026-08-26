@@ -395,4 +395,30 @@ export const api = {
       return normalize<Ticket>(response.data.data);
     },
   },
+
+  payments: {
+    createRazorpayOrder: async (orderId: string): Promise<{
+      keyId: string;
+      razorpayOrderId: string;
+      amount: number;
+      currency: string;
+      orderId: string;
+      designTitle: string;
+    }> => {
+      const response = await client.post('/payments/create-razorpay-order', { orderId });
+      return response.data.data;
+    },
+    verifyRazorpayPayment: async (payload: {
+      razorpay_order_id: string;
+      razorpay_payment_id: string;
+      razorpay_signature: string;
+      orderId: string;
+    }): Promise<{ success: boolean; data: Order }> => {
+      const response = await client.post('/payments/verify-razorpay-payment', payload);
+      return {
+        success: response.data.success,
+        data: normalize<Order>(response.data.data),
+      };
+    },
+  },
 };

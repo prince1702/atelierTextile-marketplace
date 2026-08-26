@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';
 import { WatermarkedImage } from '../../components/ui/WatermarkedImage';
 import { api } from '../../services/api';
+import { loadRazorpayScript } from '../../utils/razorpay';
 import type { Design, Order } from '../../types';
 
 const UPI_ID = 'dhavalhidad2600@okicici';
@@ -20,8 +21,75 @@ export function CartPage() {
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isRazorpayLoading, setIsRazorpayLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleRazorpayPayment = async () => {
+    if (createdOrders.length === 0) {
+      showToast('No active order found to pay', 'error');
+      return;
+    }
+    setIsRazorpayLoading(true);
+    try {
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        showToast('Failed to load Razorpay SDK. Please check your internet connection.', 'error');
+        setIsRazorpayLoading(false);
+        return;
+      }
+
+      const orderToPay = createdOrders[0];
+      const razorpayData = await api.payments.createRazorpayOrder(orderToPay.id);
+
+      const options = {
+        key: razorpayData.keyId,
+        amount: razorpayData.amount,
+        currency: razorpayData.currency,
+        name: 'TexDesigner Marketplace',
+        description: `Payment for ${razorpayData.designTitle || 'Textile Design'}`,
+        order_id: razorpayData.razorpayOrderId,
+        handler: async (response: any) => {
+          try {
+            setIsRazorpayLoading(true);
+            await api.payments.verifyRazorpayPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: orderToPay.id,
+            });
+            showToast('🎉 Payment Successful! Your order has been completed.', 'success');
+            navigate('/customer/orders');
+          } catch (err: any) {
+            console.error(err);
+            showToast(err.response?.data?.error || 'Payment verification failed', 'error');
+          } finally {
+            setIsRazorpayLoading(false);
+          }
+        },
+        prefill: {
+          name: '',
+          email: '',
+          contact: '',
+        },
+        theme: {
+          color: '#4F46E5',
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', (response: any) => {
+        console.error('Razorpay Payment Failed:', response.error);
+        showToast(`Payment Failed: ${response.error.description || 'Transaction cancelled'}`, 'error');
+      });
+      rzp.open();
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.response?.data?.error || 'Failed to initiate Razorpay payment', 'error');
+    } finally {
+      setIsRazorpayLoading(false);
+    }
+  };
 
   const [selectedLicenses, setSelectedLicenses] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
@@ -161,6 +229,44 @@ export function CartPage() {
                   <p className="text-3xl font-bold text-primary mt-0.5">₹{totalAmount.toLocaleString()}</p>
                 </div>
                 <span className="material-symbols-outlined text-[40px] text-primary/30">currency_rupee</span>
+              </div>
+
+              {/* Razorpay Online Payment Option */}
+              <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white rounded-2xl p-5 shadow-lg space-y-3.5 border border-indigo-500/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-amber-400 text-2xl animate-pulse">bolt</span>
+                    <h3 className="font-bold text-white text-base">Pay Online (Razorpay)</h3>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-wider bg-amber-400 text-slate-950 font-extrabold px-2.5 py-1 rounded-full shadow">Instant Approval</span>
+                </div>
+                <p className="text-xs text-indigo-200/90 leading-relaxed">
+                  Pay securely using <strong>UPI, Google Pay, PhonePe, Cards, or NetBanking</strong>. Your design files will be unlocked automatically!
+                </p>
+                <button
+                  onClick={handleRazorpayPayment}
+                  disabled={isRazorpayLoading}
+                  className="w-full py-4 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white font-bold text-base rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isRazorpayLoading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Opening Razorpay Checkout...
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-xl">account_balance_wallet</span>
+                      Pay ₹{totalAmount.toLocaleString()} via Razorpay
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 my-2">
+                <div className="flex-1 h-px bg-outline-variant" />
+                <span className="text-xs text-on-surface-variant font-semibold">OR PAY MANUALLY VIA UPI QR</span>
+                <div className="flex-1 h-px bg-outline-variant" />
               </div>
 
               {/* QR Code */}

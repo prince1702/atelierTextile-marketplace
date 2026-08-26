@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { api, API_URL } from '../../services/api';
+import { loadRazorpayScript } from '../../utils/razorpay';
 import type { Order } from '../../types';
 import { useNotification } from '../../contexts/NotificationContext';
 
@@ -7,6 +8,7 @@ export function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [uploadingOrderId, setUploadingOrderId] = useState<string | null>(null);
+  const [payingOrderId, setPayingOrderId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { showToast } = useNotification();
 
@@ -80,6 +82,61 @@ export function OrdersPage() {
     }
   };
 
+  const handleRazorpayPayNow = async (order: Order) => {
+    setPayingOrderId(order.id);
+    try {
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        showToast('Failed to load Razorpay SDK. Please check connection.', 'error');
+        setPayingOrderId(null);
+        return;
+      }
+
+      const razorpayData = await api.payments.createRazorpayOrder(order.id);
+
+      const options = {
+        key: razorpayData.keyId,
+        amount: razorpayData.amount,
+        currency: razorpayData.currency,
+        name: 'TexDesigner Marketplace',
+        description: `Payment for ${razorpayData.designTitle || 'Textile Design'}`,
+        order_id: razorpayData.razorpayOrderId,
+        handler: async (response: any) => {
+          try {
+            setPayingOrderId(order.id);
+            await api.payments.verifyRazorpayPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: order.id,
+            });
+            showToast('🎉 Payment Successful! Order completed.', 'success');
+            fetchOrders();
+          } catch (err: any) {
+            console.error(err);
+            showToast(err.response?.data?.error || 'Payment verification failed', 'error');
+          } finally {
+            setPayingOrderId(null);
+          }
+        },
+        theme: {
+          color: '#4F46E5',
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', (response: any) => {
+        showToast(`Payment Failed: ${response.error.description || 'Cancelled'}`, 'error');
+      });
+      rzp.open();
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.response?.data?.error || 'Failed to initiate Razorpay payment', 'error');
+    } finally {
+      setPayingOrderId(null);
+    }
+  };
+
   const getStatusBadge = (order: Order) => {
     switch (order.status) {
       case 'completed':
@@ -130,7 +187,7 @@ export function OrdersPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {orders.map(order => (
+          {orders.map((order: Order) => (
             <div key={order.id} className="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5">
                 {/* Design image + info */}
@@ -196,13 +253,27 @@ export function OrdersPage() {
                     );
                   })()}
                   {(order.status === 'pending' && !order.paymentScreenshot) && (
-                    <button
-                      onClick={() => handleUploadScreenshot(order.id)}
-                      className="px-3.5 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-semibold hover:bg-amber-600 transition-colors shadow-sm inline-flex items-center gap-1.5"
-                    >
-                      <span className="material-symbols-outlined text-[14px]">upload</span>
-                      Upload Payment Proof
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleRazorpayPayNow(order)}
+                        disabled={payingOrderId === order.id}
+                        className="px-3.5 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-sm inline-flex items-center gap-1.5 disabled:opacity-50"
+                      >
+                        {payingOrderId === order.id ? (
+                          <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <span className="material-symbols-outlined text-[14px]">bolt</span>
+                        )}
+                        Pay via Razorpay
+                      </button>
+                      <button
+                        onClick={() => handleUploadScreenshot(order.id)}
+                        className="px-3.5 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-semibold hover:bg-amber-600 transition-colors shadow-sm inline-flex items-center gap-1.5"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">upload</span>
+                        Upload Proof
+                      </button>
+                    </>
                   )}
                   {order.status === 'rejected' && (
                     <button

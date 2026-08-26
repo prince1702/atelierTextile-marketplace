@@ -58,6 +58,30 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  razorpayOrderId: {
+    type: String,
+    default: '',
+  },
+  razorpayPaymentId: {
+    type: String,
+    default: '',
+  },
+  razorpaySignature: {
+    type: String,
+    default: '',
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['razorpay', 'manual_upi'],
+    default: 'razorpay',
+  },
+  isPaid: {
+    type: Boolean,
+    default: false,
+  },
+  paidAt: {
+    type: Date,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

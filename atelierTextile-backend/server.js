@@ -68,6 +68,7 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/cart', require('./routes/cart'));
 app.use('/api/wishlist', require('./routes/wishlist'));
 app.use('/api/tickets', require('./routes/tickets'));
+app.use('/api/payments', require('./routes/payments'));
 // Serve frontend static build (if present) so frontend and backend
 // can be hosted from the same port. Builds are output to ./frontend
 const frontendDir = path.join(__dirname, 'frontend');
