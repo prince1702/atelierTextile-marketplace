@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { WatermarkOverlay } from './WatermarkOverlay';
-import { createWatermarkedCanvasUrl, createSvgCompositeDataUrl } from '../../utils/watermark';
 
 interface ImageLightboxProps {
   images: string[];
@@ -41,25 +40,11 @@ export function ImageLightbox({
     [onSelectImage, onIndexChange]
   );
 
-  const [bakedSrc, setBakedSrc] = useState<string>(() => createSvgCompositeDataUrl(currentImage, 'TexDesigner', 'dense', title));
-
-  // Reset zoom & pan and update baked canvas image when image changes or modal opens
+  // Reset zoom & pan when image changes or modal opens
   useEffect(() => {
     setZoom(1);
     setPosition({ x: 0, y: 0 });
-    if (!currentImage) return;
-
-    setBakedSrc(createSvgCompositeDataUrl(currentImage, 'TexDesigner', 'dense', title));
-
-    let isMounted = true;
-    createWatermarkedCanvasUrl(currentImage, 'TexDesigner', 'dense', title).then((res) => {
-      if (isMounted && res) setBakedSrc(res);
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [currentIndex, currentImage, isOpen, title]);
+  }, [currentIndex, currentImage, isOpen]);
 
   const handleNext = useCallback(() => {
     if (images.length === 0) return;
@@ -270,7 +255,7 @@ export function ImageLightbox({
           onContextMenu={(e) => e.preventDefault()}
         >
           <img
-            src={bakedSrc}
+            src={currentImage}
             alt={`${title} - view ${safeIndex + 1}`}
             onDoubleClick={handleToggleZoom}
             draggable={false}

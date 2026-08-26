@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { WatermarkOverlay } from './WatermarkOverlay';
-import { createWatermarkedCanvasUrl, createSvgCompositeDataUrl } from '../../utils/watermark';
 
 interface WatermarkedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   containerClassName?: string;
@@ -21,40 +20,30 @@ export function WatermarkedImage({
   src = '',
   ...props
 }: WatermarkedImageProps) {
-  // Synchronously initialize to SVG composite Data URL so raw URL is NEVER exposed
-  const [bakedSrc, setBakedSrc] = useState<string>(() => {
-    if (!src || !showWatermark) return src;
-    return createSvgCompositeDataUrl(src, watermarkText, density, designId);
-  });
-
-  useEffect(() => {
-    if (!src || !showWatermark) {
-      setBakedSrc(src);
-      return;
-    }
-
-    // Set synchronous composite URL immediately
-    setBakedSrc(createSvgCompositeDataUrl(src, watermarkText, density, designId));
-
-    let isMounted = true;
-    createWatermarkedCanvasUrl(src, watermarkText, density, designId).then((res) => {
-      if (isMounted && res) setBakedSrc(res);
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [src, watermarkText, density, showWatermark, designId]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   return (
     <div 
-      className={`relative overflow-hidden select-none ${containerClassName}`}
+      className={`relative overflow-hidden select-none bg-surface-container ${containerClassName}`}
       onContextMenu={(e) => e.preventDefault()}
     >
+      {/* Loading Skeleton */}
+      {!isLoaded && !isError && (
+        <div className="absolute inset-0 bg-slate-200 dark:bg-slate-700 animate-pulse z-0" />
+      )}
+
       <img
-        src={bakedSrc}
-        className={`select-none ${className}`}
+        src={src}
+        className={`select-none transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
         alt={alt}
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setIsLoaded(true)}
+        onError={() => {
+          setIsLoaded(true);
+          setIsError(true);
+        }}
         draggable={false}
         onDragStart={(e) => e.preventDefault()}
         onContextMenu={(e) => e.preventDefault()}
