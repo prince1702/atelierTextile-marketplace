@@ -895,23 +895,19 @@ export function CollectionPage() {
       if (selectedDesignFormat !== 'All') params.designFormat = selectedDesignFormat;
       if (selectedSareeConcept !== 'All') params.sareeConcept = selectedSareeConcept;
 
-      const response = await api.designs.getAll(params);
+      const [response, recRes] = await Promise.all([
+        api.designs.getAll(params),
+        api.designs.getAll({ limit: 12, sort: 'newest' }).catch(() => ({ designs: [] }))
+      ]);
+
       setDesigns(response.designs);
       setTotalPages(response.pages);
       setTotalResults(response.total);
 
-      if (response.designs.length <= 3) {
-        try {
-          const recRes = await api.designs.getAll({ limit: 12, sort: 'newest' });
-          const matchedIds = new Set((response.designs || []).map((d: Design) => d.id));
-          const filteredRecs = (recRes.designs || []).filter((d: Design) => !matchedIds.has(d.id));
-          setRecommendedDesigns(filteredRecs.slice(0, 8));
-        } catch (recErr) {
-          console.warn('Failed to fetch recommended designs in CollectionPage:', recErr);
-        }
-      } else {
-        setRecommendedDesigns([]);
-      }
+      const matchedIds = new Set((response.designs || []).map((d: Design) => d.id));
+      const filteredRecs = (recRes.designs || []).filter((d: Design) => !matchedIds.has(d.id));
+
+      setRecommendedDesigns(filteredRecs.slice(0, 8));
     } catch (error) {
       console.error('Failed to fetch designs:', error);
       showToast('Error loading designs', 'error');

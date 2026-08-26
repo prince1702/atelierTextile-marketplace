@@ -597,33 +597,19 @@ export function Marketplace() {
       if (selectedSareeConcept !== 'All') params.sareeConcept = selectedSareeConcept;
       if (searchTrigger.trim()) params.search = searchTrigger;
 
-      const response = await api.designs.getAll(params);
+      const [response, recRes] = await Promise.all([
+        api.designs.getAll(params),
+        api.designs.getAll({ limit: 12, sort: 'newest' }).catch(() => ({ designs: [] }))
+      ]);
+
       setDesigns(response.designs);
       setTotalPages(response.pages);
       setTotalResults(response.total);
 
-      // Fetch recommended designs whenever search is active OR when search returns 3 or fewer results
-      if (searchTrigger.trim() !== '' || (response.designs && response.designs.length <= 3)) {
-        try {
-          const recRes = await api.designs.getAll({ limit: 12, sort: 'newest' });
-          const matchedIds = new Set((response.designs || []).map((d: Design) => d.id));
-          let filteredRecs = (recRes.designs || []).filter((d: Design) => !matchedIds.has(d.id));
+      const matchedIds = new Set((response.designs || []).map((d: Design) => d.id));
+      const filteredRecs = (recRes.designs || []).filter((d: Design) => !matchedIds.has(d.id));
 
-          if (filteredRecs.length < 4) {
-            const extraRecs = await api.designs.getAll({ limit: 12, sort: 'rating' });
-            const extraFiltered = (extraRecs.designs || []).filter((d: Design) => !matchedIds.has(d.id));
-            const map = new Map();
-            [...filteredRecs, ...extraFiltered].forEach(d => map.set(d.id, d));
-            filteredRecs = Array.from(map.values());
-          }
-
-          setRecommendedDesigns(filteredRecs.slice(0, 8));
-        } catch (recErr) {
-          console.warn('Failed to fetch recommended designs:', recErr);
-        }
-      } else {
-        setRecommendedDesigns([]);
-      }
+      setRecommendedDesigns(filteredRecs.slice(0, 8));
     } catch (error) {
       console.error('Failed to fetch designs:', error);
       showToast('Error loading marketplace designs', 'error');
