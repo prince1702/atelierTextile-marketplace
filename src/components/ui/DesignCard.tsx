@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Design } from '../../types';
 import { useCart } from '../../contexts/CartContext';
+import { optimizeCloudinaryUrl } from '../../utils/imageOptimize';
 
 import { WatermarkedImage } from './WatermarkedImage';
 
@@ -28,7 +29,7 @@ export function DesignCard({ design }: DesignCardProps) {
     <div className="bg-white rounded-xl border border-outline-variant overflow-hidden card-lift group flex flex-col h-full">
       <Link to={`/design/${design.id}`} className="relative h-40 sm:h-56 overflow-hidden bg-surface-container block">
         <WatermarkedImage 
-          src={design.image} 
+          src={optimizeCloudinaryUrl(design.image, 'card')} 
           alt={design.title} 
           designId={design.title || design.id}
           density="compact"

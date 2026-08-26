@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { WatermarkOverlay } from './WatermarkOverlay';
+import { optimizeCloudinaryUrl } from '../../utils/imageOptimize';
 
 interface ImageLightboxProps {
   images: string[];
@@ -307,7 +308,7 @@ export function ImageLightbox({
                     : 'border-white/20 hover:border-white/60 opacity-60 hover:opacity-100'
                 }`}
               >
-                <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                <img src={optimizeCloudinaryUrl(img, 'thumbnail')} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
               </button>
             ))}
           </div>

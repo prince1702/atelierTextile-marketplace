@@ -5,6 +5,7 @@ import { useNotification } from '../../contexts/NotificationContext';
 import { Link } from 'react-router-dom';
 
 import { WatermarkedImage } from '../../components/ui/WatermarkedImage';
+import { optimizeCloudinaryUrl } from '../../utils/imageOptimize';
 
 export function DesignsPage() {
   const [designs, setDesigns] = useState<Design[]>([]);
@@ -101,7 +102,7 @@ export function DesignsPage() {
                       <div className="flex items-center gap-3">
                         <div className="relative w-10 h-10 rounded overflow-hidden bg-surface-container shrink-0">
                           <WatermarkedImage 
-                            src={design.image} 
+                            src={optimizeCloudinaryUrl(design.image, 'thumbnail')} 
                             alt={design.title} 
                             density="compact"
                             className="w-full h-full object-cover" 

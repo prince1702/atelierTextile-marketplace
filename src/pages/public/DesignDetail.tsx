@@ -7,6 +7,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
 import { ImageLightbox } from '../../components/ui/ImageLightbox';
 import { WatermarkedImage } from '../../components/ui/WatermarkedImage';
+import { optimizeCloudinaryUrl } from '../../utils/imageOptimize';
 
 const getParentSubcategory = (sub: string): string => {
   const ALL_SAREE_SUBCATEGORIES_VALUES = [
@@ -121,7 +122,9 @@ export function DesignDetail() {
     fetchDesign();
   }, [id, showToast]);
 
-  const allImages = design ? [design.image, ...(design.additionalImages || [])].filter(Boolean) : [];
+  const allImagesRaw = design ? [design.image, ...(design.additionalImages || [])].filter(Boolean) : [];
+  const allImages = allImagesRaw.map(img => optimizeCloudinaryUrl(img, 'detail'));
+  const allImagesThumbnail = allImagesRaw.map(img => optimizeCloudinaryUrl(img, 'thumbnail'));
 
   const handleImageSelect = (idx: number) => {
     if (allImages[idx]) {
@@ -325,7 +328,7 @@ export function DesignDetail() {
                       }}
                       className={`relative rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-20 sm:h-24 transition-all duration-200 ${i === activeImageIndex ? 'border-primary ring-2 ring-primary/30 scale-105 opacity-100' : 'border-outline-variant/30 hover:border-primary/50 opacity-70 hover:opacity-100'}`}
                     >
-                      <WatermarkedImage src={img} alt={`Thumbnail ${i + 1}`} designId={design.title || design.id} density="compact" className="w-full h-full object-cover" />
+                      <WatermarkedImage src={allImagesThumbnail[i] || img} alt={`Thumbnail ${i + 1}`} designId={design.title || design.id} density="compact" className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>

@@ -3,6 +3,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { useAuth } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
 import type { Design, Order } from '../../types';
+import { optimizeCloudinaryUrl } from '../../utils/imageOptimize';
 import { Link, useNavigate } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';
 
@@ -103,7 +104,7 @@ export function SellerDashboard() {
           ) : (
             designs.slice(0, 4).map((design) => (
               <div key={design.id} className="flex items-center gap-4 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:border-primary/30 transition-colors cursor-pointer group" onClick={() => navigate(`/design/${design.id}`)}>
-                <img src={design.image} alt={design.title} className="w-16 h-16 rounded-md object-cover bg-surface-container shrink-0" />
+                <img src={optimizeCloudinaryUrl(design.image, 'thumbnail')} alt={design.title} className="w-16 h-16 rounded-md object-cover bg-surface-container shrink-0" />
                 <div className="flex-1 min-w-0">
                   <h4 className="font-semibold text-on-surface truncate group-hover:text-primary transition-colors">{design.title}</h4>
                   <p className="text-xs text-on-surface-variant mt-1">{design.category} • {design.subcategory}</p>
