@@ -597,17 +597,36 @@ export function Marketplace() {
       if (selectedSareeConcept !== 'All') params.sareeConcept = selectedSareeConcept;
       if (searchTrigger.trim()) params.search = searchTrigger;
 
-      const [response, recRes] = await Promise.all([
-        api.designs.getAll(params),
-        api.designs.getAll({ limit: 12, sort: 'newest' }).catch(() => ({ designs: [] }))
-      ]);
-
+      const response = await api.designs.getAll(params);
       setDesigns(response.designs);
       setTotalPages(response.pages);
       setTotalResults(response.total);
 
-      const matchedIds = new Set((response.designs || []).map((d: Design) => d.id));
-      const filteredRecs = (recRes.designs || []).filter((d: Design) => !matchedIds.has(d.id));
+      // Robustly fetch recommended designs
+      let recList: Design[] = [];
+      try {
+        const recRes = await api.designs.getAll({ limit: 16, sort: 'newest' });
+        recList = recRes.designs || [];
+      } catch (err) {
+        console.warn('Primary rec fetch failed:', err);
+      }
+
+      if (recList.length === 0) {
+        try {
+          const recRes2 = await api.designs.getAll({ limit: 16 });
+          recList = recRes2.designs || [];
+        } catch (err) {
+          console.warn('Secondary rec fetch failed:', err);
+        }
+      }
+
+      const getDesignId = (d: any) => String(d.id || d._id || d.title || '');
+      const matchedIds = new Set((response.designs || []).map(getDesignId));
+
+      const filteredRecs = recList.filter((d: any) => {
+        const id = getDesignId(d);
+        return id && !matchedIds.has(id);
+      });
 
       setRecommendedDesigns(filteredRecs.slice(0, 8));
     } catch (error) {
@@ -1147,14 +1166,16 @@ export function Marketplace() {
                     ))}
                   </div>
 
-                  {/* Recommended Designs below Search Results */}
-                  {recommendedDesigns.length > 0 && (searchTrigger.trim() !== '' || designs.length <= 3) && (
-                    <div className="mt-14 pt-10 border-t border-outline-variant/60 w-full animate-fade-in">
-                      <div className="flex items-center gap-3 mb-6">
-                        <span className="material-symbols-outlined text-primary text-[24px]">recommend</span>
+                  {/* Recommended Designs below Search / Filter Results */}
+                  {recommendedDesigns.length > 0 && (
+                    <div className="mt-12 pt-8 border-t border-outline-variant/60 w-full animate-fade-in">
+                      <div className="flex items-center gap-3 mb-6 bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/40">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                          <span className="material-symbols-outlined text-[24px]">thumb_up</span>
+                        </div>
                         <div>
                           <h3 className="text-xl font-bold text-on-surface">Recommended Designs You Might Like</h3>
-                          <p className="text-xs text-on-surface-variant">Explore other top-rated textile patterns in our marketplace</p>
+                          <p className="text-xs text-on-surface-variant">Popular and trending textile patterns from our marketplace</p>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-6">

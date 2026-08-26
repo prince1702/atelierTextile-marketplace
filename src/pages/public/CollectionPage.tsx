@@ -895,17 +895,36 @@ export function CollectionPage() {
       if (selectedDesignFormat !== 'All') params.designFormat = selectedDesignFormat;
       if (selectedSareeConcept !== 'All') params.sareeConcept = selectedSareeConcept;
 
-      const [response, recRes] = await Promise.all([
-        api.designs.getAll(params),
-        api.designs.getAll({ limit: 12, sort: 'newest' }).catch(() => ({ designs: [] }))
-      ]);
-
+      const response = await api.designs.getAll(params);
       setDesigns(response.designs);
       setTotalPages(response.pages);
       setTotalResults(response.total);
 
-      const matchedIds = new Set((response.designs || []).map((d: Design) => d.id));
-      const filteredRecs = (recRes.designs || []).filter((d: Design) => !matchedIds.has(d.id));
+      // Robustly fetch recommended designs
+      let recList: Design[] = [];
+      try {
+        const recRes = await api.designs.getAll({ limit: 16, sort: 'newest' });
+        recList = recRes.designs || [];
+      } catch (err) {
+        console.warn('Primary rec fetch failed in CollectionPage:', err);
+      }
+
+      if (recList.length === 0) {
+        try {
+          const recRes2 = await api.designs.getAll({ limit: 16 });
+          recList = recRes2.designs || [];
+        } catch (err) {
+          console.warn('Secondary rec fetch failed in CollectionPage:', err);
+        }
+      }
+
+      const getDesignId = (d: any) => String(d.id || d._id || d.title || '');
+      const matchedIds = new Set((response.designs || []).map(getDesignId));
+
+      const filteredRecs = recList.filter((d: any) => {
+        const id = getDesignId(d);
+        return id && !matchedIds.has(id);
+      });
 
       setRecommendedDesigns(filteredRecs.slice(0, 8));
     } catch (error) {
@@ -1333,10 +1352,12 @@ export function CollectionPage() {
                 </div>
 
                 {/* Recommended Designs below results */}
-                {recommendedDesigns.length > 0 && designs.length <= 3 && (
-                  <div className="mt-14 pt-10 border-t border-outline-variant/60 w-full animate-fade-in">
-                    <div className="flex items-center gap-3 mb-6">
-                      <span className="material-symbols-outlined text-primary text-[24px]">recommend</span>
+                {recommendedDesigns.length > 0 && (
+                  <div className="mt-12 pt-8 border-t border-outline-variant/60 w-full animate-fade-in">
+                    <div className="flex items-center gap-3 mb-6 bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/40">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <span className="material-symbols-outlined text-[24px]">thumb_up</span>
+                      </div>
                       <div>
                         <h3 className="text-xl font-bold text-on-surface">Recommended Designs You Might Like</h3>
                         <p className="text-xs text-on-surface-variant">Explore other popular patterns in our collection</p>
