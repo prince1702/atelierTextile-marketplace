@@ -163,11 +163,18 @@ export const api = {
           filtered = filtered.filter(d => d.subcategory === params.subcategory);
         }
         if (params?.search) {
-          const s = params.search.toLowerCase();
+          const trimmed = params.search.trim();
+          const flexPattern = trimmed
+            .replace(/([a-zA-Z]+)([\d]+)/gi, '$1[\\s\\-_.]*$2')
+            .replace(/([\d]+)([a-zA-Z]+)/gi, '$1[\\s\\-_.]*$2')
+            .replace(/[\s\-_.]+/g, '[\\s\\-_.]*');
+          const regex = new RegExp(flexPattern, 'i');
+
           filtered = filtered.filter(d => 
-            d.title.toLowerCase().includes(s) || 
-            (d.description && d.description.toLowerCase().includes(s)) || 
-            (d.tags && d.tags.some(t => t.toLowerCase().includes(s)))
+            regex.test(d.title) || 
+            (d.description && regex.test(d.description)) || 
+            (d.tags && d.tags.some(t => regex.test(t))) ||
+            (d.designerName && regex.test(d.designerName))
           );
         }
         if (params?.minPrice !== undefined) {

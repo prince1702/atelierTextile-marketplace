@@ -563,6 +563,7 @@ export function Marketplace() {
   const [totalResults, setTotalResults] = useState(0);
 
   const [designs, setDesigns] = useState<Design[]>([]);
+  const [recommendedDesigns, setRecommendedDesigns] = useState<Design[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Map sort labels to backend values
@@ -600,6 +601,20 @@ export function Marketplace() {
       setDesigns(response.designs);
       setTotalPages(response.pages);
       setTotalResults(response.total);
+
+      // If user is searching or when search has results, also fetch recommended designs to show below
+      if (searchTrigger.trim() !== '') {
+        try {
+          const recRes = await api.designs.getAll({ limit: 8, sort: 'newest' });
+          const matchedIds = new Set((response.designs || []).map((d: Design) => d.id));
+          const filteredRecs = (recRes.designs || []).filter((d: Design) => !matchedIds.has(d.id));
+          setRecommendedDesigns(filteredRecs);
+        } catch (recErr) {
+          console.warn('Failed to fetch recommended designs:', recErr);
+        }
+      } else {
+        setRecommendedDesigns([]);
+      }
     } catch (error) {
       console.error('Failed to fetch designs:', error);
       showToast('Error loading marketplace designs', 'error');
@@ -1130,24 +1145,64 @@ export function Marketplace() {
                   <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
                 </div>
               ) : designs.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
-                  {designs.map(design => (
-                    <DesignCard key={design.id} design={design} />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-20 bg-white rounded-2xl border border-outline-variant border-dashed">
-                  <div className="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4 text-outline">
-                    <span className="material-symbols-outlined text-[32px]">search_off</span>
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
+                    {designs.map(design => (
+                      <DesignCard key={design.id} design={design} />
+                    ))}
                   </div>
-                  <h3 className="text-lg font-bold text-on-surface mb-2">No designs found</h3>
-                  <p className="text-on-surface-variant mb-6">Try adjusting your filters or search query to find what you're looking for.</p>
-                  <button 
-                    onClick={handleClearAll}
-                    className="px-6 py-2 bg-primary-container text-white rounded-lg font-semibold hover:bg-primary transition-colors"
-                  >
-                    Clear all filters
-                  </button>
+
+                  {/* Recommended Designs below Search Results */}
+                  {searchTrigger.trim() !== '' && recommendedDesigns.length > 0 && (
+                    <div className="mt-14 pt-10 border-t border-outline-variant/60">
+                      <div className="flex items-center gap-3 mb-6">
+                        <span className="material-symbols-outlined text-primary text-[24px]">recommend</span>
+                        <div>
+                          <h3 className="text-xl font-bold text-on-surface">Recommended Designs You Might Like</h3>
+                          <p className="text-xs text-on-surface-variant">More top-rated textile patterns in our marketplace</p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-6">
+                        {recommendedDesigns.map(design => (
+                          <DesignCard key={design.id} design={design} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="space-y-10">
+                  <div className="text-center py-16 bg-white rounded-2xl border border-outline-variant border-dashed">
+                    <div className="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4 text-outline">
+                      <span className="material-symbols-outlined text-[32px]">search_off</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-on-surface mb-2">No exact match found{searchTrigger ? ` for "${searchTrigger}"` : ''}</h3>
+                    <p className="text-on-surface-variant mb-6 text-sm">Check out these recommended designs below or clear your search.</p>
+                    <button 
+                      onClick={handleClearAll}
+                      className="px-6 py-2 bg-primary-container text-white rounded-lg font-semibold hover:bg-primary transition-colors text-sm"
+                    >
+                      Clear all filters & search
+                    </button>
+                  </div>
+
+                  {/* Recommended Designs when 0 exact results found */}
+                  {recommendedDesigns.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-3 mb-6">
+                        <span className="material-symbols-outlined text-primary text-[24px]">recommend</span>
+                        <div>
+                          <h3 className="text-xl font-bold text-on-surface">Recommended Designs</h3>
+                          <p className="text-xs text-on-surface-variant">Popular patterns you might be looking for</p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-6">
+                        {recommendedDesigns.map(design => (
+                          <DesignCard key={design.id} design={design} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
               

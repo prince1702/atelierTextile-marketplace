@@ -311,14 +311,27 @@ exports.getDesigns = async (req, res, next) => {
       if (maxPrice) filter.price.$lte = Number(maxPrice);
     }
 
-    if (search) {
+    if (search && search.trim()) {
+      const trimmed = search.trim();
+
+      // Escape special regex characters except alphanumeric
+      const escaped = trimmed.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+      
+      // Flexible pattern: insert optional spaces/hyphens/underscores between letters and numbers, e.g. "ps12" -> "ps[\s\-_.]*12"
+      const flexPattern = trimmed
+        .replace(/([a-zA-Z]+)([\d]+)/gi, '$1[\\s\\-_.]*$2')
+        .replace(/([\d]+)([a-zA-Z]+)/gi, '$1[\\s\\-_.]*$2')
+        .replace(/[\s\-_.]+/g, '[\\s\\-_.]*');
+
+      const searchRegex = { $regex: flexPattern, $options: 'i' };
+
       filter.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-        { category: { $regex: search, $options: 'i' } },
-        { subcategory: { $regex: search, $options: 'i' } },
-        { tags: { $regex: search, $options: 'i' } },
-        { designerName: { $regex: search, $options: 'i' } },
+        { title: searchRegex },
+        { description: searchRegex },
+        { category: searchRegex },
+        { subcategory: searchRegex },
+        { tags: searchRegex },
+        { designerName: searchRegex },
       ];
     }
 
@@ -333,10 +346,28 @@ exports.getDesigns = async (req, res, next) => {
     const limitNum = parseInt(limit, 10);
     const skip = (pageNum - 1) * limitNum;
 
-    const [designs, total] = await Promise.all([
+    let [designs, total] = await Promise.all([
       Design.find(filter).sort(sortOption).skip(skip).limit(limitNum),
       Design.countDocuments(filter),
     ]);
+
+    // Fallback: If searching with category filter returned 0 results, search across ALL categories
+    if (total === 0 && search && (filter.category || filter.subcategory)) {
+      const fallbackFilter = { status: filterStatus !== 'all' ? filterStatus : undefined };
+      if (filterStatus === 'all') delete fallbackFilter.status;
+      if (minPrice || maxPrice) fallbackFilter.price = filter.price;
+      if (filter.$or) fallbackFilter.$or = filter.$or;
+
+      const [fallbackDesigns, fallbackTotal] = await Promise.all([
+        Design.find(fallbackFilter).sort(sortOption).skip(skip).limit(limitNum),
+        Design.countDocuments(fallbackFilter),
+      ]);
+
+      if (fallbackTotal > 0) {
+        designs = fallbackDesigns;
+        total = fallbackTotal;
+      }
+    }
 
     res.status(200).json({
       success: true,
