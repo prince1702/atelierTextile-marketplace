@@ -10,6 +10,9 @@ export interface User {
   country: string;
   totalOrders?: number;
   totalRevenue?: number;
+  walletBalance?: number; // 60% seller earnings
+  grossSales?: number;
+  adminShare?: number; // 40% platform share
 }
 
 export interface Design {
@@ -65,6 +68,8 @@ export interface Order {
   licenseType: string;
   paymentScreenshot?: string;
   paymentNote?: string;
+  sellerEarnings?: number; // 60% share
+  adminFee?: number; // 40% share
 }
 
 export interface Ticket {

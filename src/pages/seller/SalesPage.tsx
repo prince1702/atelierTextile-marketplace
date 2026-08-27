@@ -33,11 +33,24 @@ export function SalesPage() {
     }
   };
 
+  const completedSales = sales.filter(s => s.status === 'completed');
+  const totalGrossSales = completedSales.reduce((sum, s) => sum + s.amount, 0);
+  const totalWalletEarnings = completedSales.reduce((sum, s) => sum + (s.sellerEarnings || Math.round(s.amount * 0.60)), 0);
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h2 className="text-2xl font-bold text-primary mb-1">Sales Received</h2>
-        <p className="text-sm text-on-surface-variant">Monitor purchases made on your designs and track licensing revenues.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-primary mb-1">Sales Received & Wallet</h2>
+          <p className="text-sm text-on-surface-variant">Monitor purchases made on your designs and your 60% wallet earnings.</p>
+        </div>
+        <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5 shadow-sm">
+          <span className="material-symbols-outlined text-emerald-600 text-[22px]">account_balance_wallet</span>
+          <div>
+            <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Wallet Balance (60%)</p>
+            <p className="text-lg font-bold text-emerald-900 leading-none">₹{totalWalletEarnings.toLocaleString()}</p>
+          </div>
+        </div>
       </div>
 
       {isLoading ? (
@@ -55,43 +68,50 @@ export function SalesPage() {
       ) : (
         <div className="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[800px]">
+            <table className="w-full text-left border-collapse min-w-[850px]">
               <thead>
                 <tr className="bg-surface-container-low text-xs font-semibold text-on-surface-variant uppercase tracking-wider border-b border-outline-variant">
                   <th className="py-4 px-6">Design details</th>
                   <th className="py-4 px-6">Order ID</th>
                   <th className="py-4 px-6">Buyer Name</th>
                   <th className="py-4 px-6">License Type</th>
-                  <th className="py-4 px-6">Amount Earned</th>
+                  <th className="py-4 px-6">Price</th>
+                  <th className="py-4 px-6">Wallet Earned (60%)</th>
                   <th className="py-4 px-6">Date</th>
                   <th className="py-4 px-6 text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="text-sm text-on-surface divide-y divide-outline-variant">
-                {sales.map(sale => (
-                  <tr key={sale.id} className="hover:bg-surface-container-low transition-colors">
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <img 
-                          src={sale.designImage} 
-                          alt={sale.designTitle} 
-                          className="w-10 h-10 rounded object-cover bg-surface-container shrink-0" 
-                        />
-                        <p className="font-semibold text-on-surface">{sale.designTitle}</p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 font-mono text-xs text-on-surface-variant">{sale.id}</td>
-                    <td className="py-4 px-6 text-on-surface-variant">{sale.buyerName}</td>
-                    <td className="py-4 px-6 font-medium text-on-surface-variant">{sale.licenseType}</td>
-                    <td className="py-4 px-6 font-bold text-primary">₹{sale.amount}</td>
-                    <td className="py-4 px-6 text-on-surface-variant">{sale.date}</td>
-                    <td className="py-4 px-6 text-right">
-                      <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusClass(sale.status)}`}>
-                        {sale.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {sales.map(sale => {
+                  const earned60 = sale.sellerEarnings || Math.round(sale.amount * 0.60);
+                  return (
+                    <tr key={sale.id} className="hover:bg-surface-container-low transition-colors">
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src={sale.designImage} 
+                            alt={sale.designTitle} 
+                            className="w-10 h-10 rounded object-cover bg-surface-container shrink-0" 
+                          />
+                          <p className="font-semibold text-on-surface">{sale.designTitle}</p>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 font-mono text-xs text-on-surface-variant">{sale.id}</td>
+                      <td className="py-4 px-6 text-on-surface-variant">{sale.buyerName}</td>
+                      <td className="py-4 px-6 font-medium text-on-surface-variant">{sale.licenseType}</td>
+                      <td className="py-4 px-6 font-bold text-on-surface">₹{sale.amount.toLocaleString()}</td>
+                      <td className="py-4 px-6 font-bold text-emerald-700">
+                        {sale.status === 'completed' ? `₹${earned60.toLocaleString()}` : <span className="text-on-surface-variant font-normal">Pending</span>}
+                      </td>
+                      <td className="py-4 px-6 text-on-surface-variant">{sale.date}</td>
+                      <td className="py-4 px-6 text-right">
+                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getStatusClass(sale.status)}`}>
+                          {sale.status}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

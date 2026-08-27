@@ -48,8 +48,13 @@ exports.getMyOrders = async (req, res, next) => {
 // @access  Seller
 exports.getSellerOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ seller: req.user.id }).populate('design').sort({ createdAt: -1 });
-    res.status(200).json({ success: true, count: orders.length, data: orders });
+    const orders = await Order.find({ seller: req.user.id }).populate('design').sort({ createdAt: -1 }).lean();
+    const ordersWithWallet = orders.map(o => ({
+      ...o,
+      sellerEarnings: Math.round((o.amount || 0) * 0.60),
+      adminFee: Math.round((o.amount || 0) * 0.40),
+    }));
+    res.status(200).json({ success: true, count: ordersWithWallet.length, data: ordersWithWallet });
   } catch (error) {
     next(error);
   }

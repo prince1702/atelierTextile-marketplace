@@ -91,7 +91,7 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <StatCard 
           title="Total Users" value={stats?.totalUsers || 0} icon="group" trend="up" trendValue="+12% this month"
           colorClass={{ bg: 'bg-primary-fixed', iconBg: 'bg-primary-fixed/50', iconText: 'text-primary' }}
@@ -101,12 +101,20 @@ export function AdminDashboard() {
           colorClass={{ bg: 'bg-secondary-fixed', iconBg: 'bg-secondary-container/20', iconText: 'text-secondary-container' }}
         />
         <StatCard 
-          title="Total Orders" value={stats?.totalOrders || 0} icon="how_to_reg" trend="neutral" trendValue="Stable this week"
+          title="Total Orders" value={stats?.totalOrders || 0} icon="how_to_reg" trend="neutral" trendValue="Total volume"
           colorClass={{ bg: 'bg-tertiary-fixed', iconBg: 'bg-tertiary-container/20', iconText: 'text-tertiary-container' }}
         />
         <StatCard 
-          title="Platform Revenue" value={`₹${(stats?.totalRevenue || 0).toLocaleString()}`} icon="payments" trend="up" trendValue="+22% vs last month"
-          colorClass={{ bg: 'bg-surface-variant', iconBg: 'bg-surface-variant', iconText: 'text-on-surface-variant' }}
+          title="Selling Wallet (Gross)" value={`₹${(stats?.totalRevenue || 0).toLocaleString()}`} icon="payments" trend="up" trendValue="Gross selling volume"
+          colorClass={{ bg: 'bg-blue-50', iconBg: 'bg-blue-100', iconText: 'text-blue-700' }}
+        />
+        <StatCard 
+          title="Sellers Wallet (60%)" value={`₹${(stats?.totalSellersWallet ?? Math.round((stats?.totalRevenue || 0) * 0.60)).toLocaleString()}`} icon="account_balance_wallet" trend="up" trendValue="60% seller earnings"
+          colorClass={{ bg: 'bg-emerald-50', iconBg: 'bg-emerald-100', iconText: 'text-emerald-700' }}
+        />
+        <StatCard 
+          title="Platform Fee (40%)" value={`₹${(stats?.totalAdminFee ?? Math.round((stats?.totalRevenue || 0) * 0.40)).toLocaleString()}`} icon="savings" trend="up" trendValue="40% platform share"
+          colorClass={{ bg: 'bg-purple-50', iconBg: 'bg-purple-100', iconText: 'text-purple-700' }}
         />
       </div>
 

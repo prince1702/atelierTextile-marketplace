@@ -6,12 +6,28 @@ const Order = require('../models/Order');
 // @access  Admin only
 exports.getUsers = async (req, res, next) => {
   try {
-    const users = await User.find().sort({ createdAt: -1 });
+    const [users, completedOrders] = await Promise.all([
+      User.find().sort({ createdAt: -1 }),
+      Order.find({ status: 'completed' }),
+    ]);
+
+    const usersWithWallet = users.map((u) => {
+      const uObj = u.toObject();
+      if (u.role === 'seller') {
+        const sellerOrders = completedOrders.filter(o => o.seller.toString() === u._id.toString());
+        const grossSales = sellerOrders.reduce((sum, o) => sum + (o.amount || 0), 0);
+        uObj.grossSales = grossSales;
+        uObj.walletBalance = Math.round(grossSales * 0.60);
+        uObj.adminShare = Math.round(grossSales * 0.40);
+        uObj.totalOrders = sellerOrders.length;
+      }
+      return uObj;
+    });
 
     res.status(200).json({
       success: true,
-      count: users.length,
-      data: users,
+      count: usersWithWallet.length,
+      data: usersWithWallet,
     });
   } catch (error) {
     next(error);
@@ -206,10 +222,11 @@ exports.getPlatformStats = async (req, res, next) => {
       Order.find(),
     ]);
 
-    const totalRevenue = allOrders.reduce((sum, order) => {
-      if (order.status === 'completed') return sum + order.amount;
-      return sum;
-    }, 0);
+    const completedOrders = allOrders.filter((o) => o.status === 'completed');
+
+    const totalRevenue = completedOrders.reduce((sum, o) => sum + o.amount, 0); // Total Gross Platform Selling Wallet
+    const totalSellersWallet = Math.round(totalRevenue * 0.60); // Total 60% credited to sellers
+    const totalAdminFee = Math.round(totalRevenue * 0.40); // Total 40% platform share
 
     const totalOrders = allOrders.length;
 
@@ -248,6 +265,8 @@ exports.getPlatformStats = async (req, res, next) => {
         totalSellers,
         totalCustomers,
         totalRevenue,
+        totalSellersWallet,
+        totalAdminFee,
         totalOrders,
         monthlyRevenue,
         monthlyUsers,

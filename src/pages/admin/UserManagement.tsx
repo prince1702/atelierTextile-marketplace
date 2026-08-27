@@ -167,6 +167,7 @@ export function UserManagement() {
                 <tr className="bg-surface-container-low text-xs font-semibold text-on-surface-variant uppercase tracking-wider border-b border-outline-variant">
                   <th className="py-4 px-6">User</th>
                   <th className="py-4 px-6">Role</th>
+                  <th className="py-4 px-6">Seller Wallet (60%)</th>
                   <th className="py-4 px-6">Joined Date</th>
                   <th className="py-4 px-6">Location</th>
                   <th className="py-4 px-6">Status</th>
@@ -189,6 +190,21 @@ export function UserManagement() {
                     </td>
                     <td className="py-4 px-6">
                       <span className="capitalize font-medium text-on-surface-variant">{user.role}</span>
+                    </td>
+                    <td className="py-4 px-6">
+                      {user.role === 'seller' ? (
+                        <div>
+                          <span className="font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full text-xs inline-flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[14px]">account_balance_wallet</span>
+                            ₹{(user.walletBalance || 0).toLocaleString()}
+                          </span>
+                          {user.grossSales !== undefined && (
+                            <p className="text-[10px] text-on-surface-variant mt-0.5">Gross: ₹{user.grossSales.toLocaleString()}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-on-surface-variant text-xs">—</span>
+                      )}
                     </td>
                     <td className="py-4 px-6 text-on-surface-variant">{user.joinedAt?.split('T')[0] || 'N/A'}</td>
                     <td className="py-4 px-6 text-on-surface-variant">{user.country || 'N/A'}</td>

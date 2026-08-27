@@ -49,13 +49,16 @@ export function SellerDashboard() {
     sales.filter(s => s.status === 'completed' || s.status === 'processing' || s.status === 'pending').length,
     designs.reduce((sum, d) => sum + (d.sales || 0), 0)
   );
+  const totalWalletEarnings = sales
+    .filter(s => s.status === 'completed')
+    .reduce((sum, s) => sum + (s.sellerEarnings || Math.round(s.amount * 0.60)), 0);
 
   return (
     <div className="space-y-6 animate-fade-up animate-sans">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-primary mb-1">Seller Dashboard</h2>
-          <p className="text-sm text-on-surface-variant">Overview of your design portfolio and recent sales.</p>
+          <p className="text-sm text-on-surface-variant">Overview of your design portfolio, wallet earnings, and recent sales.</p>
         </div>
         <Link 
           to="/seller/upload"
@@ -66,7 +69,15 @@ export function SellerDashboard() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <StatCard 
+          title="Seller Wallet (60%)" 
+          value={`₹${totalWalletEarnings.toLocaleString()}`} 
+          icon="account_balance_wallet" 
+          trend="up" 
+          trendValue="60% revenue per design"
+          colorClass={{ bg: 'bg-emerald-50', iconBg: 'bg-emerald-100', iconText: 'text-emerald-700' }}
+        />
         <StatCard 
           title="Active Designs" 
           value={activeDesignsCount} 
@@ -93,9 +104,9 @@ export function SellerDashboard() {
         />
       </div>
 
-      <div className="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col max-w-4xl">
+      <div className="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col max-w-5xl">
         <div className="p-5 border-b border-outline-variant flex justify-between items-center bg-surface/50">
-          <h3 className="text-base font-bold text-primary">Recent Designs</h3>
+          <h3 className="text-base font-bold text-primary">Recent Designs & Wallet Share (60%)</h3>
           <Link to="/seller/designs" className="text-sm font-semibold text-primary hover:underline">Portfolio</Link>
         </div>
         <div className="p-5 flex-1 flex flex-col gap-4">
@@ -103,13 +114,18 @@ export function SellerDashboard() {
             <p className="text-xs text-on-surface-variant text-center py-6">No designs uploaded yet</p>
           ) : (
             designs.slice(0, 4).map((design) => (
-              <div key={design.id} className="flex items-center gap-4 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:border-primary/30 transition-colors cursor-pointer group" onClick={() => navigate(`/design/${design.id}`)}>
-                <img src={optimizeCloudinaryUrl(design.image, 'thumbnail')} alt={design.title} className="w-16 h-16 rounded-md object-cover bg-surface-container shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-on-surface truncate group-hover:text-primary transition-colors">{design.title}</h4>
-                  <p className="text-xs text-on-surface-variant mt-1">{design.category} • {design.subcategory}</p>
+              <div key={design.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:border-primary/30 transition-colors cursor-pointer group" onClick={() => navigate(`/design/${design.id}`)}>
+                <div className="flex items-center gap-4 min-w-0">
+                  <img src={optimizeCloudinaryUrl(design.image, 'thumbnail')} alt={design.title} className="w-16 h-16 rounded-md object-cover bg-surface-container shrink-0" />
+                  <div className="min-w-0">
+                    <h4 className="font-semibold text-on-surface truncate group-hover:text-primary transition-colors">{design.title}</h4>
+                    <p className="text-xs text-on-surface-variant mt-1">{design.category} • {design.subcategory}</p>
+                    <p className="text-xs font-semibold text-emerald-700 mt-1">
+                      Price: ₹{design.price.toLocaleString()} · <span className="font-bold">60% Wallet: ₹{Math.round(design.price * 0.60).toLocaleString()}</span>
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 shrink-0">
                   <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full">
                     {design.sales || 0} Sold
                   </span>
