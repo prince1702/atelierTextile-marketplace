@@ -11,18 +11,21 @@ const navConfig = {
     { name: 'Users', icon: 'group', path: '/admin/users' },
     { name: 'Analytics', icon: 'analytics', path: '/admin/analytics' },
     { name: 'Payments', icon: 'qr_code_2', path: '/admin/payments' },
+    { name: 'Feedback', icon: 'rate_review', path: '/admin/feedback' },
     { name: 'Settings', icon: 'settings', path: '/profile' }
   ],
   seller: [
     { name: 'Dashboard', icon: 'dashboard', path: '/seller/dashboard' },
     { name: 'My Designs', icon: 'palette', path: '/seller/designs' },
     { name: 'Upload', icon: 'upload', path: '/seller/upload' },
+    { name: 'Feedback', icon: 'rate_review', path: '/seller/feedback' },
     { name: 'Settings', icon: 'settings', path: '/profile' }
   ],
   customer: [
     { name: 'Dashboard', icon: 'dashboard', path: '/customer/dashboard' },
     { name: 'Wishlist', icon: 'favorite', path: '/customer/wishlist' },
     { name: 'My Orders', icon: 'shopping_cart', path: '/customer/orders' },
+    { name: 'Feedback', icon: 'rate_review', path: '/customer/feedback' },
     { name: 'Rewards', icon: 'stars', path: '/customer/rewards' },
     { name: 'Support', icon: 'support_agent', path: '/customer/support' },
     { name: 'Settings', icon: 'settings', path: '/profile' }

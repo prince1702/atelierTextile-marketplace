@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { User, Design, Order, Ticket } from '../types';
+import type { User, Design, Order, Ticket, Feedback } from '../types';
 
 const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
@@ -419,6 +419,25 @@ export const api = {
         success: response.data.success,
         data: normalize<Order>(response.data.data),
       };
+    },
+  },
+
+  feedback: {
+    create: async (orderId: string, rating: 'Good' | 'Very Good' | 'Not Good' | 'Duplicate' | 'Refund', comment?: string): Promise<Feedback> => {
+      const response = await client.post('/feedback', { orderId, rating, comment });
+      return normalize<Feedback>(response.data.data);
+    },
+    getMyFeedback: async (): Promise<Feedback[]> => {
+      const response = await client.get('/feedback/my');
+      return normalize<Feedback[]>(response.data.data);
+    },
+    getSellerFeedback: async (): Promise<Feedback[]> => {
+      const response = await client.get('/feedback/seller');
+      return normalize<Feedback[]>(response.data.data);
+    },
+    getAdminFeedback: async (): Promise<Feedback[]> => {
+      const response = await client.get('/feedback/admin');
+      return normalize<Feedback[]>(response.data.data);
     },
   },
 };

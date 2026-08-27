@@ -25,12 +25,14 @@ import { UserManagement } from './pages/admin/UserManagement';
 import { InventoryPage } from './pages/admin/InventoryPage';
 import { AnalyticsPage } from './pages/admin/AnalyticsPage';
 import { PaymentOrdersPage } from './pages/admin/PaymentOrdersPage';
+import { AdminFeedbackPage } from './pages/admin/AdminFeedbackPage';
 
 // Seller Portal
 import { SellerDashboard } from './pages/seller/SellerDashboard';
 import { DesignsPage } from './pages/seller/DesignsPage';
 import { UploadPage } from './pages/seller/UploadPage';
 import { SalesPage } from './pages/seller/SalesPage';
+import { SellerFeedbackPage } from './pages/seller/SellerFeedbackPage';
 
 // Customer Portal
 import { CustomerDashboard } from './pages/customer/CustomerDashboard';
@@ -38,6 +40,7 @@ import { WishlistPage } from './pages/customer/WishlistPage';
 import { OrdersPage } from './pages/customer/OrdersPage';
 import { RewardsPage } from './pages/customer/RewardsPage';
 import { SupportPage } from './pages/customer/SupportPage';
+import { CustomerFeedbackPage } from './pages/customer/CustomerFeedbackPage';
 
 // Shared Portal
 import { Profile } from './pages/shared/Profile';
@@ -93,6 +96,7 @@ export default function App() {
                     <Route path="inventory" element={<InventoryPage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="payments" element={<PaymentOrdersPage />} />
+                    <Route path="feedback" element={<AdminFeedbackPage />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />
                   </Routes>
                 </ProtectedRoute>
@@ -106,6 +110,7 @@ export default function App() {
                     <Route path="designs" element={<DesignsPage />} />
                     <Route path="upload" element={<UploadPage />} />
                     <Route path="edit/:id" element={<UploadPage />} />
+                    <Route path="feedback" element={<SellerFeedbackPage />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />
                   </Routes>
                 </ProtectedRoute>
@@ -118,6 +123,7 @@ export default function App() {
                     <Route path="dashboard" element={<CustomerDashboard />} />
                     <Route path="wishlist" element={<WishlistPage />} />
                     <Route path="orders" element={<OrdersPage />} />
+                    <Route path="feedback" element={<CustomerFeedbackPage />} />
                     <Route path="rewards" element={<RewardsPage />} />
                     <Route path="support" element={<SupportPage />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />

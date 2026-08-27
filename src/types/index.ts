@@ -79,3 +79,19 @@ export interface Ticket {
   updatedAt: string;
   responses: number;
 }
+
+export interface Feedback {
+  id: string;
+  order: string;
+  design: string;
+  designTitle: string;
+  designImage?: string;
+  seller: string;
+  sellerName: string;
+  customer?: string | { name?: string; email?: string };
+  customerName?: string;
+  rating: 'Good' | 'Very Good' | 'Not Good' | 'Duplicate' | 'Refund';
+  comment?: string;
+  createdAt: string;
+}
+

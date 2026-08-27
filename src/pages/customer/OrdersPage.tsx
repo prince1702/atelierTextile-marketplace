@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { api, API_URL } from '../../services/api';
 import { loadRazorpayScript } from '../../utils/razorpay';
 import type { Order } from '../../types';
@@ -248,13 +249,22 @@ export function OrdersPage() {
                     const fileType = (lt === 'PDC' || lt === 'TIF') ? lt.toLowerCase() : undefined;
 
                     return (
-                      <button
-                        onClick={() => handleDownload(order.designTitle, designId, fileType)}
-                        className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
-                      >
-                        <span className="material-symbols-outlined text-[14px]">download</span>
-                        Download
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleDownload(order.designTitle, designId, fileType)}
+                          className="px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm inline-flex items-center gap-1.5"
+                        >
+                          <span className="material-symbols-outlined text-[14px]">download</span>
+                          Download
+                        </button>
+                        <Link
+                          to="/customer/feedback"
+                          className="px-3.5 py-1.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg text-xs font-semibold hover:bg-purple-100 transition-colors shadow-sm inline-flex items-center gap-1.5"
+                        >
+                          <span className="material-symbols-outlined text-[14px]">rate_review</span>
+                          Give Feedback
+                        </Link>
+                      </div>
                     );
                   })()}
                   {(order.status === 'pending' && !order.paymentScreenshot) && (
