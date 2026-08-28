@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';
@@ -7,23 +7,15 @@ import { api } from '../../services/api';
 import { loadRazorpayScript } from '../../utils/razorpay';
 import type { Design, Order } from '../../types';
 
-const UPI_ID = 'dhavalhidad2600@okicici';
-const UPI_NAME = 'TexDesigner';
-
 export function CartPage() {
   const { items, removeFromCart, clearCart } = useCart();
   const { showToast } = useNotification();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [paymentStep, setPaymentStep] = useState<'cart' | 'pay' | 'upload'>('cart');
+  const [paymentStep, setPaymentStep] = useState<'cart' | 'pay'>('cart');
   const [createdOrders, setCreatedOrders] = useState<Order[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
-  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [isRazorpayLoading, setIsRazorpayLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleRazorpayPayment = async () => {
     if (createdOrders.length === 0) {
@@ -158,59 +150,21 @@ export function CartPage() {
     }
   };
 
-  const handleCopyUPI = () => {
-    navigator.clipboard.writeText(UPI_ID);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setScreenshotFile(file);
-    const reader = new FileReader();
-    reader.onload = (ev) => setScreenshotPreview(ev.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
-  const handleSubmitScreenshot = async () => {
-    if (!screenshotFile || createdOrders.length === 0) return;
-    setIsUploading(true);
-    try {
-      // Upload screenshot to the first order (all orders share the same payment)
-      await Promise.all(
-        createdOrders.map(order => api.orders.uploadPaymentScreenshot(order.id, screenshotFile))
-      );
-      showToast('Payment screenshot submitted! Awaiting admin approval.', 'success');
-      navigate('/customer/orders');
-    } catch (error: any) {
-      console.error(error);
-      showToast(error.response?.data?.error || 'Failed to upload screenshot', 'error');
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
   // ─── Payment Modal ──────────────────────────────────────────────────────────
-  if (paymentStep === 'pay' || paymentStep === 'upload') {
+  if (paymentStep === 'pay') {
     return (
       <div className="bg-surface min-h-[calc(100vh-4rem)] pb-24 pt-8">
         <div className="max-w-lg mx-auto px-6">
           {/* Progress Steps */}
-          <div className="flex items-center justify-center gap-2 mb-8 text-sm font-semibold">
-            <span className="text-primary flex items-center gap-1">
+          <div className="flex items-center justify-center gap-3 mb-8 text-sm font-semibold">
+            <span className="text-primary flex items-center gap-1.5">
               <span className="w-6 h-6 bg-primary text-white rounded-full inline-flex items-center justify-center text-xs">✓</span>
               Order Placed
             </span>
-            <div className="flex-1 h-px bg-primary mx-2 max-w-[60px]" />
-            <span className={`flex items-center gap-1 ${paymentStep === 'pay' ? 'text-primary' : 'text-on-surface-variant'}`}>
-              <span className={`w-6 h-6 rounded-full inline-flex items-center justify-center text-xs font-bold border-2 ${paymentStep === 'pay' ? 'bg-primary text-white border-primary' : 'border-outline-variant text-outline'}`}>2</span>
-              Pay via UPI
-            </span>
-            <div className="flex-1 h-px bg-outline-variant mx-2 max-w-[60px]" />
-            <span className="text-on-surface-variant flex items-center gap-1">
-              <span className="w-6 h-6 rounded-full inline-flex items-center justify-center text-xs font-bold border-2 border-outline-variant text-outline">3</span>
-              Upload Proof
+            <div className="w-12 h-px bg-primary" />
+            <span className="text-primary flex items-center gap-1.5">
+              <span className="w-6 h-6 bg-primary text-white rounded-full inline-flex items-center justify-center text-xs font-bold">2</span>
+              Razorpay Checkout
             </span>
           </div>
 
@@ -218,7 +172,7 @@ export function CartPage() {
             {/* Header */}
             <div className="bg-primary px-6 py-4">
               <h2 className="text-white font-bold text-xl">Complete Your Payment</h2>
-              <p className="text-white/70 text-sm mt-0.5">Scan QR code or use UPI ID to pay ₹{totalAmount.toLocaleString()}</p>
+              <p className="text-white/70 text-sm mt-0.5">Pay securely online via Razorpay</p>
             </div>
 
             <div className="p-6 space-y-6">
@@ -232,16 +186,16 @@ export function CartPage() {
               </div>
 
               {/* Razorpay Online Payment Option */}
-              <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white rounded-2xl p-5 shadow-lg space-y-3.5 border border-indigo-500/30">
+              <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white rounded-2xl p-6 shadow-lg space-y-4 border border-indigo-500/30">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-amber-400 text-2xl animate-pulse">bolt</span>
-                    <h3 className="font-bold text-white text-base">Pay Online (Razorpay)</h3>
+                    <h3 className="font-bold text-white text-base">Pay Online via Razorpay</h3>
                   </div>
                   <span className="text-[10px] uppercase tracking-wider bg-amber-400 text-slate-950 font-extrabold px-2.5 py-1 rounded-full shadow">Instant Approval</span>
                 </div>
                 <p className="text-xs text-indigo-200/90 leading-relaxed">
-                  Pay securely using <strong>UPI, Google Pay, PhonePe, Cards, or NetBanking</strong>. Your design files will be unlocked automatically!
+                  Pay securely using <strong>UPI, Google Pay, PhonePe, Paytm, Credit/Debit Cards, or NetBanking</strong>. Upon successful payment, your design files will be unlocked instantly for download!
                 </p>
                 <button
                   onClick={handleRazorpayPayment}
@@ -256,129 +210,18 @@ export function CartPage() {
                   ) : (
                     <>
                       <span className="material-symbols-outlined text-xl">account_balance_wallet</span>
-                      Pay ₹{totalAmount.toLocaleString()} via Razorpay
+                      Pay ₹{totalAmount.toLocaleString()} Now
                     </>
                   )}
                 </button>
               </div>
 
-              {/* Divider */}
-              <div className="flex items-center gap-3 my-2">
-                <div className="flex-1 h-px bg-outline-variant" />
-                <span className="text-xs text-on-surface-variant font-semibold">OR PAY MANUALLY VIA UPI QR</span>
-                <div className="flex-1 h-px bg-outline-variant" />
-              </div>
-
-              {/* QR Code */}
-              <div className="flex flex-col items-center">
-                <p className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold mb-3">Scan to Pay</p>
-                <div className="border-4 border-primary/20 rounded-2xl p-2 shadow-sm">
-                  <img
-                    src="/upi-qr.png"
-                    alt="UPI QR Code"
-                    className="w-52 h-52 object-contain rounded-lg"
-                  />
-                </div>
-                <p className="text-xs text-on-surface-variant mt-2">Works with Google Pay, PhonePe, Paytm, any UPI app</p>
-                <div className="mt-3 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center gap-2 text-xs text-amber-800 font-semibold shadow-sm">
-                  <span className="material-symbols-outlined text-[16px] text-amber-600">schedule</span>
-                  <span>Payment Verification Hours: 10:00 AM to 6:00 PM</span>
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className="flex items-center gap-3">
-                <div className="flex-1 h-px bg-outline-variant" />
-                <span className="text-xs text-on-surface-variant font-semibold">OR PAY USING UPI ID</span>
-                <div className="flex-1 h-px bg-outline-variant" />
-              </div>
-
-              {/* UPI ID */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface-container-low border border-outline-variant rounded-xl p-4">
-                <div className="flex items-start gap-3">
-                  <span className="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5">account_balance_wallet</span>
-                  <div className="min-w-0">
-                    <p className="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">UPI ID</p>
-                    <p className="font-mono font-bold text-on-surface text-sm break-all mt-0.5">{UPI_ID}</p>
-                    <p className="text-xs text-on-surface-variant mt-0.5">Name: {UPI_NAME}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleCopyUPI}
-                  className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs font-bold transition-all shrink-0 ${copied ? 'bg-primary text-white' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
-                >
-                  {copied ? '✓ Copied!' : 'Copy UPI ID'}
-                </button>
-              </div>
-
-              {/* Instructions */}
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                <p className="text-amber-800 font-bold text-sm mb-2 flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[18px]">info</span>
-                  Payment Instructions
+              <div className="text-center pt-2">
+                <p className="text-xs text-on-surface-variant flex items-center justify-center gap-1.5">
+                  <span className="material-symbols-outlined text-green-600 text-sm">lock</span>
+                  100% Encrypted & Secure Payment via Razorpay
                 </p>
-                <ol className="text-amber-700 text-xs space-y-1 list-decimal list-inside">
-                  <li>Open any UPI app (Google Pay, PhonePe, Paytm)</li>
-                  <li>Scan the QR code or enter the UPI ID above</li>
-                  <li>Pay exactly <strong>₹{totalAmount.toLocaleString()}</strong></li>
-                  <li>Take a screenshot of the success screen</li>
-                  <li>Upload it below and click Submit</li>
-                  <li>For any assistance, call Customer Care: <strong>8849590378</strong></li>
-                </ol>
               </div>
-
-              {/* Screenshot Upload */}
-              <div>
-                <p className="text-sm font-bold text-on-surface mb-3">Upload Payment Screenshot</p>
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${screenshotPreview ? 'border-primary/40 bg-primary/5' : 'border-outline-variant hover:border-primary hover:bg-surface-container-low'}`}
-                >
-                  {screenshotPreview ? (
-                    <div className="space-y-2">
-                      <img src={screenshotPreview} alt="Payment screenshot" className="max-h-48 mx-auto rounded-lg object-contain shadow" />
-                      <p className="text-xs text-primary font-semibold">✓ {screenshotFile?.name}</p>
-                      <p className="text-xs text-on-surface-variant">Click to change</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <span className="material-symbols-outlined text-[40px] text-outline">upload_file</span>
-                      <p className="text-sm font-semibold text-on-surface">Click to upload screenshot</p>
-                      <p className="text-xs text-on-surface-variant">JPG, PNG, WEBP — max 10MB</p>
-                    </div>
-                  )}
-                </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileSelect}
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                onClick={handleSubmitScreenshot}
-                disabled={!screenshotFile || isUploading}
-                className="w-full py-4 bg-primary text-white rounded-xl font-bold text-base hover:bg-primary-container transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isUploading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <span className="material-symbols-outlined">send</span>
-                    Submit Payment Proof
-                  </>
-                )}
-              </button>
-
-              <p className="text-[11px] text-center text-on-surface-variant">
-                Your design will be unlocked once admin verifies the payment (usually within a few hours).
-              </p>
             </div>
           </div>
         </div>
