@@ -339,7 +339,13 @@ export function DesignDetail() {
           {/* Right: Product Details */}
           <div className="lg:col-span-5 space-y-8 lg:pl-4">
             <div>
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                {design.discountPercentage && design.discountPercentage > 0 ? (
+                  <span className="bg-emerald-600 text-white px-3 py-1 rounded font-extrabold text-xs uppercase tracking-wider shadow flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px]">local_offer</span>
+                    {design.offerName || 'Special Offer'} · {design.discountPercentage}% OFF
+                  </span>
+                ) : null}
                 <span className="bg-primary-fixed text-primary px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider">{design.category}</span>
                 {design.badge && <span className="bg-secondary-container text-on-secondary px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider">{design.badge}</span>}
               </div>
@@ -382,8 +388,22 @@ export function DesignDetail() {
 
               <div className="mt-6 pt-6 border-t border-outline-variant/50">
                 <div className="flex justify-between items-center mb-6">
-                  <span className="text-on-surface-variant">Total Payment</span>
-                  <span className="text-3xl font-bold text-primary">₹{getPrice(design.price, selectedLicense).toLocaleString()}</span>
+                  <div>
+                    <span className="text-on-surface-variant text-sm block">Total Payment</span>
+                    {design.discountPercentage && design.discountPercentage > 0 ? (
+                      <span className="text-xs font-bold text-emerald-700">{design.offerName || 'Promotional Offer'} ({design.discountPercentage}% OFF Applied)</span>
+                    ) : null}
+                  </div>
+                  <div className="text-right">
+                    {design.originalPrice && design.originalPrice > design.price ? (
+                      <div>
+                        <span className="text-xs text-on-surface-variant line-through font-semibold block">Original: ₹{getPrice(design.originalPrice, selectedLicense).toLocaleString()}</span>
+                        <span className="text-3xl font-extrabold text-emerald-700">₹{getPrice(design.price, selectedLicense).toLocaleString()}</span>
+                      </div>
+                    ) : (
+                      <span className="text-3xl font-bold text-primary">₹{getPrice(design.price, selectedLicense).toLocaleString()}</span>
+                    )}
+                  </div>
                 </div>
                 <button onClick={handleAddToCart} className="w-full py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-2 group">
                   <span className="material-symbols-outlined group-hover:scale-110 transition-transform">shopping_cart</span>

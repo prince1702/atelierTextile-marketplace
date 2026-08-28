@@ -3,6 +3,7 @@ const User = require('../models/User');
 const cloudinary = require('../config/cloudinary');
 const fs = require('fs');
 const path = require('path');
+const { getActiveOffer, applyOfferToDesign } = require('../utils/offerHelper');
 
 // Helper: upload buffer to Cloudinary
 const uploadToCloudinary = (buffer, resourceType = 'image', originalName = '') => {
@@ -369,13 +370,16 @@ exports.getDesigns = async (req, res, next) => {
       }
     }
 
+    const activeOffer = await getActiveOffer();
+    const formattedDesigns = designs.map(d => applyOfferToDesign(d, activeOffer));
+
     res.status(200).json({
       success: true,
-      count: designs.length,
+      count: formattedDesigns.length,
       total,
       page: pageNum,
       pages: Math.ceil(total / limitNum),
-      data: designs,
+      data: formattedDesigns,
     });
   } catch (error) {
     next(error);
@@ -399,9 +403,12 @@ exports.getDesign = async (req, res, next) => {
       });
     }
 
+    const activeOffer = await getActiveOffer();
+    const formattedDesign = applyOfferToDesign(design, activeOffer);
+
     res.status(200).json({
       success: true,
-      data: design,
+      data: formattedDesign,
     });
   } catch (error) {
     next(error);

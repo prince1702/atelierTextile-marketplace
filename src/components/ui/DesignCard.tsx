@@ -35,13 +35,19 @@ export function DesignCard({ design }: DesignCardProps) {
           density="compact"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        {design.badge && (
+        {design.discountPercentage && design.discountPercentage > 0 ? (
+          <div className="absolute top-2.5 left-2.5 z-10">
+            <span className="bg-emerald-600 text-white text-[9px] sm:text-[11px] font-extrabold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider shadow">
+              {design.discountPercentage}% OFF
+            </span>
+          </div>
+        ) : design.badge ? (
           <div className="absolute top-2.5 left-2.5 z-10">
             <span className={`${getBadgeColor(design.badgeColor)} text-[9px] sm:text-[11px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider`}>
               {design.badge}
             </span>
           </div>
-        )}
+        ) : null}
         <button 
           onClick={(e) => {
             e.stopPropagation();
@@ -70,11 +76,20 @@ export function DesignCard({ design }: DesignCardProps) {
         <p className="text-[11px] sm:text-xs text-on-surface-variant mb-3 sm:mb-4 flex items-center gap-1">
           <span>by <span className="font-medium text-on-surface">{design.designerName}</span></span>
         </p>
- 
+
         <div className="mt-auto pt-3 sm:pt-4 border-t border-outline-variant flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between w-full">
           <div className="flex flex-col">
-            <span className="text-[9px] sm:text-[10px] uppercase font-bold text-outline tracking-wider">License from</span>
-            <span className="text-base sm:text-lg font-bold text-primary-container">₹{design.price}</span>
+            <span className="text-[9px] sm:text-[10px] uppercase font-bold text-outline tracking-wider">
+              {design.discountPercentage && design.discountPercentage > 0 ? (design.offerName || 'Offer Price') : 'License from'}
+            </span>
+            {design.originalPrice && design.originalPrice > design.price ? (
+              <div className="flex items-center gap-1.5">
+                <span className="text-base sm:text-lg font-extrabold text-emerald-700">₹{design.price.toLocaleString()}</span>
+                <span className="text-xs text-on-surface-variant line-through font-semibold">₹{design.originalPrice.toLocaleString()}</span>
+              </div>
+            ) : (
+              <span className="text-base sm:text-lg font-bold text-primary-container">₹{design.price.toLocaleString()}</span>
+            )}
           </div>
           <Link 
             to={`/design/${design.id}`} 

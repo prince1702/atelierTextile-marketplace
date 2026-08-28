@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { User, Design, Order, Ticket, Feedback } from '../types';
+import type { User, Design, Order, Ticket, Feedback, Offer } from '../types';
 
 const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
@@ -438,6 +438,67 @@ export const api = {
     getAdminFeedback: async (): Promise<Feedback[]> => {
       const response = await client.get('/feedback/admin');
       return normalize<Feedback[]>(response.data.data);
+    },
+  },
+
+  offers: {
+    getActive: async (): Promise<{
+      id?: string;
+      offerName?: string;
+      offerType?: string;
+      discountPercentage?: number;
+      endDateTime?: string;
+      remainingSeconds?: number;
+    } | null> => {
+      try {
+        const response = await client.get('/offers/active');
+        return response.data.data;
+      } catch (error) {
+        console.warn('Failed to fetch active offer:', error);
+        return null;
+      }
+    },
+    getStats: async (): Promise<{
+      totalOffers: number;
+      activeOffersCount: number;
+      scheduledOffersCount: number;
+      expiredOffersCount: number;
+      disabledOffersCount: number;
+      currentActiveOffer: (Offer & { remainingSeconds?: number }) | null;
+    }> => {
+      const response = await client.get('/offers/stats');
+      return response.data.data;
+    },
+    getAll: async (params?: { search?: string; status?: string; offerType?: string; sort?: string }): Promise<Offer[]> => {
+      const response = await client.get('/offers', { params });
+      return normalize<Offer[]>(response.data.data);
+    },
+    getById: async (id: string): Promise<Offer> => {
+      const response = await client.get(`/offers/${id}`);
+      return normalize<Offer>(response.data.data);
+    },
+    create: async (offerData: {
+      offerName: string;
+      offerType: string;
+      discountPercentage: number;
+      startDateTime: string;
+      endDateTime: string;
+      priority?: number;
+      status?: string;
+    }): Promise<Offer> => {
+      const response = await client.post('/offers', offerData);
+      return normalize<Offer>(response.data.data);
+    },
+    update: async (id: string, offerData: Partial<Offer>): Promise<Offer> => {
+      const response = await client.put(`/offers/${id}`, offerData);
+      return normalize<Offer>(response.data.data);
+    },
+    toggleStatus: async (id: string): Promise<Offer> => {
+      const response = await client.patch(`/offers/${id}/toggle`);
+      return normalize<Offer>(response.data.data);
+    },
+    delete: async (id: string): Promise<void> => {
+      await client.delete(`/offers/${id}`);
     },
   },
 };

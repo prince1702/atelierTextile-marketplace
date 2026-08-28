@@ -26,6 +26,7 @@ import { InventoryPage } from './pages/admin/InventoryPage';
 import { AnalyticsPage } from './pages/admin/AnalyticsPage';
 import { PaymentOrdersPage } from './pages/admin/PaymentOrdersPage';
 import { AdminFeedbackPage } from './pages/admin/AdminFeedbackPage';
+import { OffersPage } from './pages/admin/OffersPage';
 
 // Seller Portal
 import { SellerDashboard } from './pages/seller/SellerDashboard';
@@ -97,6 +98,7 @@ export default function App() {
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="payments" element={<PaymentOrdersPage />} />
                     <Route path="feedback" element={<AdminFeedbackPage />} />
+                    <Route path="offers" element={<OffersPage />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />
                   </Routes>
                 </ProtectedRoute>

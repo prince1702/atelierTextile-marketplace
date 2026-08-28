@@ -12,6 +12,7 @@ const navConfig = {
     { name: 'Analytics', icon: 'analytics', path: '/admin/analytics' },
     { name: 'Payments', icon: 'qr_code_2', path: '/admin/payments' },
     { name: 'Feedback', icon: 'rate_review', path: '/admin/feedback' },
+    { name: 'Offers & Promotions', icon: 'local_offer', path: '/admin/offers' },
     { name: 'Settings', icon: 'settings', path: '/profile' }
   ],
   seller: [

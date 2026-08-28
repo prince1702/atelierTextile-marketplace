@@ -51,6 +51,11 @@ export interface Design {
   designFile?: string;
   pdcDesignFile?: string;
   additionalImages?: string[];
+  originalPrice?: number;
+  discountPercentage?: number;
+  offerName?: string;
+  offerType?: string;
+  offerPrice?: number;
 }
 
 export interface Order {
@@ -99,4 +104,18 @@ export interface Feedback {
   comment?: string;
   createdAt: string;
 }
+
+export interface Offer {
+  id: string;
+  offerName: string;
+  offerType: 'Festival Offer' | 'Seasonal Offer' | 'Special Offer' | 'Clearance Sale' | 'Other';
+  discountPercentage: number;
+  startDateTime: string;
+  endDateTime: string;
+  status: 'scheduled' | 'active' | 'expired' | 'disabled';
+  priority: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 
