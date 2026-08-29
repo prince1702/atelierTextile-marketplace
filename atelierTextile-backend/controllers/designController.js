@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { getActiveOffer, applyOfferToDesign } = require('../utils/offerHelper');
 
-// Helper: upload buffer to Cloudinary
+// Helper: upload buffer to Cloudinary (images + design archives)
 const uploadToCloudinary = (buffer, resourceType = 'image', originalName = '') => {
   return new Promise((resolve, reject) => {
     const options = {
@@ -14,6 +14,7 @@ const uploadToCloudinary = (buffer, resourceType = 'image', originalName = '') =
       timeout: 120000,
     };
     if (resourceType === 'raw') {
+      // Design archive files stay authenticated (not meant to be publicly accessible)
       options.type = 'authenticated';
     }
 
@@ -23,6 +24,29 @@ const uploadToCloudinary = (buffer, resourceType = 'image', originalName = '') =
       options.public_id = `${base}-${Date.now()}${ext}`;
     }
 
+    const stream = cloudinary.uploader.upload_stream(
+      options,
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+    stream.end(buffer);
+  });
+};
+
+// Helper: upload PDF buffer to Cloudinary with PUBLIC access so the URL never expires
+const uploadPdfToCloudinary = (buffer, originalName = '') => {
+  return new Promise((resolve, reject) => {
+    const ext = path.extname(originalName) || '.pdf';
+    const base = path.basename(originalName, ext).replace(/[^a-zA-Z0-9]/g, '_');
+    const options = {
+      folder: 'atelierTextile/designs/catalogs',
+      resource_type: 'raw',
+      type: 'upload',            // PUBLIC — URL never expires
+      public_id: `${base}-${Date.now()}${ext}`,
+      timeout: 180000,
+    };
     const stream = cloudinary.uploader.upload_stream(
       options,
       (error, result) => {
@@ -614,11 +638,12 @@ exports.createDesign = async (req, res, next) => {
       let uploadSuccess = false;
       if (isCloudinaryConfigured) {
         try {
-          const result = await uploadToCloudinary(pdfFile.buffer, 'raw', pdfFile.originalname);
+          // Use dedicated PDF uploader — forces type='upload' (public) so URL never expires
+          const result = await uploadPdfToCloudinary(pdfFile.buffer, pdfFile.originalname);
           pdfFileUrl = result.secure_url;
           uploadSuccess = true;
         } catch (cloudinaryError) {
-          console.error('❌ Cloudinary raw pdf file upload failed:', cloudinaryError.message);
+          console.error('❌ Cloudinary PDF upload failed:', cloudinaryError.message);
         }
       }
 
@@ -812,11 +837,12 @@ exports.updateDesign = async (req, res, next) => {
       let uploadSuccess = false;
       if (isCloudinaryConfigured) {
         try {
-          const result = await uploadToCloudinary(pdfFile.buffer, 'raw', pdfFile.originalname);
+          // Use dedicated PDF uploader — forces type='upload' (public) so URL never expires
+          const result = await uploadPdfToCloudinary(pdfFile.buffer, pdfFile.originalname);
           req.body.pdfUrl = result.secure_url;
           uploadSuccess = true;
         } catch (cloudinaryError) {
-          console.warn('⚠️ Cloudinary raw pdf upload failed during edit, using local fallback:', cloudinaryError.message);
+          console.warn('⚠️ Cloudinary PDF upload failed during edit, using local fallback:', cloudinaryError.message);
         }
       }
 
