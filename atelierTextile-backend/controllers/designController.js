@@ -68,6 +68,50 @@ const parseRangeNumbers = (str) => {
   return { min, max };
 };
 
+/**
+ * If a PDF is stored as a Cloudinary "authenticated" resource, its secure_url
+ * contains an expiring signature (s--xxx--) that causes "Failed to load PDF"
+ * errors after it expires.  This helper extracts the public_id and generates
+ * a FRESH signed URL valid for 24 hours on every request, so customers always
+ * get a working link regardless of Cloudinary account security settings.
+ */
+const refreshPdfUrl = (url) => {
+  if (!url) return url;
+
+  // Only process Cloudinary authenticated URLs
+  if (!url.includes('res.cloudinary.com') || !url.includes('/authenticated/')) {
+    return url; // already public — return as-is
+  }
+
+  try {
+    // URL format: https://res.cloudinary.com/{cloud}/raw/authenticated/s--{sig}--/v{ver}/{public_id}.ext
+    // Split on "/authenticated/" to isolate the path after it
+    const afterAuth = url.split('/authenticated/')[1] || '';
+
+    // Strip the signature block  "s--xxxxx--/"  (always present in authenticated URLs)
+    const withoutSig = afterAuth.replace(/^s--[^/]+--\//, '');
+
+    // Strip the version prefix  "v1234567890/"
+    const publicIdWithExt = withoutSig.replace(/^v\d+\//, '');
+
+    if (!publicIdWithExt) return url;
+
+    // Generate a fresh signed URL valid for 24 hours
+    const freshUrl = cloudinary.url(publicIdWithExt, {
+      resource_type: 'raw',
+      type: 'authenticated',
+      sign_url: true,
+      secure: true,
+      expires_at: Math.floor(Date.now() / 1000) + 86400, // 24 hours from now
+    });
+
+    return freshUrl;
+  } catch (e) {
+    console.warn('⚠️ refreshPdfUrl failed, returning original URL:', e.message);
+    return url;
+  }
+};
+
 // @desc    Get all active designs (public, with filters & pagination)
 // @route   GET /api/designs
 // @access  Public
@@ -429,6 +473,12 @@ exports.getDesign = async (req, res, next) => {
 
     const activeOffer = await getActiveOffer();
     const formattedDesign = applyOfferToDesign(design, activeOffer);
+
+    // If this is a bulk PDF design, always serve a fresh signed URL so it
+    // never shows "Failed to load PDF document" due to an expired signature.
+    if (formattedDesign.isBulk && formattedDesign.pdfUrl) {
+      formattedDesign.pdfUrl = refreshPdfUrl(formattedDesign.pdfUrl);
+    }
 
     res.status(200).json({
       success: true,
