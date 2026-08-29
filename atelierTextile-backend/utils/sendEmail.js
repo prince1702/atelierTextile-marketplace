@@ -8,10 +8,13 @@ const nodemailer = require('nodemailer');
  *
  * @param {{ to: string, subject: string, html: string }} options
  */
-const sendEmail = async ({ to, subject, html }) => {
+const sendEmail = async ({ to, subject, html, apiKeyType }) => {
   const fromEmail = process.env.EMAIL_USER || 'sojitraprince172@gmail.com';
   const fromName = 'TexDesigner';
-  const resendKey = process.env.Email_login || process.env.RESEND_API_KEY;
+  
+  const resendKey = apiKeyType === 'forget_password'
+    ? (process.env.Forget_password || process.env.Email_login || process.env.RESEND_API_KEY)
+    : (process.env.Email_login || process.env.RESEND_API_KEY);
 
   // 1. Try Brevo HTTP API
   if (process.env.BREVO_API_KEY) {

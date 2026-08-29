@@ -337,6 +337,7 @@ exports.forgotPassword = async (req, res, next) => {
         to: user.email,
         subject: 'TexDesigner — Password Reset Request',
         html,
+        apiKeyType: 'forget_password',
       });
 
       console.log(`🔑 Password reset email sent to: ${email}`);
