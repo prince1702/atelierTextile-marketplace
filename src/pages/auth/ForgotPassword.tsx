@@ -18,9 +18,13 @@ export function ForgotPassword() {
 
     setIsLoading(true);
     try {
-      await api.auth.forgotPassword(email);
-      setSubmitted(true);
-      showToast('Reset link sent to your email');
+      const result = await api.auth.forgotPassword(email);
+      if (result.success) {
+        setSubmitted(true);
+        showToast(result.message || 'Reset link sent to your email');
+      } else {
+        showToast(result.message || 'Something went wrong. Please try again.', 'error');
+      }
     } catch (error: any) {
       const message = error.response?.data?.error || 'Failed to send reset email. Please try again.';
       showToast(message, 'error');

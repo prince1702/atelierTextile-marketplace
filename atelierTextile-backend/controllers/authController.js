@@ -287,10 +287,11 @@ exports.forgotPassword = async (req, res, next) => {
     const cleanEmail = email.toLowerCase().trim();
     const user = await User.findOne({ email: cleanEmail });
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'No account found with this email address. Please register first.',
+    // Don't reveal whether the email exists or if the account is suspended
+    if (!user || user.status === 'suspended') {
+      return res.status(200).json({
+        success: true,
+        data: { message: 'If that email is registered, a password reset link has been sent.' },
       });
     }
 

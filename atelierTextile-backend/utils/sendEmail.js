@@ -11,7 +11,7 @@ const nodemailer = require('nodemailer');
 const sendEmail = async ({ to, subject, html }) => {
   const fromEmail = process.env.EMAIL_USER || 'sojitraprince172@gmail.com';
   const fromName = 'TexDesigner';
-  const resendKey = process.env.RESEND_API_KEY || 're_ZnH3DjT4_1Wi6UiyTGEj3i5NAEs1PwcpW';
+  const resendKey = process.env.Email_login || process.env.RESEND_API_KEY;
 
   // 1. Try Brevo HTTP API
   if (process.env.BREVO_API_KEY) {
@@ -109,12 +109,12 @@ const sendEmail = async ({ to, subject, html }) => {
       console.log(`📧 SMTP email sent: ${info.messageId} → ${to}`);
       return info;
     } catch (smtpErr) {
-      console.warn('⚠️ SMTP Email error:', smtpErr.message);
-      return { success: false, warning: smtpErr.message };
+      console.error('❌ SMTP Email error:', smtpErr.message);
+      throw new Error(`SMTP email delivery failed: ${smtpErr.message}`);
     }
   }
 
-  return { success: true, simulated: true };
+  throw new Error('No email provider is configured or all providers failed. Unable to send email.');
 };
 
 module.exports = sendEmail;

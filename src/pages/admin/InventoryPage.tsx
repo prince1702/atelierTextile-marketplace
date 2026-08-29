@@ -33,8 +33,10 @@ export function InventoryPage() {
       await api.designs.updateStatus(id, newStatus);
       showToast(`Design listing status updated to ${newStatus}`, 'success');
       fetchDesigns();
-    } catch (error) {
-      showToast('Failed to update design status', 'error');
+    } catch (error: any) {
+      console.error('❌ updateDesignStatus error:', error?.response?.data || error?.message || error);
+      const serverMsg = error?.response?.data?.error || error?.message || 'Unknown error';
+      showToast(`Failed to update design status: ${serverMsg}`, 'error');
     }
   };
 
