@@ -68,6 +68,20 @@ const parseRangeNumbers = (str) => {
   return { min, max };
 };
 
+// Helper to normalize req.files whether upload.any() or upload.fields() is used
+const getFilesMap = (req) => {
+  if (!req.files) return {};
+  if (Array.isArray(req.files)) {
+    const map = {};
+    for (const f of req.files) {
+      if (!map[f.fieldname]) map[f.fieldname] = [];
+      map[f.fieldname].push(f);
+    }
+    return map;
+  }
+  return req.files;
+};
+
 /**
  * If a PDF is stored as a Cloudinary "authenticated" resource, its secure_url
  * contains an expiring signature (s--xxx--) that causes "Failed to load PDF"
@@ -529,11 +543,12 @@ exports.createDesign = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'User not found' });
     }
 
-    const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
-    const designFile = req.files && req.files['designFile'] ? req.files['designFile'][0] : null;
-    const pdcDesignFile = req.files && req.files['pdcDesignFile'] ? req.files['pdcDesignFile'][0] : null;
-    const pdfFile = req.files && req.files['pdfFile'] ? req.files['pdfFile'][0] : null;
-    const additionalImageFiles = req.files && req.files['additionalImages'] ? req.files['additionalImages'] : [];
+    const filesMap = getFilesMap(req);
+    const imageFile = filesMap['image'] ? filesMap['image'][0] : null;
+    const designFile = filesMap['designFile'] ? filesMap['designFile'][0] : null;
+    const pdcDesignFile = filesMap['pdcDesignFile'] ? filesMap['pdcDesignFile'][0] : null;
+    const pdfFile = filesMap['pdfFile'] ? filesMap['pdfFile'][0] : null;
+    const additionalImageFiles = filesMap['additionalImages'] ? filesMap['additionalImages'] : [];
 
     let imageUrl = '';
     let designFileUrl = '';
@@ -786,11 +801,12 @@ exports.updateDesign = async (req, res, next) => {
       });
     }
 
-    const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
-    const designFile = req.files && req.files['designFile'] ? req.files['designFile'][0] : null;
-    const pdcDesignFile = req.files && req.files['pdcDesignFile'] ? req.files['pdcDesignFile'][0] : null;
-    const pdfFile = req.files && req.files['pdfFile'] ? req.files['pdfFile'][0] : null;
-    const additionalImageFiles = req.files && req.files['additionalImages'] ? req.files['additionalImages'] : [];
+    const filesMap = getFilesMap(req);
+    const imageFile = filesMap['image'] ? filesMap['image'][0] : null;
+    const designFile = filesMap['designFile'] ? filesMap['designFile'][0] : null;
+    const pdcDesignFile = filesMap['pdcDesignFile'] ? filesMap['pdcDesignFile'][0] : null;
+    const pdfFile = filesMap['pdfFile'] ? filesMap['pdfFile'][0] : null;
+    const additionalImageFiles = filesMap['additionalImages'] ? filesMap['additionalImages'] : [];
 
     const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
                                    process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&

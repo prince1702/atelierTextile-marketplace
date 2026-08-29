@@ -21,13 +21,7 @@ router.get('/', getDesigns);
 router.get('/category/:category', getDesignsByCategory);
 router.get('/:id/preview-pdf', previewPdf);
 
-const cpUpload = upload.fields([
-  { name: 'image', maxCount: 1 },
-  { name: 'designFile', maxCount: 1 },
-  { name: 'pdcDesignFile', maxCount: 1 },
-  { name: 'additionalImages', maxCount: 4 },
-  { name: 'pdfFile', maxCount: 1 }
-]);
+const cpUpload = upload.any();
 
 // Seller routes (must come before /:id to avoid conflict)
 router.get('/my/listings', auth, authorize('seller'), getMyListings);
