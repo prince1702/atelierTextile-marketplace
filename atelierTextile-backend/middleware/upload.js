@@ -21,6 +21,12 @@ const fileFilter = (req, file, cb) => {
     } else {
       cb(new Error('Only ZIP, RAR, PDC, or TIF files are allowed for the PDC/TIF design file'), false);
     }
+  } else if (file.fieldname === 'pdfFile') {
+    if (ext === '.pdf') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF files are allowed for the bulk PDF upload'), false);
+    }
   } else {
     const allowedExts = ['.jpeg', '.jpg', '.png', '.webp', '.svg'];
     if (allowedExts.includes(ext)) {

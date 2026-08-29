@@ -28,13 +28,22 @@ export function DesignCard({ design }: DesignCardProps) {
   return (
     <div className="bg-white rounded-xl border border-outline-variant overflow-hidden card-lift group flex flex-col h-full">
       <Link to={`/design/${design.id}`} className="relative h-40 sm:h-56 overflow-hidden bg-surface-container block">
-        <WatermarkedImage 
-          src={optimizeCloudinaryUrl(design.image, 'card')} 
-          alt={design.title} 
-          designId={design.title || design.id}
-          density="compact"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {design.isBulk && !design.image ? (
+          <div className="w-full h-full bg-gradient-to-br from-red-500/80 to-amber-600/85 flex flex-col items-center justify-center text-white p-4 group-hover:scale-105 transition-transform duration-500">
+            <span className="material-symbols-outlined text-[48px] mb-2 drop-shadow">picture_as_pdf</span>
+            <span className="text-xs font-bold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-full border border-white/20">
+              Bulk Catalog
+            </span>
+          </div>
+        ) : (
+          <WatermarkedImage 
+            src={optimizeCloudinaryUrl(design.image, 'card')} 
+            alt={design.title} 
+            designId={design.title || design.id}
+            density="compact"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        )}
         {design.discountPercentage && design.discountPercentage > 0 ? (
           <div className="absolute top-2.5 left-2.5 z-10">
             <span className="bg-emerald-600 text-white text-[9px] sm:text-[11px] font-extrabold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider shadow">

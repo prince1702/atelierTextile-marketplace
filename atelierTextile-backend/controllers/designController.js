@@ -448,11 +448,13 @@ exports.createDesign = async (req, res, next) => {
     const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
     const designFile = req.files && req.files['designFile'] ? req.files['designFile'][0] : null;
     const pdcDesignFile = req.files && req.files['pdcDesignFile'] ? req.files['pdcDesignFile'][0] : null;
+    const pdfFile = req.files && req.files['pdfFile'] ? req.files['pdfFile'][0] : null;
     const additionalImageFiles = req.files && req.files['additionalImages'] ? req.files['additionalImages'] : [];
 
     let imageUrl = '';
     let designFileUrl = '';
     let pdcDesignFileUrl = '';
+    let pdfFileUrl = '';
     const additionalImageUrls = [];
 
     const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
@@ -607,6 +609,37 @@ exports.createDesign = async (req, res, next) => {
       }
     }
 
+    // 3b. Process PDF file if uploaded
+    if (pdfFile) {
+      let uploadSuccess = false;
+      if (isCloudinaryConfigured) {
+        try {
+          const result = await uploadToCloudinary(pdfFile.buffer, 'raw', pdfFile.originalname);
+          pdfFileUrl = result.secure_url;
+          uploadSuccess = true;
+        } catch (cloudinaryError) {
+          console.error('❌ Cloudinary raw pdf file upload failed:', cloudinaryError.message);
+        }
+      }
+
+      if (!uploadSuccess) {
+        try {
+          const uploadsDir = path.join(__dirname, '../public/uploads');
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+          const filename = `pdfFile-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(pdfFile.originalname) || '.pdf'}`;
+          const filePath = path.join(uploadsDir, filename);
+          fs.writeFileSync(filePath, pdfFile.buffer);
+          
+          const host = req.get('host');
+          pdfFileUrl = `${req.protocol}://${host}/uploads/${filename}`;
+        } catch (localError) {
+          console.error('❌ Local PDF design file write failed:', localError);
+        }
+      }
+    }
+
     const areaRange = parseRangeNumbers(req.body.area);
     const needleRange = parseRangeNumbers(req.body.needle);
 
@@ -619,6 +652,8 @@ exports.createDesign = async (req, res, next) => {
       needleMax: needleRange.max,
       designFile: designFileUrl || req.body.designFile || '',
       pdcDesignFile: pdcDesignFileUrl || req.body.pdcDesignFile || '',
+      isBulk: req.body.isBulk === 'true' || req.body.isBulk === true,
+      pdfUrl: pdfFileUrl || req.body.pdfUrl || '',
 
       tags: req.body.tags
         ? typeof req.body.tags === 'string'
@@ -669,6 +704,7 @@ exports.updateDesign = async (req, res, next) => {
     const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
     const designFile = req.files && req.files['designFile'] ? req.files['designFile'][0] : null;
     const pdcDesignFile = req.files && req.files['pdcDesignFile'] ? req.files['pdcDesignFile'][0] : null;
+    const pdfFile = req.files && req.files['pdfFile'] ? req.files['pdfFile'][0] : null;
     const additionalImageFiles = req.files && req.files['additionalImages'] ? req.files['additionalImages'] : [];
 
     const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
@@ -771,6 +807,37 @@ exports.updateDesign = async (req, res, next) => {
       }
     }
 
+    // Upload new pdfFile if provided
+    if (pdfFile) {
+      let uploadSuccess = false;
+      if (isCloudinaryConfigured) {
+        try {
+          const result = await uploadToCloudinary(pdfFile.buffer, 'raw', pdfFile.originalname);
+          req.body.pdfUrl = result.secure_url;
+          uploadSuccess = true;
+        } catch (cloudinaryError) {
+          console.warn('⚠️ Cloudinary raw pdf upload failed during edit, using local fallback:', cloudinaryError.message);
+        }
+      }
+
+      if (!uploadSuccess) {
+        try {
+          const uploadsDir = path.join(__dirname, '../public/uploads');
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+          const filename = `pdfFile-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(pdfFile.originalname) || '.pdf'}`;
+          const filePath = path.join(uploadsDir, filename);
+          fs.writeFileSync(filePath, pdfFile.buffer);
+          
+          const host = req.get('host');
+          req.body.pdfUrl = `${req.protocol}://${host}/uploads/${filename}`;
+        } catch (localError) {
+          console.error('❌ Local PDF file write failed during edit:', localError);
+        }
+      }
+    }
+
     // Upload new additional images if provided
     if (additionalImageFiles.length > 0) {
       const additionalImageUrls = [];
@@ -810,6 +877,10 @@ exports.updateDesign = async (req, res, next) => {
     }
 
     // Parse array fields if sent as strings
+    if (req.body.isBulk !== undefined) {
+      req.body.isBulk = req.body.isBulk === 'true' || req.body.isBulk === true;
+    }
+
     if (req.body.tags && typeof req.body.tags === 'string') {
       req.body.tags = req.body.tags.split(',').map((t) => t.trim());
     }

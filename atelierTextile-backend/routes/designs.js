@@ -23,7 +23,8 @@ const cpUpload = upload.fields([
   { name: 'image', maxCount: 1 },
   { name: 'designFile', maxCount: 1 },
   { name: 'pdcDesignFile', maxCount: 1 },
-  { name: 'additionalImages', maxCount: 4 }
+  { name: 'additionalImages', maxCount: 4 },
+  { name: 'pdfFile', maxCount: 1 }
 ]);
 
 // Seller routes (must come before /:id to avoid conflict)

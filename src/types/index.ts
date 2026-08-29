@@ -56,6 +56,8 @@ export interface Design {
   offerName?: string;
   offerType?: string;
   offerPrice?: number;
+  isBulk?: boolean;
+  pdfUrl?: string;
 }
 
 export interface Order {

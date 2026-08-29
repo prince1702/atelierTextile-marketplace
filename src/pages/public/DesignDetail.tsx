@@ -272,69 +272,123 @@ export function DesignDetail() {
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 pt-8 animate-fade-in animate-sans">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
-          {/* Left: Image Gallery */}
-          {/* Left: Image Gallery */}
-          {(() => {
-            const galleryImages = (allImages && allImages.length > 0)
-              ? allImages
-              : [design.image, design.image, design.image, design.image];
-            const activeImg = galleryImages[activeImageIndex] || galleryImages[selectedImageIndex] || design.image;
-
-            return (
-              <div className="lg:col-span-7 space-y-4">
-                <div 
-                  onWheel={handleMainImageWheel}
-                  onClick={() => setIsLightboxOpen(true)}
-                  className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group cursor-zoom-in shadow-sm hover:shadow-md transition-shadow"
-                  title="Click to view full screen image modal or scroll wheel to switch photos"
-                >
-                  <WatermarkedImage src={activeImg} alt={design.title} designId={design.title || design.id} density="dense" className="w-full h-[600px] object-cover transition-transform duration-300 group-hover:scale-102" />
-                  
-                  {/* Click to expand overlay hint */}
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-10">
-                    <div className="bg-black/75 backdrop-blur text-white px-5 py-2.5 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg border border-white/20">
-                      <span className="material-symbols-outlined text-[20px]">fullscreen</span>
-                      Click to open full view
-                    </div>
-                  </div>
-
-                  {/* Photo Counter badge */}
-                  {galleryImages.length > 1 && (
-                    <div className="absolute top-6 left-6 bg-black/60 backdrop-blur text-white text-xs font-semibold px-3.5 py-1.5 rounded-full z-10 flex items-center gap-1.5 border border-white/10 shadow-sm">
-                      <span className="material-symbols-outlined text-[15px]">photo_library</span>
-                      {activeImageIndex + 1} / {galleryImages.length}
-                    </div>
-                  )}
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleWishlist(design);
-                    }}
-                    className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-modal z-20"
-                    title="Add to Wishlist"
-                  >
-                    <span className={`material-symbols-outlined text-[24px] ${isWishlisted ? 'filled text-error' : 'text-on-surface-variant'}`}>favorite</span>
-                  </button>
+          {/* Left: Image Gallery or PDF Viewer */}
+          {design.isBulk && design.pdfUrl ? (
+            <div className="lg:col-span-7 space-y-6">
+              {/* PDF Presentation Card */}
+              <div className="relative rounded-2xl overflow-hidden bg-white border border-outline-variant shadow-sm p-8 flex flex-col items-center justify-center min-h-[300px]">
+                <div className="absolute top-4 left-4 bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 border border-red-200">
+                  <span className="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+                  PDF Catalog Mode
                 </div>
 
-                <div className="grid grid-cols-5 gap-3 sm:gap-4">
-                  {galleryImages.map((img, i) => (
-                    <div 
-                      key={i} 
-                      onClick={() => {
-                        handleImageSelect(i);
-                        setSelectedImageIndex(i);
-                      }}
-                      className={`relative rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-20 sm:h-24 transition-all duration-200 ${i === activeImageIndex ? 'border-primary ring-2 ring-primary/30 scale-105 opacity-100' : 'border-outline-variant/30 hover:border-primary/50 opacity-70 hover:opacity-100'}`}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleWishlist(design);
+                  }}
+                  className="absolute top-4 right-4 w-10 h-10 bg-surface-container rounded-full flex items-center justify-center hover:bg-white text-on-surface-variant transition-colors shadow-sm"
+                  title="Add to Wishlist"
+                >
+                  <span className={`material-symbols-outlined text-[20px] ${isWishlisted ? 'filled text-error' : ''}`}>favorite</span>
+                </button>
+
+                <div className="text-center max-w-md mx-auto space-y-4 py-4">
+                  <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto shadow-sm border border-red-100">
+                    <span className="material-symbols-outlined text-[36px]">picture_as_pdf</span>
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-on-surface">Bulk Design Catalog</h2>
+                    <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">
+                      This design contains a bulk catalog PDF. You can preview it inside the interactive viewer below or view it in a full browser tab.
+                    </p>
+                  </div>
+                  <div className="pt-2">
+                    <a
+                      href={design.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-semibold rounded-xl text-xs hover:bg-primary-container hover:text-primary transition-all shadow-sm"
                     >
-                      <WatermarkedImage src={allImagesThumbnail[i] || img} alt={`Thumbnail ${i + 1}`} designId={design.title || design.id} density="compact" className="w-full h-full object-cover" />
-                    </div>
-                  ))}
+                      <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                      Open Catalog PDF
+                    </a>
+                  </div>
                 </div>
               </div>
-            );
-          })()}
+
+              {/* Embedded PDF IFrame Viewer */}
+              <div className="rounded-2xl border border-outline-variant overflow-hidden shadow-sm h-[600px] bg-surface-container">
+                <iframe
+                  src={`${design.pdfUrl}#toolbar=0`}
+                  className="w-full h-full border-none"
+                  title="PDF Catalog Preview"
+                />
+              </div>
+            </div>
+          ) : (
+            (() => {
+              const galleryImages = (allImages && allImages.length > 0)
+                ? allImages
+                : [design.image, design.image, design.image, design.image];
+              const activeImg = galleryImages[activeImageIndex] || galleryImages[selectedImageIndex] || design.image;
+
+              return (
+                <div className="lg:col-span-7 space-y-4">
+                  <div 
+                    onWheel={handleMainImageWheel}
+                    onClick={() => setIsLightboxOpen(true)}
+                    className="relative rounded-2xl overflow-hidden bg-surface-container border border-outline-variant group cursor-zoom-in shadow-sm hover:shadow-md transition-shadow"
+                    title="Click to view full screen image modal or scroll wheel to switch photos"
+                  >
+                    <WatermarkedImage src={activeImg} alt={design.title} designId={design.title || design.id} density="dense" className="w-full h-[600px] object-cover transition-transform duration-300 group-hover:scale-102" />
+                    
+                    {/* Click to expand overlay hint */}
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-10">
+                      <div className="bg-black/75 backdrop-blur text-white px-5 py-2.5 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg border border-white/20">
+                        <span className="material-symbols-outlined text-[20px]">fullscreen</span>
+                        Click to open full view
+                      </div>
+                    </div>
+
+                    {/* Photo Counter badge */}
+                    {galleryImages.length > 1 && (
+                      <div className="absolute top-6 left-6 bg-black/60 backdrop-blur text-white text-xs font-semibold px-3.5 py-1.5 rounded-full z-10 flex items-center gap-1.5 border border-white/10 shadow-sm">
+                        <span className="material-symbols-outlined text-[15px]">photo_library</span>
+                        {activeImageIndex + 1} / {galleryImages.length}
+                      </div>
+                    )}
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(design);
+                      }}
+                      className="absolute top-6 right-6 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-modal z-20"
+                      title="Add to Wishlist"
+                    >
+                      <span className={`material-symbols-outlined text-[24px] ${isWishlisted ? 'filled text-error' : 'text-on-surface-variant'}`}>favorite</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-5 gap-3 sm:gap-4">
+                    {galleryImages.map((img, i) => (
+                      <div 
+                        key={i} 
+                        onClick={() => {
+                          handleImageSelect(i);
+                          setSelectedImageIndex(i);
+                        }}
+                        className={`relative rounded-xl overflow-hidden bg-surface-container border-2 cursor-pointer h-20 sm:h-24 transition-all duration-200 ${i === activeImageIndex ? 'border-primary ring-2 ring-primary/30 scale-105 opacity-100' : 'border-outline-variant/30 hover:border-primary/50 opacity-70 hover:opacity-100'}`}
+                      >
+                        <WatermarkedImage src={allImagesThumbnail[i] || img} alt={`Thumbnail ${i + 1}`} designId={design.title || design.id} density="compact" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()
+          )}
 
           {/* Right: Product Details */}
           <div className="lg:col-span-5 space-y-8 lg:pl-4">

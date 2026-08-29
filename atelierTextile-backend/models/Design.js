@@ -110,6 +110,14 @@ const designSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  isBulk: {
+    type: Boolean,
+    default: false,
+  },
+  pdfUrl: {
+    type: String,
+    default: '',
+  },
   rating: {
     type: Number,
     default: 0,
