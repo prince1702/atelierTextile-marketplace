@@ -439,7 +439,15 @@ exports.getDesigns = async (req, res, next) => {
     }
 
     const activeOffer = await getActiveOffer();
-    const formattedDesigns = designs.map(d => applyOfferToDesign(d, activeOffer));
+    const host = req.get('host');
+    const protocol = req.protocol === 'https' || req.get('x-forwarded-proto') === 'https' ? 'https' : req.protocol;
+    const formattedDesigns = designs.map(d => {
+      const formatted = applyOfferToDesign(d, activeOffer);
+      if (formatted.isBulk && formatted.pdfUrl) {
+        formatted.pdfUrl = `${protocol}://${host}/api/designs/${d._id || d.id}/preview-pdf`;
+      }
+      return formatted;
+    });
 
     res.status(200).json({
       success: true,
@@ -474,10 +482,12 @@ exports.getDesign = async (req, res, next) => {
     const activeOffer = await getActiveOffer();
     const formattedDesign = applyOfferToDesign(design, activeOffer);
 
-    // If this is a bulk PDF design, always serve a fresh signed URL so it
-    // never shows "Failed to load PDF document" due to an expired signature.
+    // If this is a bulk PDF design, point to backend streaming endpoint
+    // so any browser / iframe loads the PDF instantly without Cloudinary ACL or auth errors.
     if (formattedDesign.isBulk && formattedDesign.pdfUrl) {
-      formattedDesign.pdfUrl = refreshPdfUrl(formattedDesign.pdfUrl);
+      const host = req.get('host');
+      const protocol = req.protocol === 'https' || req.get('x-forwarded-proto') === 'https' ? 'https' : req.protocol;
+      formattedDesign.pdfUrl = `${protocol}://${host}/api/designs/${design._id}/preview-pdf`;
     }
 
     res.status(200).json({
@@ -1253,6 +1263,124 @@ exports.downloadDesign = async (req, res, next) => {
     }
 
     return res.status(404).json({ success: false, error: 'No valid design file is available for download.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Preview / Stream Bulk PDF catalog file
+// @route   GET /api/designs/:id/preview-pdf
+// @access  Public
+exports.previewPdf = async (req, res, next) => {
+  try {
+    const design = await Design.findById(req.params.id);
+    if (!design) {
+      return res.status(404).json({ success: false, error: 'Design not found' });
+    }
+
+    if (!design.isBulk || !design.pdfUrl || design.pdfUrl.trim() === '') {
+      return res.status(404).json({ success: false, error: 'No PDF catalog available for this design' });
+    }
+
+    const fileUrl = design.pdfUrl;
+    const safeTitle = (design.title || 'catalog').replace(/[^a-zA-Z0-9]/g, '_');
+    const pdfFilename = `${safeTitle}.pdf`;
+
+    // 1. Local disk file in /uploads/
+    if (fileUrl.includes('/uploads/')) {
+      try {
+        const urlObj = new URL(fileUrl, 'http://localhost:5000');
+        const filename = path.basename(urlObj.pathname);
+        const filePath = path.join(__dirname, '../public/uploads', filename);
+        if (fs.existsSync(filePath)) {
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Content-Disposition', `inline; filename="${pdfFilename}"`);
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          return fs.createReadStream(filePath).pipe(res);
+        }
+      } catch (e) {
+        console.warn('⚠️ Path parse error for local PDF file:', e.message);
+      }
+    }
+
+    // Helper: stream remote URL with redirect and error handling
+    const streamDirectUrl = (targetUrl) => {
+      const https = require('https');
+      const http = require('http');
+
+      const streamFrom = (url, redirectsLeft) => {
+        if (redirectsLeft < 0) {
+          if (!res.headersSent) res.status(502).json({ success: false, error: 'Too many redirects from storage server.' });
+          return;
+        }
+        const proto = url.startsWith('https') ? https : http;
+        proto.get(url, (remoteRes) => {
+          if ([301, 302, 307, 308].includes(remoteRes.statusCode)) {
+            streamFrom(remoteRes.headers.location, redirectsLeft - 1);
+            return;
+          }
+          if (remoteRes.statusCode !== 200) {
+            if (!res.headersSent) {
+              res.status(remoteRes.statusCode || 502).json({
+                success: false,
+                error: `Storage returned status ${remoteRes.statusCode}.`,
+              });
+            }
+            return;
+          }
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Content-Disposition', `inline; filename="${pdfFilename}"`);
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          if (remoteRes.headers['content-length']) {
+            res.setHeader('Content-Length', remoteRes.headers['content-length']);
+          }
+          remoteRes.pipe(res);
+        }).on('error', (err) => {
+          console.error('❌ PDF Stream error:', err.message);
+          if (!res.headersSent) res.status(502).json({ success: false, error: 'Failed to stream PDF from storage.' });
+        });
+      };
+      streamFrom(targetUrl, 5);
+    };
+
+    // 2. Cloudinary raw file (authenticated or upload)
+    if (fileUrl.includes('cloudinary.com') && (fileUrl.includes('/raw/authenticated/') || fileUrl.includes('/raw/upload/'))) {
+      try {
+        const urlObj = new URL(fileUrl);
+        const pathParts = urlObj.pathname.split('/');
+        
+        let typeIdx = pathParts.indexOf('authenticated');
+        const uploadType = typeIdx !== -1 ? 'authenticated' : 'upload';
+        if (typeIdx === -1) typeIdx = pathParts.indexOf('upload');
+        
+        let publicIdParts = pathParts.slice(typeIdx + 1);
+        publicIdParts = publicIdParts.filter(p => !p.startsWith('s--'));
+        if (/^v\d+$/.test(publicIdParts[0])) {
+          publicIdParts = publicIdParts.slice(1);
+        }
+        const publicId = publicIdParts.join('/');
+
+        // Generate signed download URL using Cloudinary SDK
+        const signedUrl = cloudinary.utils.private_download_url(publicId, '', {
+          resource_type: 'raw',
+          type: uploadType,
+          expires_at: Math.floor(Date.now() / 1000) + 3600,
+        });
+
+        streamDirectUrl(signedUrl);
+        return;
+      } catch (err) {
+        console.warn('⚠️ Cloudinary signed PDF stream error, falling back to direct stream:', err.message);
+      }
+    }
+
+    // 3. Fallback direct stream for any HTTP/HTTPS URL
+    if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+      streamDirectUrl(fileUrl);
+      return;
+    }
+
+    return res.status(404).json({ success: false, error: 'PDF file not accessible' });
   } catch (error) {
     next(error);
   }

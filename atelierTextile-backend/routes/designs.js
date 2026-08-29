@@ -13,11 +13,13 @@ const {
   getMyListings,
   updateDesignStatus,
   downloadDesign,
+  previewPdf,
 } = require('../controllers/designController');
 
 // Public routes
 router.get('/', getDesigns);
 router.get('/category/:category', getDesignsByCategory);
+router.get('/:id/preview-pdf', previewPdf);
 
 const cpUpload = upload.fields([
   { name: 'image', maxCount: 1 },
