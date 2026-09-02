@@ -188,20 +188,34 @@ export function InventoryPage() {
                         <p className="text-[11px] text-on-surface-variant font-normal">PDC: ₹{design.pdcPrice.toLocaleString()}</p>
                       ) : null}
                     </td>
-                    <td className="py-4 px-6 text-right space-x-2">
-                      {/* View / Preview Button */}
+                    <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                      {/* View / Preview Modal Button */}
                       <button 
+                        type="button"
                         onClick={() => openPreview(design)}
-                        className="px-3 py-1.5 bg-surface text-primary border border-primary/30 rounded-lg text-xs font-semibold hover:bg-primary hover:text-white transition-all shadow-sm inline-flex items-center gap-1"
-                        title="View full design details & media"
+                        className="px-3 py-1.5 bg-primary/10 text-primary border border-primary/25 rounded-lg text-xs font-bold hover:bg-primary hover:text-white transition-all shadow-sm inline-flex items-center gap-1"
+                        title="View full design details & media modal"
                       >
                         <span className="material-symbols-outlined text-[15px]">visibility</span>
                         View
                       </button>
 
+                      {/* Direct Live Page Link */}
+                      <a
+                        href={`/design/${design.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2.5 py-1.5 bg-surface text-on-surface-variant border border-outline-variant rounded-lg text-xs font-semibold hover:bg-surface-container hover:text-primary transition-all inline-flex items-center gap-1"
+                        title="Open live customer page in new tab"
+                      >
+                        <span className="material-symbols-outlined text-[15px]">open_in_new</span>
+                        Live
+                      </a>
+
                       {activeTab === 'pending' && (
                         <>
                           <button 
+                            type="button"
                             onClick={() => handleUpdateStatus(design.id, 'active')}
                             className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm inline-flex items-center gap-1"
                             title="Approve design and publish to marketplace"
@@ -210,6 +224,7 @@ export function InventoryPage() {
                             Approve
                           </button>
                           <button 
+                            type="button"
                             onClick={() => handleUpdateStatus(design.id, 'rejected')}
                             className="px-3 py-1.5 bg-red-100 text-red-700 hover:bg-red-600 hover:text-white rounded-lg text-xs font-semibold transition-all inline-flex items-center gap-1"
                             title="Reject design"
@@ -222,8 +237,10 @@ export function InventoryPage() {
                       
                       {activeTab === 'rejected' && (
                         <button 
+                          type="button"
                           onClick={() => handleUpdateStatus(design.id, 'active')}
                           className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm inline-flex items-center gap-1"
+                          title="Re-publish design to marketplace"
                         >
                           <span className="material-symbols-outlined text-[15px]">publish</span>
                           Re-Publish
@@ -232,9 +249,10 @@ export function InventoryPage() {
 
                       {activeTab === 'active' && (
                         <button 
+                          type="button"
                           onClick={() => handleUpdateStatus(design.id, 'rejected')}
                           className="px-3 py-1.5 bg-amber-100 text-amber-800 hover:bg-amber-600 hover:text-white rounded-lg text-xs font-semibold transition-all inline-flex items-center gap-1"
-                          title="Reject / Unpublish"
+                          title="Unpublish / Move to Rejected"
                         >
                           <span className="material-symbols-outlined text-[15px]">block</span>
                           Reject
@@ -242,6 +260,7 @@ export function InventoryPage() {
                       )}
 
                       <button 
+                        type="button"
                         onClick={() => handleDelete(design.id)}
                         className="text-on-surface-variant hover:text-error p-1.5 rounded-full hover:bg-error-container/20 transition-colors inline-block align-middle"
                         title="Delete permanently"
