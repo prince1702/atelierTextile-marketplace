@@ -1,25 +1,28 @@
 const User = require('../models/User');
 const Order = require('../models/Order');
+const Design = require('../models/Design');
 
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Admin only
 exports.getUsers = async (req, res, next) => {
   try {
-    const [users, completedOrders] = await Promise.all([
+    const [users, completedOrders, designs] = await Promise.all([
       User.find().sort({ createdAt: -1 }),
       Order.find({ status: 'completed' }),
+      Design.find(),
     ]);
 
     const usersWithWallet = users.map((u) => {
       const uObj = u.toObject();
       if (u.role === 'seller') {
-        const sellerOrders = completedOrders.filter(o => o.seller.toString() === u._id.toString());
+        const sellerOrders = completedOrders.filter(o => o.seller && o.seller.toString() === u._id.toString());
         const grossSales = sellerOrders.reduce((sum, o) => sum + (o.amount || 0), 0);
         uObj.grossSales = grossSales;
         uObj.walletBalance = Math.round(grossSales * 0.60);
         uObj.adminShare = Math.round(grossSales * 0.40);
         uObj.totalOrders = sellerOrders.length;
+        uObj.totalDesigns = designs.filter(d => d.designer && d.designer.toString() === u._id.toString()).length;
       }
       return uObj;
     });
@@ -53,9 +56,24 @@ exports.getUser = async (req, res, next) => {
       });
     }
 
+    const uObj = user.toObject();
+    if (user.role === 'seller') {
+      const [completedOrders, designs] = await Promise.all([
+        Order.find({ seller: user._id, status: 'completed' }),
+        Design.find({ designer: user._id }).sort({ createdAt: -1 }),
+      ]);
+      const grossSales = completedOrders.reduce((sum, o) => sum + (o.amount || 0), 0);
+      uObj.grossSales = grossSales;
+      uObj.walletBalance = Math.round(grossSales * 0.60);
+      uObj.adminShare = Math.round(grossSales * 0.40);
+      uObj.totalOrders = completedOrders.length;
+      uObj.totalDesigns = designs.length;
+      uObj.designs = designs;
+    }
+
     res.status(200).json({
       success: true,
-      data: user,
+      data: uObj,
     });
   } catch (error) {
     next(error);

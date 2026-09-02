@@ -95,26 +95,32 @@ export function AdminDashboard() {
         <StatCard 
           title="Total Users" value={stats?.totalUsers || 0} icon="group" trend="up" trendValue="+12% this month"
           colorClass={{ bg: 'bg-primary-fixed', iconBg: 'bg-primary-fixed/50', iconText: 'text-primary' }}
+          to="/admin/users"
         />
         <StatCard 
           title="Total Sellers" value={stats?.totalSellers || 0} icon="storefront" trend="up" trendValue="+5% this month"
           colorClass={{ bg: 'bg-secondary-fixed', iconBg: 'bg-secondary-container/20', iconText: 'text-secondary-container' }}
+          to="/admin/users?role=seller"
         />
         <StatCard 
           title="Total Orders" value={stats?.totalOrders || 0} icon="how_to_reg" trend="neutral" trendValue="Total volume"
           colorClass={{ bg: 'bg-tertiary-fixed', iconBg: 'bg-tertiary-container/20', iconText: 'text-tertiary-container' }}
+          to="/admin/payments"
         />
         <StatCard 
           title="Selling Wallet (Gross)" value={`₹${(stats?.totalRevenue || 0).toLocaleString()}`} icon="payments" trend="up" trendValue="Gross selling volume"
           colorClass={{ bg: 'bg-blue-50', iconBg: 'bg-blue-100', iconText: 'text-blue-700' }}
+          to="/admin/users?role=seller"
         />
         <StatCard 
           title="Sellers Wallet (60%)" value={`₹${(stats?.totalSellersWallet ?? Math.round((stats?.totalRevenue || 0) * 0.60)).toLocaleString()}`} icon="account_balance_wallet" trend="up" trendValue="60% seller earnings"
           colorClass={{ bg: 'bg-emerald-50', iconBg: 'bg-emerald-100', iconText: 'text-emerald-700' }}
+          to="/admin/users?role=seller"
         />
         <StatCard 
           title="Platform Fee (40%)" value={`₹${(stats?.totalAdminFee ?? Math.round((stats?.totalRevenue || 0) * 0.40)).toLocaleString()}`} icon="savings" trend="up" trendValue="40% platform share"
           colorClass={{ bg: 'bg-purple-50', iconBg: 'bg-purple-100', iconText: 'text-purple-700' }}
+          to="/admin/analytics"
         />
       </div>
 

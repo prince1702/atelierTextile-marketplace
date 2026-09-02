@@ -13,6 +13,8 @@ export interface User {
   walletBalance?: number; // 60% seller earnings
   grossSales?: number;
   adminShare?: number; // 40% platform share
+  totalDesigns?: number;
+  designs?: Design[];
 }
 
 export interface Design {
