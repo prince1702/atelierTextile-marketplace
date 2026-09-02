@@ -81,7 +81,7 @@ export function DesignDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isInWishlist } = useCart();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { showToast } = useNotification();
 
   const [design, setDesign] = useState<Design | null>(null);
@@ -216,8 +216,71 @@ export function DesignDetail() {
     }
   })();
 
+  const handleAdminUpdateStatus = async (newStatus: 'active' | 'pending' | 'rejected') => {
+    if (!design) return;
+    try {
+      await api.designs.updateStatus(design.id, newStatus);
+      showToast(`Design status updated to ${newStatus}`, 'success');
+      setDesign({ ...design, status: newStatus });
+    } catch (err: any) {
+      showToast('Failed to update design status', 'error');
+    }
+  };
+
   return (
     <div className="bg-surface min-h-screen pb-24">
+      {/* Admin Moderation Action Bar */}
+      {user?.role === 'admin' && (
+        <div className="bg-surface-container-lowest border-b border-outline-variant px-6 md:px-10 py-3 shadow-sm">
+          <div className="max-w-[1440px] mx-auto flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-[20px]">admin_panel_settings</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-on-surface">
+                Admin Review Mode · Current Status:{' '}
+                <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
+                  design.status === 'active' 
+                    ? 'bg-emerald-100 text-emerald-800' 
+                    : design.status === 'rejected' 
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-amber-100 text-amber-800'
+                }`}>
+                  {design.status.toUpperCase()}
+                </span>
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {design.status !== 'active' && (
+                <button
+                  type="button"
+                  onClick={() => handleAdminUpdateStatus('active')}
+                  className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                  Approve & Publish
+                </button>
+              )}
+              {design.status !== 'rejected' && (
+                <button
+                  type="button"
+                  onClick={() => handleAdminUpdateStatus('rejected')}
+                  className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-[16px]">cancel</span>
+                  Reject Design
+                </button>
+              )}
+              <Link
+                to="/admin/inventory"
+                className="px-3 py-1.5 bg-surface text-on-surface border border-outline-variant rounded-lg text-xs font-semibold hover:bg-surface-container transition-colors"
+              >
+                Back to Inventory
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Breadcrumb */}
       <div className="bg-white border-b border-outline-variant">
         <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-4 flex items-center gap-2 text-sm flex-wrap">
