@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ateliertextile-backend
+    name: atelierTextile-marketplace
     runtime: node
     plan: free
     rootDir: atelierTextile-backend

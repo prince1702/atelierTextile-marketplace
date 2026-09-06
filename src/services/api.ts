@@ -10,7 +10,7 @@ const getApiUrl = () => {
     }
   }
   // Production: backend is hosted on Render, not Vercel
-  return 'https://ateliertextile-backend.onrender.com';
+  return 'https://ateliertextile-marketplace.onrender.com';
 };
 
 export const API_URL = getApiUrl();
