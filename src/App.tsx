@@ -25,6 +25,7 @@ import { UserManagement } from './pages/admin/UserManagement';
 import { InventoryPage } from './pages/admin/InventoryPage';
 import { AnalyticsPage } from './pages/admin/AnalyticsPage';
 import { PaymentOrdersPage } from './pages/admin/PaymentOrdersPage';
+import { SellerPayoutsPage } from './pages/admin/SellerPayoutsPage';
 import { AdminFeedbackPage } from './pages/admin/AdminFeedbackPage';
 import { OffersPage } from './pages/admin/OffersPage';
 
@@ -97,6 +98,8 @@ export default function App() {
                     <Route path="inventory" element={<InventoryPage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="payments" element={<PaymentOrdersPage />} />
+                    <Route path="seller-payouts" element={<SellerPayoutsPage />} />
+                    <Route path="payouts" element={<Navigate to="seller-payouts" replace />} />
                     <Route path="feedback" element={<AdminFeedbackPage />} />
                     <Route path="offers" element={<OffersPage />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />
@@ -110,6 +113,7 @@ export default function App() {
                   <Routes>
                     <Route path="dashboard" element={<SellerDashboard />} />
                     <Route path="designs" element={<DesignsPage />} />
+                    <Route path="sales" element={<SalesPage />} />
                     <Route path="upload" element={<UploadPage />} />
                     <Route path="edit/:id" element={<UploadPage />} />
                     <Route path="feedback" element={<SellerFeedbackPage />} />

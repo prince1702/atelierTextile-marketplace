@@ -1,3 +1,9 @@
+export interface PayoutDetails {
+  upiId?: string;
+  gpayNumber?: string;
+  accountHolderName?: string;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -10,11 +16,34 @@ export interface User {
   country: string;
   totalOrders?: number;
   totalRevenue?: number;
-  walletBalance?: number; // 60% seller earnings
+  walletBalance?: number; // 60% unpaid seller earnings
+  lifetimeEarnings?: number; // 60% lifetime gross seller earnings
+  totalPaidOut?: number; // cumulative amount paid out to seller
+  payoutDetails?: PayoutDetails;
   grossSales?: number;
   adminShare?: number; // 40% platform share
   totalDesigns?: number;
   designs?: Design[];
+}
+
+export interface Payout {
+  id: string;
+  _id?: string;
+  seller: string | User;
+  sellerName: string;
+  sellerEmail: string;
+  amount: number;
+  period: string;
+  paymentMethod: 'upi' | 'gpay' | 'bank_transfer' | 'other';
+  paymentId: string;
+  transactionRef?: string;
+  notes?: string;
+  paidBy?: string | User;
+  paidByName?: string;
+  paidAt: string;
+  status: 'completed' | 'pending' | 'failed';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Design {

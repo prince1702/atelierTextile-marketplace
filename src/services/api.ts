@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { User, Design, Order, Ticket, Feedback, Offer } from '../types';
+import type { User, Design, Order, Ticket, Feedback, Offer, Payout, PayoutDetails } from '../types';
 
 const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
@@ -499,6 +499,71 @@ export const api = {
     },
     delete: async (id: string): Promise<void> => {
       await client.delete(`/offers/${id}`);
+    },
+  },
+  payouts: {
+    updateDetails: async (details: PayoutDetails): Promise<PayoutDetails> => {
+      const response = await client.put('/payouts/details', details);
+      return response.data.data;
+    },
+    getMyPayouts: async (): Promise<{
+      grossSales: number;
+      lifetimeEarnings: number;
+      totalPaidOut: number;
+      unpaidBalance: number;
+      payoutDetails: PayoutDetails;
+      payouts: Payout[];
+    }> => {
+      const response = await client.get('/payouts/my-history');
+      return {
+        ...response.data.data,
+        payouts: normalize<Payout[]>(response.data.data.payouts),
+      };
+    },
+    getPendingPayouts: async (): Promise<Array<{
+      id: string;
+      name: string;
+      email: string;
+      initials: string;
+      avatar?: string;
+      grossSales: number;
+      lifetimeEarnings: number;
+      totalPaidOut: number;
+      unpaidBalance: number;
+      totalOrders: number;
+      payoutDetails: PayoutDetails;
+      hasPaymentDetails: boolean;
+      lastPayout?: {
+        amount: number;
+        period: string;
+        paidAt: string;
+        transactionRef?: string;
+      } | null;
+    }>> => {
+      const response = await client.get('/payouts/admin/pending');
+      return normalize(response.data.data);
+    },
+    processPayout: async (
+      sellerId: string,
+      data: {
+        amount?: number;
+        period?: string;
+        paymentMethod?: string;
+        paymentId?: string;
+        transactionRef?: string;
+        notes?: string;
+      }
+    ): Promise<{ message: string; data: Payout; newUnpaidBalance: number }> => {
+      const response = await client.post(`/payouts/admin/pay/${sellerId}`, data);
+      return {
+        message: response.data.message,
+        data: normalize<Payout>(response.data.data),
+        newUnpaidBalance: response.data.newUnpaidBalance,
+      };
+    },
+    getPayoutHistory: async (params?: { period?: string; sellerId?: string; search?: string }): Promise<Payout[]> => {
+      const response = await client.get('/payouts/admin/history', { params });
+      return normalize<Payout[]>(response.data.data);
     },
   },
 };

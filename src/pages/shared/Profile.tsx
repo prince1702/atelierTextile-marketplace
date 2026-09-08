@@ -21,6 +21,33 @@ export function Profile() {
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   
+  const [upiId, setUpiId] = useState(user?.payoutDetails?.upiId || '');
+  const [gpayNumber, setGpayNumber] = useState(user?.payoutDetails?.gpayNumber || '');
+  const [accountHolderName, setAccountHolderName] = useState(user?.payoutDetails?.accountHolderName || user?.name || '');
+  const [isSavingPayout, setIsSavingPayout] = useState(false);
+
+  const handleSavePayoutDetails = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setIsSavingPayout(true);
+    try {
+      const updatedDetails = await api.payouts.updateDetails({
+        upiId: upiId.trim(),
+        gpayNumber: gpayNumber.trim(),
+        accountHolderName: accountHolderName.trim(),
+      });
+      updateUserSession({
+        ...user,
+        payoutDetails: updatedDetails,
+      });
+      showToast('Payment & Payout details saved successfully! Admin will use these for end-of-month settlements.', 'success');
+    } catch (error: any) {
+      showToast(error.response?.data?.error || 'Failed to save payout details', 'error');
+    } finally {
+      setIsSavingPayout(false);
+    }
+  };
+
   const handleSavePersonal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -127,6 +154,90 @@ export function Profile() {
 
         {/* Right Column: Forms */}
         <div className="lg:col-span-2 space-y-5">
+          {/* Payout & Payment Settings for Sellers and Admins */}
+          {(user.role === 'seller' || user.role === 'admin') && (
+            <div className="bg-white rounded-xl border-2 border-emerald-200 p-6 md:p-8 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2 pb-3 border-b border-emerald-100">
+                <h3 className="text-lg font-bold text-emerald-950 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-emerald-600 text-[22px]">payments</span>
+                  Monthly Payout & UPI Settings
+                </h3>
+                <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full uppercase tracking-wider self-start sm:self-auto">
+                  Seller Payments
+                </span>
+              </div>
+              <p className="text-xs text-on-surface-variant mb-6 leading-relaxed">
+                Provide your <strong>UPI ID</strong> or <strong>Google Pay Phone Number</strong>. Platform Admins use these details to transfer your 60% wallet earnings at the end of each month.
+              </p>
+              <form className="space-y-4" onSubmit={handleSavePayoutDetails}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">
+                      UPI ID (Google Pay / PhonePe / Paytm / Bank UPI)
+                    </label>
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-3 top-2.5 text-emerald-600 text-[18px]">qr_code_2</span>
+                      <input 
+                        className="w-full bg-white border border-outline-variant rounded-lg pl-10 pr-4 py-2.5 text-sm text-on-surface focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all" 
+                        type="text" 
+                        placeholder="e.g. yourname@oksbi / name@paytm" 
+                        value={upiId} 
+                        onChange={e => setUpiId(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">
+                      Google Pay Phone Number
+                    </label>
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-3 top-2.5 text-emerald-600 text-[18px]">phone_android</span>
+                      <input 
+                        className="w-full bg-white border border-outline-variant rounded-lg pl-10 pr-4 py-2.5 text-sm text-on-surface focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all" 
+                        type="text" 
+                        placeholder="e.g. +91 9876543210" 
+                        value={gpayNumber} 
+                        onChange={e => setGpayNumber(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">
+                    Account / Beneficiary Name (Optional)
+                  </label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[18px]">person</span>
+                    <input 
+                      className="w-full bg-white border border-outline-variant rounded-lg pl-10 pr-4 py-2.5 text-sm text-on-surface focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all" 
+                      type="text" 
+                      placeholder="Account holder name as per bank records" 
+                      value={accountHolderName} 
+                      onChange={e => setAccountHolderName(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-emerald-100">
+                  <span className="text-xs text-emerald-800 font-medium flex items-center gap-1">
+                    <span className={`w-2 h-2 rounded-full ${upiId || gpayNumber ? 'bg-emerald-600' : 'bg-amber-500'}`}></span>
+                    {upiId || gpayNumber ? 'Payout method active' : 'Please provide at least one payment method'}
+                  </span>
+                  <button 
+                    className="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2 shadow-sm" 
+                    type="submit" 
+                    disabled={isSavingPayout}
+                  >
+                    <span className="material-symbols-outlined text-[16px]">save</span>
+                    {isSavingPayout ? 'Saving...' : 'Save Payout Details'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
           {/* Personal Info */}
           <div className="bg-white rounded-xl border border-outline-variant p-6 md:p-8 shadow-sm">
             <h3 className="text-lg font-bold text-primary mb-6 flex items-center gap-2">

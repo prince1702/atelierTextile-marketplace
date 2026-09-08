@@ -10,7 +10,8 @@ const navConfig = {
     { name: 'Inventory', icon: 'inventory_2', path: '/admin/inventory' },
     { name: 'Users', icon: 'group', path: '/admin/users' },
     { name: 'Analytics', icon: 'analytics', path: '/admin/analytics' },
-    { name: 'Payments', icon: 'qr_code_2', path: '/admin/payments' },
+    { name: 'Customer Payments', icon: 'qr_code_2', path: '/admin/payments' },
+    { name: 'Seller Payouts', icon: 'account_balance_wallet', path: '/admin/seller-payouts' },
     { name: 'Feedback', icon: 'rate_review', path: '/admin/feedback' },
     { name: 'Offers & Promotions', icon: 'local_offer', path: '/admin/offers' },
     { name: 'Settings', icon: 'settings', path: '/profile' }
@@ -18,6 +19,7 @@ const navConfig = {
   seller: [
     { name: 'Dashboard', icon: 'dashboard', path: '/seller/dashboard' },
     { name: 'My Designs', icon: 'palette', path: '/seller/designs' },
+    { name: 'Sales & Wallet', icon: 'account_balance_wallet', path: '/seller/sales' },
     { name: 'Upload', icon: 'upload', path: '/seller/upload' },
     { name: 'Feedback', icon: 'rate_review', path: '/seller/feedback' },
     { name: 'Settings', icon: 'settings', path: '/profile' }

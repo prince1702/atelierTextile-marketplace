@@ -276,14 +276,23 @@ export function UserManagement() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 sm:border-l sm:border-emerald-800/80 sm:pl-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-800/60 border border-emerald-700 flex items-center justify-center">
-              <span className="material-symbols-outlined text-[26px] text-emerald-300">storefront</span>
+          <div className="flex items-center justify-between gap-3 sm:border-l sm:border-emerald-800/80 sm:pl-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-emerald-800/60 border border-emerald-700 flex items-center justify-center">
+                <span className="material-symbols-outlined text-[26px] text-emerald-300">storefront</span>
+              </div>
+              <div>
+                <p className="text-xs uppercase font-bold text-emerald-300 tracking-wider">Active Sellers</p>
+                <h3 className="text-2xl font-black text-white">{sellersList.length} Sellers</h3>
+              </div>
             </div>
-            <div>
-              <p className="text-xs uppercase font-bold text-emerald-300 tracking-wider">Active Sellers & Volume</p>
-              <h3 className="text-2xl font-black text-white">{sellersList.length} Sellers · {totalSellersOrders} Orders</h3>
-            </div>
+            <Link
+              to="/admin/seller-payouts"
+              className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold text-xs px-3.5 py-2 rounded-xl transition-colors shadow-sm whitespace-nowrap flex items-center gap-1.5"
+            >
+              <span>Monthly Settlements</span>
+              <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </Link>
           </div>
         </div>
       )}

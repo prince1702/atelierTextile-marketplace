@@ -18,11 +18,17 @@ exports.getUsers = async (req, res, next) => {
       if (u.role === 'seller') {
         const sellerOrders = completedOrders.filter(o => o.seller && o.seller.toString() === u._id.toString());
         const grossSales = sellerOrders.reduce((sum, o) => sum + (o.amount || 0), 0);
+        const lifetimeEarnings = Math.round(grossSales * 0.60);
+        const totalPaidOut = u.totalPaidOut || 0;
+        const unpaidBalance = Math.max(0, lifetimeEarnings - totalPaidOut);
         uObj.grossSales = grossSales;
-        uObj.walletBalance = Math.round(grossSales * 0.60);
+        uObj.lifetimeEarnings = lifetimeEarnings;
+        uObj.totalPaidOut = totalPaidOut;
+        uObj.walletBalance = unpaidBalance;
         uObj.adminShare = Math.round(grossSales * 0.40);
         uObj.totalOrders = sellerOrders.length;
         uObj.totalDesigns = designs.filter(d => d.designer && d.designer.toString() === u._id.toString()).length;
+        uObj.payoutDetails = u.payoutDetails || { upiId: '', gpayNumber: '', accountHolderName: '' };
       }
       return uObj;
     });
@@ -63,12 +69,18 @@ exports.getUser = async (req, res, next) => {
         Design.find({ designer: user._id }).sort({ createdAt: -1 }),
       ]);
       const grossSales = completedOrders.reduce((sum, o) => sum + (o.amount || 0), 0);
+      const lifetimeEarnings = Math.round(grossSales * 0.60);
+      const totalPaidOut = user.totalPaidOut || 0;
+      const unpaidBalance = Math.max(0, lifetimeEarnings - totalPaidOut);
       uObj.grossSales = grossSales;
-      uObj.walletBalance = Math.round(grossSales * 0.60);
+      uObj.lifetimeEarnings = lifetimeEarnings;
+      uObj.totalPaidOut = totalPaidOut;
+      uObj.walletBalance = unpaidBalance;
       uObj.adminShare = Math.round(grossSales * 0.40);
       uObj.totalOrders = completedOrders.length;
       uObj.totalDesigns = designs.length;
       uObj.designs = designs;
+      uObj.payoutDetails = user.payoutDetails || { upiId: '', gpayNumber: '', accountHolderName: '' };
     }
 
     res.status(200).json({
@@ -99,7 +111,7 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    const { name, email, password, currentPassword, role, status, country } = req.body;
+    const { name, email, password, currentPassword, role, status, country, payoutDetails } = req.body;
 
     // Check email uniqueness if changing email
     if (email && email.toLowerCase() !== user.email.toLowerCase()) {
@@ -112,6 +124,14 @@ exports.updateUser = async (req, res, next) => {
 
     if (name) user.name = name;
     if (country !== undefined) user.country = country;
+
+    if (payoutDetails && typeof payoutDetails === 'object') {
+      user.payoutDetails = {
+        upiId: payoutDetails.upiId !== undefined ? payoutDetails.upiId.trim() : (user.payoutDetails?.upiId || ''),
+        gpayNumber: payoutDetails.gpayNumber !== undefined ? payoutDetails.gpayNumber.trim() : (user.payoutDetails?.gpayNumber || ''),
+        accountHolderName: payoutDetails.accountHolderName !== undefined ? payoutDetails.accountHolderName.trim() : (user.payoutDetails?.accountHolderName || ''),
+      };
+    }
 
     // Admin-only fields
     if (req.user.role === 'admin') {

@@ -51,6 +51,27 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  payoutDetails: {
+    upiId: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    gpayNumber: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    accountHolderName: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+  },
+  totalPaidOut: {
+    type: Number,
+    default: 0,
+  },
   resetPasswordToken: {
     type: String,
   },
