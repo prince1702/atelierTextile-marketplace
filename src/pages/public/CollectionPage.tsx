@@ -900,10 +900,15 @@ export function CollectionPage() {
       setTotalPages(response.pages);
       setTotalResults(response.total);
 
-      // Robustly fetch recommended designs
+      // Robustly fetch recommended designs matching current category
       let recList: Design[] = [];
+      const recParams: any = { limit: 24, sort: 'newest' };
+      if (category && category !== 'All') {
+        recParams.category = category;
+      }
+
       try {
-        const recRes = await api.designs.getAll({ limit: 16, sort: 'newest' });
+        const recRes = await api.designs.getAll(recParams);
         recList = recRes.designs || [];
       } catch (err) {
         console.warn('Primary rec fetch failed in CollectionPage:', err);
@@ -911,7 +916,11 @@ export function CollectionPage() {
 
       if (recList.length === 0) {
         try {
-          const recRes2 = await api.designs.getAll({ limit: 16 });
+          const fallbackParams: any = { limit: 24 };
+          if (category && category !== 'All') {
+            fallbackParams.category = category;
+          }
+          const recRes2 = await api.designs.getAll(fallbackParams);
           recList = recRes2.designs || [];
         } catch (err) {
           console.warn('Secondary rec fetch failed in CollectionPage:', err);
@@ -921,10 +930,24 @@ export function CollectionPage() {
       const getDesignId = (d: any) => String(d.id || d._id || d.title || '');
       const matchedIds = new Set((response.designs || []).map(getDesignId));
 
+      // Strictly only recommend designs belonging to current category
       const filteredRecs = recList.filter((d: any) => {
         const id = getDesignId(d);
-        return id && !matchedIds.has(id);
+        const matchesCategory =
+          category === 'All' ||
+          !category ||
+          (d.category && d.category.trim().toLowerCase() === category.trim().toLowerCase());
+        return id && !matchedIds.has(id) && matchesCategory;
       });
+
+      // Prioritize same subcategory if user is viewing a specific subcategory
+      if (subcategory && subcategory !== 'All') {
+        filteredRecs.sort((a: any, b: any) => {
+          const aSub = (a.subcategory || '').toLowerCase() === subcategory.toLowerCase() ? 1 : 0;
+          const bSub = (b.subcategory || '').toLowerCase() === subcategory.toLowerCase() ? 1 : 0;
+          return bSub - aSub;
+        });
+      }
 
       setRecommendedDesigns(filteredRecs.slice(0, 8));
     } catch (error) {
