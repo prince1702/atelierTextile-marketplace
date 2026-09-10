@@ -429,19 +429,25 @@ export function InventoryPage() {
                       )}
                       {selectedDesign.area && (
                         <div>
-                          <span className="text-on-surface-variant block font-medium">Area:</span>
+                          <span className="text-on-surface-variant block font-medium">
+                            {selectedDesign.category === 'Weaving Design' ? 'Reed:' : 'Area:'}
+                          </span>
                           <span className="font-semibold text-on-surface">{selectedDesign.area}</span>
                         </div>
                       )}
                       {selectedDesign.needle && (
                         <div>
-                          <span className="text-on-surface-variant block font-medium">Needle:</span>
+                          <span className="text-on-surface-variant block font-medium">
+                            {selectedDesign.category === 'Weaving Design' ? 'Pick:' : 'Needle:'}
+                          </span>
                           <span className="font-semibold text-on-surface">{selectedDesign.needle}</span>
                         </div>
                       )}
                       {selectedDesign.sareeConcept && (
                         <div>
-                          <span className="text-on-surface-variant block font-medium">Concept:</span>
+                          <span className="text-on-surface-variant block font-medium">
+                            {selectedDesign.category === 'Weaving Design' ? 'Design Concept:' : 'Concept:'}
+                          </span>
                           <span className="font-semibold text-on-surface">{selectedDesign.sareeConcept}</span>
                         </div>
                       )}
