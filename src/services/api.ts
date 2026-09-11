@@ -73,8 +73,8 @@ export const api = {
         user: normalize<User>(response.data.user),
       };
     },
-    register: async (name: string, email: string, password: string, role: 'seller' | 'customer'): Promise<{ token: string; user: User }> => {
-      const response = await client.post('/auth/register', { name, email, password, role });
+    register: async (name: string, email: string, mobileNumber: string, password: string, role: 'seller' | 'customer'): Promise<{ token: string; user: User }> => {
+      const response = await client.post('/auth/register', { name, email, mobileNumber, password, role });
       return {
         token: response.data.token,
         user: normalize<User>(response.data.user),
@@ -87,8 +87,8 @@ export const api = {
         message: response.data.message || 'Verification code sent',
       };
     },
-    verifySignupOtp: async (name: string, email: string, password: string, role: 'seller' | 'customer', otp: string): Promise<{ token: string; user: User }> => {
-      const response = await client.post('/auth/verify-otp', { name, email, password, role, otp });
+    verifySignupOtp: async (name: string, email: string, mobileNumber: string, password: string, role: 'seller' | 'customer', otp: string): Promise<{ token: string; user: User }> => {
+      const response = await client.post('/auth/verify-otp', { name, email, mobileNumber, password, role, otp });
       return {
         token: response.data.token,
         user: normalize<User>(response.data.user),

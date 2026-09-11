@@ -9,6 +9,11 @@ const sendEmail = require('../utils/sendEmail');
 exports.registerValidation = [
   body('name').trim().notEmpty().withMessage('Name is required'),
   body('email').isEmail().withMessage('Please provide a valid email'),
+  body('mobileNumber')
+    .optional()
+    .trim()
+    .matches(/^[0-9+\s()-]{7,20}$/)
+    .withMessage('Please provide a valid mobile number'),
   body('password')
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters'),
@@ -36,7 +41,7 @@ exports.register = async (req, res, next) => {
       });
     }
 
-    const { name, email, password, role } = req.body;
+    const { name, email, mobileNumber, password, role } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -53,6 +58,7 @@ exports.register = async (req, res, next) => {
     const user = await User.create({
       name,
       email,
+      mobileNumber: (mobileNumber || '').trim(),
       password,
       role: userRole,
     });
@@ -66,6 +72,7 @@ exports.register = async (req, res, next) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        mobileNumber: user.mobileNumber || '',
         role: user.role,
         initials: user.initials,
         avatar: user.avatar,
@@ -156,7 +163,7 @@ exports.sendSignupOtp = async (req, res, next) => {
 // @access  Public
 exports.verifySignupOtp = async (req, res, next) => {
   try {
-    const { name, email, password, role, otp } = req.body;
+    const { name, email, mobileNumber, password, role, otp } = req.body;
 
     if (!name || !email || !password || !otp) {
       return res.status(400).json({ success: false, error: 'Please provide name, email, password, and OTP code' });
@@ -184,6 +191,7 @@ exports.verifySignupOtp = async (req, res, next) => {
     const user = await User.create({
       name,
       email: cleanEmail,
+      mobileNumber: (mobileNumber || '').trim(),
       password,
       role: userRole,
     });
@@ -197,6 +205,7 @@ exports.verifySignupOtp = async (req, res, next) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        mobileNumber: user.mobileNumber || '',
         role: user.role,
         initials: user.initials,
         avatar: user.avatar,
@@ -259,6 +268,7 @@ exports.login = async (req, res, next) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        mobileNumber: user.mobileNumber || '',
         role: user.role,
         initials: user.initials,
         avatar: user.avatar,

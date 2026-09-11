@@ -8,9 +8,9 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  register: (name: string, email: string, password: string, role: 'seller' | 'customer') => Promise<void>;
+  register: (name: string, email: string, mobileNumber: string, password: string, role: 'seller' | 'customer') => Promise<void>;
   sendSignupOtp: (email: string) => Promise<{ success: boolean; message: string }>;
-  verifySignupOtp: (name: string, email: string, password: string, role: 'seller' | 'customer', otp: string) => Promise<void>;
+  verifySignupOtp: (name: string, email: string, mobileNumber: string, password: string, role: 'seller' | 'customer', otp: string) => Promise<void>;
   updateUserSession: (updatedUser: User) => void;
 }
 
@@ -64,10 +64,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const register = useCallback(async (name: string, email: string, password: string, role: 'seller' | 'customer') => {
+  const register = useCallback(async (name: string, email: string, mobileNumber: string, password: string, role: 'seller' | 'customer') => {
     setIsLoading(true);
     try {
-      const { token, user: registeredUser } = await api.auth.register(name, email, password, role);
+      const { token, user: registeredUser } = await api.auth.register(name, email, mobileNumber, password, role);
       localStorage.setItem('texdesigner_token', token);
       localStorage.setItem('texdesigner_user', JSON.stringify(registeredUser));
       setUser(registeredUser);
@@ -83,10 +83,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return await api.auth.sendSignupOtp(email);
   }, []);
 
-  const verifySignupOtp = useCallback(async (name: string, email: string, password: string, role: 'seller' | 'customer', otp: string) => {
+  const verifySignupOtp = useCallback(async (name: string, email: string, mobileNumber: string, password: string, role: 'seller' | 'customer', otp: string) => {
     setIsLoading(true);
     try {
-      const { token, user: registeredUser } = await api.auth.verifySignupOtp(name, email, password, role, otp);
+      const { token, user: registeredUser } = await api.auth.verifySignupOtp(name, email, mobileNumber, password, role, otp);
       localStorage.setItem('texdesigner_token', token);
       localStorage.setItem('texdesigner_user', JSON.stringify(registeredUser));
       setUser(registeredUser);

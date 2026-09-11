@@ -111,7 +111,7 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    const { name, email, password, currentPassword, role, status, country, payoutDetails } = req.body;
+    const { name, email, mobileNumber, password, currentPassword, role, status, country, payoutDetails } = req.body;
 
     // Check email uniqueness if changing email
     if (email && email.toLowerCase() !== user.email.toLowerCase()) {
@@ -123,6 +123,7 @@ exports.updateUser = async (req, res, next) => {
     }
 
     if (name) user.name = name;
+    if (mobileNumber !== undefined) user.mobileNumber = mobileNumber.trim();
     if (country !== undefined) user.country = country;
 
     if (payoutDetails && typeof payoutDetails === 'object') {

@@ -22,10 +22,17 @@ export function UserManagement() {
   const [sellerDesigns, setSellerDesigns] = useState<Design[]>([]);
   const [isLoadingDesigns, setIsLoadingDesigns] = useState(false);
 
+  // Selected customer profile modal state
+  const [selectedCustomer, setSelectedCustomer] = useState<User | null>(null);
+
+  // Search filter
+  const [searchQuery, setSearchQuery] = useState('');
+
   // Edit user modal state
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [editName, setEditName] = useState('');
   const [editEmail, setEditEmail] = useState('');
+  const [editMobileNumber, setEditMobileNumber] = useState('');
   const [editRole, setEditRole] = useState<'admin' | 'seller' | 'customer'>('customer');
   const [editPassword, setEditPassword] = useState('');
   const [editConfirmPassword, setEditConfirmPassword] = useState('');
@@ -92,9 +99,14 @@ export function UserManagement() {
     setEditingUser(user);
     setEditName(user.name);
     setEditEmail(user.email);
+    setEditMobileNumber(user.mobileNumber || '');
     setEditRole(user.role);
     setEditPassword('');
     setEditConfirmPassword('');
+  };
+
+  const handleOpenCustomerProfile = (user: User) => {
+    setSelectedCustomer(user);
   };
 
   const handleSaveEditUser = async (e: React.FormEvent) => {
@@ -102,9 +114,10 @@ export function UserManagement() {
     if (!editingUser) return;
     setIsSubmitting(true);
     try {
-      const payload: { name?: string; email?: string; role?: 'admin' | 'seller' | 'customer'; password?: string } = {
+      const payload: { name?: string; email?: string; mobileNumber?: string; role?: 'admin' | 'seller' | 'customer'; password?: string } = {
         name: editName,
         email: editEmail,
+        mobileNumber: editMobileNumber.trim(),
         role: editRole,
       };
       if (editPassword.trim()) {
@@ -170,8 +183,14 @@ export function UserManagement() {
   };
 
   const filteredUsers = userList.filter(user => {
-    if (filter === 'all') return true;
-    return user.role === filter;
+    if (filter !== 'all' && user.role !== filter) return false;
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase().trim();
+    return (
+      user.name.toLowerCase().includes(q) ||
+      user.email.toLowerCase().includes(q) ||
+      (user.mobileNumber && user.mobileNumber.toLowerCase().includes(q))
+    );
   });
 
   // Calculate total seller metrics
@@ -253,6 +272,32 @@ export function UserManagement() {
         </div>
       </div>
 
+      {/* Search Bar & User Counter */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-outline-variant shadow-2xs">
+        <div className="relative flex-1 max-w-md">
+          <span className="material-symbols-outlined absolute left-3.5 top-2.5 text-on-surface-variant text-[20px]">search</span>
+          <input
+            type="text"
+            placeholder="Search by name, email, or mobile number..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-11 pr-9 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-xs sm:text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all placeholder:text-on-surface-variant/60"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2.5 top-2 text-on-surface-variant hover:text-primary transition-colors"
+            >
+              <span className="material-symbols-outlined text-[18px]">close</span>
+            </button>
+          )}
+        </div>
+        <div className="text-xs text-on-surface-variant font-medium self-center sm:self-auto px-2">
+          Showing <strong className="text-on-surface">{filteredUsers.length}</strong> of {userList.length} users
+        </div>
+      </div>
+
       {/* Sellers Wallet Overview Banner (Shown on Sellers tab or All Users) */}
       {(filter === 'seller' || filter === 'all') && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gradient-to-r from-emerald-900 to-teal-950 p-5 rounded-2xl text-white shadow-md">
@@ -322,19 +367,43 @@ export function UserManagement() {
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <div 
-                          onClick={() => user.role === 'seller' ? handleOpenSellerProfile(user) : handleOpenEdit(user)}
+                          onClick={() => user.role === 'seller' ? handleOpenSellerProfile(user) : handleOpenCustomerProfile(user)}
                           className="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold text-sm select-none shrink-0 cursor-pointer hover:ring-2 hover:ring-primary/40 transition-all"
                         >
                           {user.initials}
                         </div>
                         <div>
                           <p 
-                            onClick={() => user.role === 'seller' ? handleOpenSellerProfile(user) : handleOpenEdit(user)}
+                            onClick={() => user.role === 'seller' ? handleOpenSellerProfile(user) : handleOpenCustomerProfile(user)}
                             className="font-semibold hover:text-primary cursor-pointer transition-colors"
                           >
                             {user.name}
                           </p>
-                          <p className="text-xs text-on-surface-variant">{user.email}</p>
+                          <div className="flex flex-col gap-0.5 mt-0.5">
+                            <a 
+                              href={`mailto:${user.email}`} 
+                              className="text-xs text-on-surface-variant hover:text-primary transition-colors inline-flex items-center gap-1 w-fit"
+                              title="Send email"
+                            >
+                              <span className="material-symbols-outlined text-[13px] text-primary">mail</span>
+                              {user.email}
+                            </a>
+                            {user.mobileNumber ? (
+                              <a 
+                                href={`tel:${user.mobileNumber}`} 
+                                className="text-xs font-medium text-emerald-800 hover:underline inline-flex items-center gap-1 w-fit"
+                                title="Call mobile number"
+                              >
+                                <span className="material-symbols-outlined text-[13px] text-emerald-700">call</span>
+                                {user.mobileNumber}
+                              </a>
+                            ) : (
+                              <span className="text-[11px] text-on-surface-variant/60 italic flex items-center gap-1">
+                                <span className="material-symbols-outlined text-[13px]">phone_disabled</span>
+                                No mobile provided
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -387,6 +456,19 @@ export function UserManagement() {
                         >
                           <span className="material-symbols-outlined text-[15px]">person_search</span>
                           View Profile
+                        </button>
+                      )}
+
+                      {/* View Details Button for Customers */}
+                      {user.role === 'customer' && (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenCustomerProfile(user)}
+                          className="px-3 py-1.5 bg-primary/10 text-primary border border-primary/25 rounded-lg text-xs font-bold hover:bg-primary hover:text-white transition-all shadow-sm inline-flex items-center gap-1"
+                          title="View customer contact details & info"
+                        >
+                          <span className="material-symbols-outlined text-[15px]">badge</span>
+                          Customer Info
                         </button>
                       )}
 
@@ -452,7 +534,19 @@ export function UserManagement() {
                       {selectedSeller.status}
                     </span>
                   </div>
-                  <p className="text-xs text-on-surface-variant">{selectedSeller.email} · ID: <span className="font-mono">{selectedSeller.id}</span></p>
+                  <div className="flex items-center gap-2 flex-wrap text-xs text-on-surface-variant mt-1">
+                    <a href={`mailto:${selectedSeller.email}`} className="hover:text-primary flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px]">mail</span>
+                      {selectedSeller.email}
+                    </a>
+                    {selectedSeller.mobileNumber && (
+                      <a href={`tel:${selectedSeller.mobileNumber}`} className="font-semibold text-emerald-700 hover:underline flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px]">call</span>
+                        {selectedSeller.mobileNumber}
+                      </a>
+                    )}
+                    <span>· ID: <span className="font-mono">{selectedSeller.id}</span></span>
+                  </div>
                 </div>
               </div>
 
@@ -524,6 +618,27 @@ export function UserManagement() {
                   <div>
                     <span className="text-on-surface-variant block font-medium">Account Status:</span>
                     <span className="font-semibold text-on-surface capitalize">{selectedSeller.status}</span>
+                  </div>
+                  <div className="col-span-2 sm:col-span-4 pt-1 border-t border-outline-variant/40">
+                    <span className="text-on-surface-variant block font-medium">Contact Phone:</span>
+                    {selectedSeller.mobileNumber ? (
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <a href={`tel:${selectedSeller.mobileNumber}`} className="font-bold text-emerald-800 hover:underline flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[14px] text-emerald-700">call</span>
+                          {selectedSeller.mobileNumber}
+                        </a>
+                        <a 
+                          href={`https://wa.me/${selectedSeller.mobileNumber.replace(/[^0-9]/g, '')}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="px-2 py-0.5 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 rounded text-[10px] font-bold"
+                        >
+                          WhatsApp
+                        </a>
+                      </div>
+                    ) : (
+                      <span className="font-semibold text-on-surface-variant italic">No phone number provided</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -657,6 +772,116 @@ export function UserManagement() {
         </div>
       )}
 
+      {/* ── Customer Details Modal ────────────────────────────────────────────── */}
+      {selectedCustomer && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in" onClick={() => setSelectedCustomer(null)}>
+          <div 
+            className="bg-white rounded-2xl shadow-2xl border border-outline-variant w-full max-w-lg overflow-hidden animate-scale-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="px-6 py-5 border-b border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-primary-fixed text-primary font-bold text-lg flex items-center justify-center border border-primary/20 shadow-2xs">
+                  {selectedCustomer.initials}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-on-surface">{selectedCustomer.name}</h3>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusColor(selectedCustomer.status)}`}>
+                      {selectedCustomer.status}
+                    </span>
+                  </div>
+                  <span className="text-xs font-semibold text-primary capitalize">{selectedCustomer.role} Account</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedCustomer(null)}
+                className="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              <div className="bg-surface-container-low rounded-xl p-4 border border-outline-variant/60 space-y-3">
+                <h4 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Contact Information</h4>
+                <div className="space-y-2.5 text-xs">
+                  <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-outline-variant">
+                    <span className="text-on-surface-variant font-medium flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[16px] text-primary">mail</span>
+                      Email:
+                    </span>
+                    <a href={`mailto:${selectedCustomer.email}`} className="font-semibold text-primary hover:underline">
+                      {selectedCustomer.email}
+                    </a>
+                  </div>
+                  <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-outline-variant">
+                    <span className="text-on-surface-variant font-medium flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[16px] text-emerald-600">call</span>
+                      Mobile Number:
+                    </span>
+                    {selectedCustomer.mobileNumber ? (
+                      <div className="flex items-center gap-2">
+                        <a href={`tel:${selectedCustomer.mobileNumber}`} className="font-bold text-emerald-800 hover:underline">
+                          {selectedCustomer.mobileNumber}
+                        </a>
+                        <a 
+                          href={`https://wa.me/${selectedCustomer.mobileNumber.replace(/[^0-9]/g, '')}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="px-2 py-0.5 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 rounded text-[11px] font-bold"
+                          title="Open WhatsApp chat"
+                        >
+                          WhatsApp
+                        </a>
+                      </div>
+                    ) : (
+                      <span className="text-on-surface-variant italic">No mobile provided</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="p-3 bg-surface-container-low rounded-xl border border-outline-variant">
+                  <span className="text-on-surface-variant block font-medium">Joined Date</span>
+                  <span className="font-bold text-on-surface text-sm mt-0.5 block">{selectedCustomer.joinedAt?.split('T')[0] || 'N/A'}</span>
+                </div>
+                <div className="p-3 bg-surface-container-low rounded-xl border border-outline-variant">
+                  <span className="text-on-surface-variant block font-medium">Total Orders</span>
+                  <span className="font-bold text-on-surface text-sm mt-0.5 block">{selectedCustomer.totalOrders || 0} purchases</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 border-t border-outline-variant bg-surface-container-lowest flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => {
+                  const target = selectedCustomer;
+                  setSelectedCustomer(null);
+                  handleOpenEdit(target);
+                }}
+                className="px-3.5 py-2 bg-primary/10 text-primary border border-primary/25 rounded-xl text-xs font-bold hover:bg-primary hover:text-white transition-all inline-flex items-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-[16px]">edit</span>
+                Edit Account
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedCustomer(null)}
+                className="px-5 py-2 bg-surface text-on-surface border border-outline-variant rounded-xl text-xs font-semibold hover:bg-surface-container transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Edit User Modal */}
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-fade-in">
@@ -695,6 +920,20 @@ export function UserManagement() {
                   onChange={(e) => setEditEmail(e.target.value)}
                   className="w-full bg-white border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Mobile Number</label>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[18px]">call</span>
+                  <input
+                    type="tel"
+                    placeholder="+91 98765 43210"
+                    value={editMobileNumber}
+                    onChange={(e) => setEditMobileNumber(e.target.value)}
+                    className="w-full bg-white border border-outline-variant rounded-lg pl-10 pr-3 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
+                  />
+                </div>
               </div>
 
               <div>

@@ -98,6 +98,7 @@ exports.getAdminPendingPayouts = async (req, res, next) => {
         _id: seller._id,
         name: seller.name,
         email: seller.email,
+        mobileNumber: seller.mobileNumber || '',
         initials: seller.initials,
         avatar: seller.avatar,
         grossSales,

@@ -11,7 +11,8 @@ export function Profile() {
   const [firstName, setFirstName] = useState(user?.name ? user.name.split(' ')[0] : '');
   const [lastName, setLastName] = useState(user?.name ? user.name.split(' ').slice(1).join(' ') : '');
   const [email, setEmail] = useState(user?.email || '');
-  const [bio, setBio] = useState('Textile professional focusing on premium patterns and sustainable materials.');
+  const [mobileNumber, setMobileNumber] = useState(user?.mobileNumber || '');
+  const [bio, setBio] = useState('Senior Textile Designer specializing in jacquard weaving and sustainable dye techniques.');
   
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -70,9 +71,12 @@ export function Profile() {
     if (!user) return;
     setIsSaving(true);
     try {
-      const updated = await api.users.update(user.id, { email });
+      const updated = await api.users.update(user.id, { 
+        email,
+        mobileNumber: mobileNumber.trim(),
+      });
       updateUserSession(updated);
-      showToast('Contact email updated successfully!', 'success');
+      showToast('Contact details updated successfully!', 'success');
     } catch (error: any) {
       showToast(error.response?.data?.error || 'Failed to update contact details', 'error');
     } finally {
@@ -126,10 +130,16 @@ export function Profile() {
             </div>
             <h3 className="text-lg font-bold text-primary mb-0.5">{user.name}</h3>
             <p className="text-sm text-on-surface-variant capitalize mb-1">{user.role}</p>
-            <div className="flex items-center gap-1 text-xs text-surface-tint mb-4">
+            <div className="flex items-center gap-1.5 text-xs text-on-surface-variant justify-center mt-1">
               <span className="material-symbols-outlined text-[14px]">location_on</span>
               <span>{user.country || 'Global User'}</span>
             </div>
+            {user.mobileNumber && (
+              <div className="flex items-center gap-1.5 text-xs text-on-surface-variant justify-center mt-1 font-medium">
+                <span className="material-symbols-outlined text-[14px] text-primary">call</span>
+                <span>{user.mobileNumber}</span>
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-xl border border-outline-variant p-5 shadow-sm">
@@ -274,7 +284,7 @@ export function Profile() {
             <div className="bg-white rounded-xl border border-outline-variant p-6 shadow-sm">
               <h3 className="text-base font-bold text-primary mb-5 flex items-center gap-2">
                 <span className="material-symbols-outlined text-[18px]">contact_page</span>
-                Contact Email
+                Contact Information
               </h3>
               <form className="space-y-4" onSubmit={handleSaveContact}>
                 <div>
@@ -284,8 +294,16 @@ export function Profile() {
                     <input className="w-full bg-white border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" type="email" value={email} onChange={e => setEmail(e.target.value)}/>
                   </div>
                 </div>
-                <button className="text-sm font-semibold text-primary border border-primary hover:bg-surface-variant px-4 py-2 rounded-lg transition-colors w-full" type="submit" disabled={isSaving}>
-                  Update Email
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">Mobile Number</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[18px]">call</span>
+                    <input className="w-full bg-white border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all" type="tel" placeholder="+91 98765 43210" value={mobileNumber} onChange={e => setMobileNumber(e.target.value)}/>
+                  </div>
+                </div>
+                <button className="text-sm font-semibold text-primary border border-primary hover:bg-surface-variant px-4 py-2 rounded-lg transition-colors w-full flex items-center justify-center gap-1.5" type="submit" disabled={isSaving}>
+                  <span className="material-symbols-outlined text-[16px]">save</span>
+                  Save Contact Details
                 </button>
               </form>
             </div>

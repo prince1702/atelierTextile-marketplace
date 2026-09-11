@@ -7,6 +7,8 @@ export function Register() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
   const [role, setRole] = useState<'customer' | 'seller'>('customer');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -39,10 +41,29 @@ export function Register() {
   const handleNext = () => setStep(prev => Math.min(prev + 1, 4));
   const handleBack = () => setStep(prev => Math.max(prev - 1, 1));
 
+  // Step 1 Validation
+  const handleStep1Submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim()) {
+      showToast('Please fill all required fields', 'error');
+      return;
+    }
+    const cleanMobile = mobileNumber.trim();
+    if (!cleanMobile) {
+      showToast('Please enter your mobile number', 'error');
+      return;
+    }
+    if (cleanMobile.length < 7) {
+      showToast('Please enter a valid mobile number (at least 7 digits)', 'error');
+      return;
+    }
+    setStep(2);
+  };
+
   // Request OTP Email
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !mobileNumber) {
       showToast('Please fill all required fields', 'error');
       return;
     }
@@ -134,9 +155,13 @@ export function Register() {
       return;
     }
 
+    const formattedMobile = mobileNumber.trim().startsWith('+')
+      ? mobileNumber.trim()
+      : `${countryCode} ${mobileNumber.trim()}`;
+
     setIsLoading(true);
     try {
-      await verifySignupOtp(name, email, password, role, fullOtp);
+      await verifySignupOtp(name, email, formattedMobile, password, role, fullOtp);
       showToast('Account verified and created successfully!');
       setTimeout(() => navigate(`/${role}/dashboard`), 100);
     } catch (error: any) {
@@ -189,7 +214,7 @@ export function Register() {
           </div>
         </div>
 
-        <form onSubmit={step === 3 ? handleSendOtp : step === 4 ? handleVerifyAndRegister : (e) => { e.preventDefault(); handleNext(); }}>
+        <form onSubmit={step === 1 ? handleStep1Submit : step === 2 ? (e) => { e.preventDefault(); handleNext(); } : step === 3 ? handleSendOtp : handleVerifyAndRegister}>
           <div className="p-8 min-h-[300px] relative">
             
             {/* Step 1: Basic Info */}
@@ -202,6 +227,40 @@ export function Register() {
                 <div>
                   <label className="block text-sm font-semibold text-on-surface mb-1.5">Email Address</label>
                   <input required value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm outline-none transition-all" placeholder="jane@example.com" type="email" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface mb-1.5">
+                    Mobile Number <span className="text-primary">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <select
+                      value={countryCode}
+                      onChange={e => setCountryCode(e.target.value)}
+                      className="w-28 px-2.5 py-2.5 bg-white border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm outline-none transition-all font-medium text-on-surface"
+                    >
+                      <option value="+91">🇮🇳 +91</option>
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+971">🇦🇪 +971</option>
+                      <option value="+61">🇦🇺 +61</option>
+                      <option value="+65">🇸🇬 +65</option>
+                    </select>
+                    <div className="relative flex-1">
+                      <span className="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[18px]">call</span>
+                      <input
+                        required
+                        value={mobileNumber}
+                        onChange={e => setMobileNumber(e.target.value.replace(/[^0-9\s-]/g, ''))}
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm outline-none transition-all"
+                        placeholder="98765 43210"
+                        type="tel"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-on-surface-variant mt-1.5 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px] text-primary">verified_user</span>
+                    OTP verification code will be sent to your email address.
+                  </p>
                 </div>
               </div>
             )}

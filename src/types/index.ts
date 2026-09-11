@@ -8,6 +8,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  mobileNumber?: string;
   role: 'admin' | 'seller' | 'customer';
   initials: string;
   avatar?: string;

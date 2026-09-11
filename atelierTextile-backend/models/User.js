@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema({
     enum: ['admin', 'seller', 'customer'],
     default: 'customer',
   },
+  mobileNumber: {
+    type: String,
+    trim: true,
+    default: '',
+  },
   avatar: {
     type: String,
     default: '',
