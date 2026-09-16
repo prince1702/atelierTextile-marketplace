@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../../services/api';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 export function UploadPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
   const isEditMode = !!id;
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+  const [designerMeta, setDesignerMeta] = useState<{ name?: string; id?: string }>({});
 
   const { showToast } = useNotification();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,6 +65,9 @@ export function UploadPage() {
       try {
         const design = await api.designs.getById(id);
         if (design) {
+          if (design.designerName) {
+            setDesignerMeta({ name: design.designerName, id: design.designer });
+          }
           setTitle(design.title || '');
           setDescription(design.description || '');
           setCategory(design.category || 'Weaving Design');
@@ -399,12 +406,12 @@ export function UploadPage() {
 
       if (isEditMode && id) {
         await api.designs.update(id, formData);
-        showToast('Design updated successfully!', 'success');
+        showToast(isAdmin ? 'Design updated successfully by Admin!' : 'Design updated successfully!', 'success');
       } else {
         await api.designs.create(formData);
         showToast('Design uploaded successfully! It is pending admin review.', 'success');
       }
-      navigate('/seller/designs');
+      navigate(isAdmin ? '/admin/inventory' : '/seller/designs');
     } catch (error: any) {
       console.error(error);
       showToast(error.response?.data?.error || 'Failed to save design', 'error');
@@ -423,16 +430,44 @@ export function UploadPage() {
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto animate-fade-in">
-      <div>
-        <h2 className="text-2xl font-bold text-primary mb-1">
-          {isEditMode ? 'Edit Design' : 'Upload New Design'}
-        </h2>
-        <p className="text-sm text-on-surface-variant">
-          {isEditMode 
-            ? 'Update design details, pricing, categories, or upload replacement design files.'
-            : 'Submit your textile design to the marketplace. Designs are reviewed by admins before activation.'
-          }
-        </p>
+      {isAdmin && (
+        <div className="flex items-center justify-between bg-primary-fixed/20 border border-primary/20 rounded-xl px-4 py-3">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary text-[20px]">admin_panel_settings</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-primary">
+              Admin Privilege Mode · Editing Catalog Listing #{id}
+            </span>
+          </div>
+          <Link
+            to="/admin/inventory"
+            className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+          >
+            <span className="material-symbols-outlined text-[15px]">arrow_back</span>
+            Back to Inventory
+          </Link>
+        </div>
+      )}
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 className="text-2xl font-bold text-primary mb-1">
+            {isEditMode ? (isAdmin ? 'Edit Design (Admin Mode)' : 'Edit Design') : 'Upload New Design'}
+          </h2>
+          <p className="text-sm text-on-surface-variant">
+            {isEditMode 
+              ? (isAdmin 
+                  ? 'Update design specifications, pricing, formats, or upload replacement master files directly.'
+                  : 'Update design details, pricing, categories, or upload replacement design files.'
+                )
+              : 'Submit your textile design to the marketplace. Designs are reviewed by admins before activation.'
+            }
+          </p>
+        </div>
+        {designerMeta.name && (
+          <div className="px-3 py-1.5 bg-surface-container rounded-lg border border-outline-variant text-xs text-on-surface-variant shrink-0">
+            Designer: <span className="font-semibold text-on-surface">{designerMeta.name}</span>
+          </div>
+        )}
       </div>
 
       <div className="bg-white border border-outline-variant rounded-2xl p-6 md:p-8 shadow-sm">
@@ -1327,7 +1362,7 @@ export function UploadPage() {
           <div className="pt-4 flex justify-end gap-3 border-t border-outline-variant/30">
             <button 
               type="button" 
-              onClick={() => navigate('/seller/designs')}
+              onClick={() => navigate(isAdmin ? '/admin/inventory' : '/seller/designs')}
               className="px-5 py-2.5 border border-outline-variant rounded-lg text-sm font-semibold hover:bg-surface-container-low transition-colors"
             >
               Cancel
@@ -1342,7 +1377,7 @@ export function UploadPage() {
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   {isEditMode ? 'Saving Changes...' : 'Uploading to Cloudinary...'}
                 </>
-              ) : (isEditMode ? 'Update Design' : 'Submit Design')}
+              ) : (isEditMode ? (isAdmin ? 'Update Design as Admin' : 'Update Design') : 'Submit Design')}
             </button>
           </div>
 

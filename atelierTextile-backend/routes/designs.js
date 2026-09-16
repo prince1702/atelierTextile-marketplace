@@ -31,8 +31,8 @@ router.post('/', auth, authorize('seller'), cpUpload, createDesign);
 router.get('/:id', getDesign);
 router.get('/:id/download', auth, downloadDesign);
 
-// Seller update/delete own design
-router.put('/:id', auth, authorize('seller'), cpUpload, updateDesign);
+// Seller or Admin update / delete design
+router.put('/:id', auth, authorize('seller', 'admin'), cpUpload, updateDesign);
 router.delete('/:id', auth, authorize('seller', 'admin'), deleteDesign);
 
 // Admin status update

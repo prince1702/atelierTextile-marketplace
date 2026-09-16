@@ -793,11 +793,13 @@ exports.updateDesign = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Design not found' });
     }
 
-    // Check ownership
-    if (design.designer.toString() !== req.user.id.toString()) {
+    // Check ownership or admin
+    const isOwner = design.designer && design.designer.toString() === req.user.id.toString();
+    const isAdmin = req.user.role === 'admin';
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({
         success: false,
-        error: 'You can only update your own designs',
+        error: 'You do not have permission to update this design',
       });
     }
 
@@ -1120,7 +1122,7 @@ exports.downloadDesign = async (req, res, next) => {
     }
 
     // Check permissions: admin, owner, or purchaser
-    const isOwner = design.designer.toString() === req.user.id.toString();
+    const isOwner = design.designer && design.designer.toString() === req.user.id.toString();
     const isAdmin = req.user.role === 'admin';
     const hasPurchased = await Order.exists({
       buyer: req.user.id,
@@ -1148,6 +1150,29 @@ exports.downloadDesign = async (req, res, next) => {
         });
       }
       fileUrl = design.pdcDesignFile;
+    } else if (requestedType === 'pdf') {
+      if (!design.pdfUrl || design.pdfUrl.trim() === '') {
+        return res.status(404).json({
+          success: false,
+          error: 'PDF catalog file is not available for this design.',
+        });
+      }
+      fileUrl = design.pdfUrl;
+    } else if (requestedType === 'image') {
+      if (!design.image || design.image.trim() === '') {
+        return res.status(404).json({
+          success: false,
+          error: 'Image file is not available for this design.',
+        });
+      }
+      fileUrl = design.image;
+    } else {
+      // If default download requested and designFile is missing, gracefully fallback to PDF or image
+      if ((!fileUrl || fileUrl.trim() === '') && design.pdfUrl) {
+        fileUrl = design.pdfUrl;
+      } else if ((!fileUrl || fileUrl.trim() === '') && design.image) {
+        fileUrl = design.image;
+      }
     }
 
     // Helper to check if a URL points to an expired Render ephemeral upload

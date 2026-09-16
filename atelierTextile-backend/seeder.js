@@ -53,11 +53,14 @@ const seedDataWithoutExit = async () => {
     console.log(`📦 ${orders.length} orders seeded`);
 
     // --- SEED TICKETS ---
+    const customer1 = await User.findOne({ email: 'customer@atelier.com' });
+    const customer3 = (await User.findOne({ email: 'james.k@luxbrand.kr' })) || customer1;
+
     const ticketsData = [
       {
         subject: 'Cannot download licensed design files',
         description: 'After purchasing the Geometric Navy Gold design, I am unable to access the download link. The page keeps showing an error.',
-        user: customer1._id, status: 'in-progress', priority: 'high', category: 'Technical Issue',
+        user: customer1?._id, status: 'in-progress', priority: 'high', category: 'Technical Issue',
         responses: 2, createdAt: new Date('2024-10-24'), updatedAt: new Date('2024-10-24'),
       },
       {

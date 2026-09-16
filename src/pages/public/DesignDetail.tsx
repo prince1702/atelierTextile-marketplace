@@ -216,6 +216,25 @@ export function DesignDetail() {
     }
   })();
 
+  const [downloadingType, setDownloadingType] = useState<string | null>(null);
+
+  const handleAdminDownload = async (fileType?: string) => {
+    if (!design) return;
+    const key = fileType || 'main';
+    setDownloadingType(key);
+    try {
+      const label = fileType ? fileType.toUpperCase() : 'Main';
+      showToast(`Downloading ${label} file: ${design.title}...`, 'info');
+      await api.designs.downloadFile(design.id, design.title, fileType);
+      showToast(`${label} file downloaded successfully!`, 'success');
+    } catch (err: any) {
+      console.error('Download error:', err);
+      showToast(err.message || 'Failed to download file', 'error');
+    } finally {
+      setDownloadingType(null);
+    }
+  };
+
   const handleAdminUpdateStatus = async (newStatus: 'active' | 'pending' | 'rejected') => {
     if (!design) return;
     try {
@@ -249,7 +268,27 @@ export function DesignDetail() {
               </span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Link
+                to={`/admin/edit/${design.id}`}
+                className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1"
+                title="Edit this design in admin panel"
+              >
+                <span className="material-symbols-outlined text-[16px]">edit</span>
+                Edit Design
+              </Link>
+              <button
+                type="button"
+                onClick={() => handleAdminDownload()}
+                disabled={!!downloadingType}
+                className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1"
+                title="Download design files (Admin Free Access)"
+              >
+                <span className={`material-symbols-outlined text-[16px] ${downloadingType === 'main' ? 'animate-spin' : ''}`}>
+                  {downloadingType === 'main' ? 'sync' : 'download'}
+                </span>
+                Download Free
+              </button>
               {design.status !== 'active' && (
                 <button
                   type="button"
@@ -502,6 +541,74 @@ export function DesignDetail() {
                   </label>
                 ))}
               </div>
+
+              {/* Admin Zero-Payment Access Card */}
+              {user?.role === 'admin' && (
+                <div className="mb-6 p-4 rounded-xl border-2 border-emerald-500/40 bg-gradient-to-br from-emerald-50 to-teal-50/50 space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-emerald-700 text-[22px]">admin_panel_settings</span>
+                      <div>
+                        <h4 className="text-xs font-bold text-emerald-950 uppercase tracking-wider">Admin Complimentary Access</h4>
+                        <p className="text-[11px] text-emerald-700">Download master production files directly without payment or checkout.</p>
+                      </div>
+                    </div>
+                    <span className="px-2 py-0.5 bg-emerald-200 text-emerald-800 rounded text-[10px] font-extrabold uppercase">
+                      Zero Cost
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => handleAdminDownload()}
+                      disabled={!!downloadingType}
+                      className="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5"
+                    >
+                      <span className={`material-symbols-outlined text-[16px] ${downloadingType === 'main' ? 'animate-spin' : ''}`}>
+                        {downloadingType === 'main' ? 'sync' : 'download'}
+                      </span>
+                      Download Main File
+                    </button>
+
+                    {(design.pdcDesignFile || design.pdcPrice) && (
+                      <button
+                        type="button"
+                        onClick={() => handleAdminDownload('pdc')}
+                        disabled={!!downloadingType}
+                        className="py-2.5 px-3 bg-primary hover:bg-primary-container text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5"
+                      >
+                        <span className={`material-symbols-outlined text-[16px] ${downloadingType === 'pdc' ? 'animate-spin' : ''}`}>
+                          {downloadingType === 'pdc' ? 'sync' : 'download'}
+                        </span>
+                        Download PDC / TIF
+                      </button>
+                    )}
+
+                    {(design.pdfUrl || design.isBulk) && (
+                      <button
+                        type="button"
+                        onClick={() => handleAdminDownload('pdf')}
+                        disabled={!!downloadingType}
+                        className="py-2.5 px-3 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5"
+                      >
+                        <span className={`material-symbols-outlined text-[16px] ${downloadingType === 'pdf' ? 'animate-spin' : ''}`}>
+                          {downloadingType === 'pdf' ? 'sync' : 'download'}
+                        </span>
+                        Download PDF Catalog
+                      </button>
+                    )}
+
+                    <Link
+                      to={`/admin/edit/${design.id}`}
+                      className="py-2.5 px-3 bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 text-center"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">edit</span>
+                      Edit Design
+                    </Link>
+                  </div>
+                </div>
+              )}
 
               <div className="mt-6 pt-6 border-t border-outline-variant/50">
                 <div className="flex justify-between items-center mb-6">

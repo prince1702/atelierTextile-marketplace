@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import type { Design } from '../../types';
 import { useNotification } from '../../contexts/NotificationContext';
@@ -11,6 +12,8 @@ export function InventoryPage() {
   const [activeTab, setActiveTab] = useState<'pending' | 'active' | 'rejected'>('pending');
   const [selectedDesign, setSelectedDesign] = useState<Design | null>(null);
   const [previewImage, setPreviewImage] = useState<string>('');
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [downloadDropdownId, setDownloadDropdownId] = useState<string | null>(null);
   const { showToast } = useNotification();
 
   const fetchDesigns = async () => {
@@ -39,6 +42,22 @@ export function InventoryPage() {
   const closePreview = () => {
     setSelectedDesign(null);
     setPreviewImage('');
+  };
+
+  const handleDownloadFile = async (design: Design, fileType?: string) => {
+    setDownloadingId(`${design.id}-${fileType || 'main'}`);
+    try {
+      const typeLabel = fileType ? fileType.toUpperCase() : 'Main';
+      showToast(`Downloading ${typeLabel} file: ${design.title}...`, 'info');
+      await api.designs.downloadFile(design.id, design.title, fileType);
+      showToast(`${typeLabel} file downloaded successfully!`, 'success');
+      setDownloadDropdownId(null);
+    } catch (err: any) {
+      console.error('Download error:', err);
+      showToast(err.message || 'Failed to download design file', 'error');
+    } finally {
+      setDownloadingId(null);
+    }
   };
 
   const handleUpdateStatus = async (id: string, newStatus: 'active' | 'pending' | 'rejected') => {
@@ -200,6 +219,101 @@ export function InventoryPage() {
                         View
                       </button>
 
+                      {/* Edit Design Button */}
+                      <Link
+                        to={`/admin/edit/${design.id}`}
+                        className="px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm inline-flex items-center gap-1"
+                        title="Edit design specifications, files, and pricing"
+                      >
+                        <span className="material-symbols-outlined text-[15px]">edit</span>
+                        Edit
+                      </Link>
+
+                      {/* Download Button (Admin Free) */}
+                      <div className="relative inline-block text-left">
+                        {design.pdcDesignFile || design.pdcPrice || design.pdfUrl || design.isBulk ? (
+                          <div className="inline-flex rounded-lg shadow-sm border border-emerald-300 bg-emerald-50 text-emerald-700 overflow-hidden">
+                            <button
+                              type="button"
+                              onClick={() => handleDownloadFile(design)}
+                              disabled={downloadingId?.startsWith(design.id)}
+                              className="px-2.5 py-1.5 text-xs font-bold hover:bg-emerald-600 hover:text-white transition-colors inline-flex items-center gap-1"
+                              title="Download main design file (Admin Free Access)"
+                            >
+                              <span className={`material-symbols-outlined text-[15px] ${downloadingId === `${design.id}-main` ? 'animate-spin' : ''}`}>
+                                {downloadingId === `${design.id}-main` ? 'sync' : 'download'}
+                              </span>
+                              Download
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setDownloadDropdownId(downloadDropdownId === design.id ? null : design.id)}
+                              className="px-1.5 py-1.5 border-l border-emerald-300 hover:bg-emerald-600 hover:text-white transition-colors"
+                              title="Choose download format"
+                            >
+                              <span className="material-symbols-outlined text-[14px]">arrow_drop_down</span>
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleDownloadFile(design)}
+                            disabled={downloadingId?.startsWith(design.id)}
+                            className="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-bold hover:bg-emerald-600 hover:text-white transition-all shadow-sm inline-flex items-center gap-1"
+                            title="Download design file (Admin Free Access)"
+                          >
+                            <span className={`material-symbols-outlined text-[15px] ${downloadingId === `${design.id}-main` ? 'animate-spin' : ''}`}>
+                              {downloadingId === `${design.id}-main` ? 'sync' : 'download'}
+                            </span>
+                            Download
+                          </button>
+                        )}
+
+                        {downloadDropdownId === design.id && (
+                          <div className="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-outline-variant py-1 z-30 animate-fade-in text-left">
+                            <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-on-surface-variant border-b border-outline-variant/40">
+                              Admin Free Downloads
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleDownloadFile(design)}
+                              className="w-full text-left px-3 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container flex items-center gap-2"
+                            >
+                              <span className="material-symbols-outlined text-[16px] text-emerald-600">file_download</span>
+                              Main Design File
+                            </button>
+                            {(design.pdcDesignFile || design.pdcPrice) && (
+                              <button
+                                type="button"
+                                onClick={() => handleDownloadFile(design, 'pdc')}
+                                className="w-full text-left px-3 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container flex items-center gap-2"
+                              >
+                                <span className="material-symbols-outlined text-[16px] text-primary">folder_zip</span>
+                                PDC / TIF Format
+                              </button>
+                            )}
+                            {(design.pdfUrl || design.isBulk) && (
+                              <button
+                                type="button"
+                                onClick={() => handleDownloadFile(design, 'pdf')}
+                                className="w-full text-left px-3 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container flex items-center gap-2"
+                              >
+                                <span className="material-symbols-outlined text-[16px] text-red-600">picture_as_pdf</span>
+                                Catalog PDF
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleDownloadFile(design, 'image')}
+                              className="w-full text-left px-3 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container flex items-center gap-2"
+                            >
+                              <span className="material-symbols-outlined text-[16px] text-amber-600">image</span>
+                              Original Image Asset
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
                       {/* Direct Live Page Link */}
                       <a
                         href={`/design/${design.id}`}
@@ -294,6 +408,14 @@ export function InventoryPage() {
               </div>
 
               <div className="flex items-center gap-2">
+                <Link
+                  to={`/admin/edit/${selectedDesign.id}`}
+                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm inline-flex items-center gap-1.5"
+                  title="Edit design specifications, files, and pricing"
+                >
+                  <span className="material-symbols-outlined text-[15px]">edit</span>
+                  Edit Design
+                </Link>
                 <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
                   selectedDesign.status === 'active' 
                     ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
@@ -488,6 +610,92 @@ export function InventoryPage() {
                     </div>
                   )}
 
+                  {/* Admin Direct Downloads Section */}
+                  <div className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50/50 border border-emerald-200 rounded-xl space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-emerald-700 text-[20px]">download_for_offline</span>
+                        <div>
+                          <h4 className="text-xs font-bold text-emerald-900 uppercase tracking-wider">Admin Free Download Center</h4>
+                          <p className="text-[11px] text-emerald-700">Instant direct access to all design packages without payment</p>
+                        </div>
+                      </div>
+                      <span className="px-2 py-0.5 bg-emerald-200 text-emerald-800 rounded text-[10px] font-extrabold uppercase">
+                        Admin Access
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                      {/* Main Design File */}
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadFile(selectedDesign)}
+                        disabled={downloadingId?.startsWith(selectedDesign.id)}
+                        className="p-2.5 bg-white border border-emerald-200 hover:border-emerald-500 rounded-lg text-left flex items-center justify-between group transition-all shadow-xs"
+                      >
+                        <div>
+                          <p className="text-xs font-bold text-on-surface group-hover:text-emerald-700 transition-colors">Main Design File</p>
+                          <p className="text-[10px] text-on-surface-variant">Production Archive ({selectedDesign.designFormat || 'BMP/ZIP'})</p>
+                        </div>
+                        <span className={`material-symbols-outlined text-emerald-600 text-[18px] ${downloadingId === `${selectedDesign.id}-main` ? 'animate-spin' : 'group-hover:translate-y-0.5 transition-transform'}`}>
+                          {downloadingId === `${selectedDesign.id}-main` ? 'sync' : 'download'}
+                        </span>
+                      </button>
+
+                      {/* PDC / TIF File */}
+                      {(selectedDesign.pdcDesignFile || selectedDesign.pdcPrice) && (
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadFile(selectedDesign, 'pdc')}
+                          disabled={downloadingId?.startsWith(selectedDesign.id)}
+                          className="p-2.5 bg-white border border-primary/20 hover:border-primary rounded-lg text-left flex items-center justify-between group transition-all shadow-xs"
+                        >
+                          <div>
+                            <p className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">PDC / TIF Format File</p>
+                            <p className="text-[10px] text-on-surface-variant">Specialist Jacquard / Print Asset</p>
+                          </div>
+                          <span className={`material-symbols-outlined text-primary text-[18px] ${downloadingId === `${selectedDesign.id}-pdc` ? 'animate-spin' : 'group-hover:translate-y-0.5 transition-transform'}`}>
+                            {downloadingId === `${selectedDesign.id}-pdc` ? 'sync' : 'download'}
+                          </span>
+                        </button>
+                      )}
+
+                      {/* Bulk PDF Catalog */}
+                      {(selectedDesign.pdfUrl || selectedDesign.isBulk) && (
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadFile(selectedDesign, 'pdf')}
+                          disabled={downloadingId?.startsWith(selectedDesign.id)}
+                          className="p-2.5 bg-white border border-red-200 hover:border-red-500 rounded-lg text-left flex items-center justify-between group transition-all shadow-xs"
+                        >
+                          <div>
+                            <p className="text-xs font-bold text-on-surface group-hover:text-red-600 transition-colors">Catalog PDF File</p>
+                            <p className="text-[10px] text-on-surface-variant">Complete Multi-Page Catalog</p>
+                          </div>
+                          <span className={`material-symbols-outlined text-red-600 text-[18px] ${downloadingId === `${selectedDesign.id}-pdf` ? 'animate-spin' : 'group-hover:translate-y-0.5 transition-transform'}`}>
+                            {downloadingId === `${selectedDesign.id}-pdf` ? 'sync' : 'download'}
+                          </span>
+                        </button>
+                      )}
+
+                      {/* Original High-Res Image */}
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadFile(selectedDesign, 'image')}
+                        disabled={downloadingId?.startsWith(selectedDesign.id)}
+                        className="p-2.5 bg-white border border-amber-200 hover:border-amber-500 rounded-lg text-left flex items-center justify-between group transition-all shadow-xs"
+                      >
+                        <div>
+                          <p className="text-xs font-bold text-on-surface group-hover:text-amber-700 transition-colors">Unwatermarked Asset</p>
+                          <p className="text-[10px] text-on-surface-variant">Original High-Resolution Image</p>
+                        </div>
+                        <span className={`material-symbols-outlined text-amber-600 text-[18px] ${downloadingId === `${selectedDesign.id}-image` ? 'animate-spin' : 'group-hover:translate-y-0.5 transition-transform'}`}>
+                          {downloadingId === `${selectedDesign.id}-image` ? 'sync' : 'download'}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+
                   {/* Public Store Link */}
                   <div className="pt-1">
                     <a
@@ -506,14 +714,23 @@ export function InventoryPage() {
 
             {/* Modal Footer Actions */}
             <div className="px-6 py-4 border-t border-outline-variant bg-surface-container-lowest flex items-center justify-between flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => handleDelete(selectedDesign.id)}
-                className="px-3.5 py-2 text-red-600 hover:bg-red-50 rounded-xl text-xs font-bold transition-colors inline-flex items-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-[16px]">delete</span>
-                Delete Permanently
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleDelete(selectedDesign.id)}
+                  className="px-3.5 py-2 text-red-600 hover:bg-red-50 rounded-xl text-xs font-bold transition-colors inline-flex items-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-[16px]">delete</span>
+                  Delete
+                </button>
+                <Link
+                  to={`/admin/edit/${selectedDesign.id}`}
+                  className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-600 hover:text-white rounded-xl text-xs font-bold transition-all shadow-sm inline-flex items-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-[16px]">edit</span>
+                  Edit Design
+                </Link>
+              </div>
 
               <div className="flex items-center gap-3">
                 <button

@@ -102,6 +102,7 @@ export default function App() {
                     <Route path="payouts" element={<Navigate to="seller-payouts" replace />} />
                     <Route path="feedback" element={<AdminFeedbackPage />} />
                     <Route path="offers" element={<OffersPage />} />
+                    <Route path="edit/:id" element={<UploadPage />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />
                   </Routes>
                 </ProtectedRoute>
