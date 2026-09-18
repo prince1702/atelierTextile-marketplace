@@ -17,6 +17,9 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 
+// Trust reverse proxy headers (Render, Railway, etc.) so req.protocol returns 'https'
+app.set('trust proxy', 1);
+
 // CORS — allow frontend origin and vercel preview domains
 const allowedOrigins = [
   process.env.FRONTEND_URL,

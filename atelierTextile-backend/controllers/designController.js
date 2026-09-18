@@ -561,6 +561,13 @@ exports.createDesign = async (req, res, next) => {
                                    process.env.CLOUDINARY_API_KEY && 
                                    process.env.CLOUDINARY_API_KEY !== 'your_api_key';
 
+    // Helper: resolve true protocol (handles reverse proxies on Render/Railway)
+    const getProtocol = () => req.get('x-forwarded-proto') || req.protocol;
+
+    // In production, Cloudinary MUST be configured for images (local disk is ephemeral)
+    const host = req.get('host') || '';
+    const isProduction = host.includes('onrender.com') || host.includes('railway.app') || process.env.NODE_ENV === 'production';
+
     // 1. Process display image
     if (imageFile) {
       let uploadSuccess = false;
@@ -570,8 +577,19 @@ exports.createDesign = async (req, res, next) => {
           imageUrl = result.secure_url;
           uploadSuccess = true;
         } catch (cloudinaryError) {
-          console.warn('⚠️ Cloudinary upload failed, using local fallback:', cloudinaryError.message);
+          console.error('❌ Cloudinary image upload failed:', cloudinaryError.message);
+          if (isProduction) {
+            return res.status(500).json({
+              success: false,
+              error: `Failed to upload display image to Cloudinary (${cloudinaryError.message}). Please try again.`,
+            });
+          }
         }
+      } else if (isProduction) {
+        return res.status(500).json({
+          success: false,
+          error: 'Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables on the server.',
+        });
       }
 
       if (!uploadSuccess) {
@@ -583,10 +601,8 @@ exports.createDesign = async (req, res, next) => {
           const filename = `design-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(imageFile.originalname) || '.jpg'}`;
           const filePath = path.join(uploadsDir, filename);
           fs.writeFileSync(filePath, imageFile.buffer);
-          
-          // Resolve backend URL dynamically
-          const host = req.get('host');
-          imageUrl = `${req.protocol}://${host}/uploads/${filename}`;
+          // Use x-forwarded-proto to get the correct protocol behind a proxy
+          imageUrl = `${getProtocol()}://${req.get('host')}/uploads/${filename}`;
         } catch (localError) {
           console.error('❌ Local file write failed:', localError);
           imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500'; // Final fallback
@@ -620,9 +636,7 @@ exports.createDesign = async (req, res, next) => {
             const filename = `design-add-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname) || '.jpg'}`;
             const filePath = path.join(uploadsDir, filename);
             fs.writeFileSync(filePath, file.buffer);
-            
-            const host = req.get('host');
-            additionalUrl = `${req.protocol}://${host}/uploads/${filename}`;
+            additionalUrl = `${getProtocol()}://${req.get('host')}/uploads/${filename}`;
           } catch (localError) {
             console.error('❌ Local additional image write failed:', localError);
             additionalUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
@@ -815,6 +829,11 @@ exports.updateDesign = async (req, res, next) => {
                                    process.env.CLOUDINARY_API_KEY && 
                                    process.env.CLOUDINARY_API_KEY !== 'your_api_key';
 
+    // Helper: resolve true protocol (handles reverse proxies on Render/Railway)
+    const getProtocol = () => req.get('x-forwarded-proto') || req.protocol;
+    const editHost = req.get('host') || '';
+    const isProductionEdit = editHost.includes('onrender.com') || editHost.includes('railway.app') || process.env.NODE_ENV === 'production';
+
     // Upload new image if provided
     if (imageFile) {
       let uploadSuccess = false;
@@ -824,8 +843,19 @@ exports.updateDesign = async (req, res, next) => {
           req.body.image = result.secure_url;
           uploadSuccess = true;
         } catch (cloudinaryError) {
-          console.warn('⚠️ Cloudinary upload failed during edit, using local fallback:', cloudinaryError.message);
+          console.error('❌ Cloudinary image upload failed during edit:', cloudinaryError.message);
+          if (isProductionEdit) {
+            return res.status(500).json({
+              success: false,
+              error: `Failed to upload display image to Cloudinary (${cloudinaryError.message}). Please try again.`,
+            });
+          }
         }
+      } else if (isProductionEdit) {
+        return res.status(500).json({
+          success: false,
+          error: 'Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables on the server.',
+        });
       }
 
       if (!uploadSuccess) {
@@ -837,10 +867,7 @@ exports.updateDesign = async (req, res, next) => {
           const filename = `design-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(imageFile.originalname) || '.jpg'}`;
           const filePath = path.join(uploadsDir, filename);
           fs.writeFileSync(filePath, imageFile.buffer);
-          
-          // Resolve backend URL dynamically
-          const host = req.get('host');
-          req.body.image = `${req.protocol}://${host}/uploads/${filename}`;
+          req.body.image = `${getProtocol()}://${req.get('host')}/uploads/${filename}`;
         } catch (localError) {
           console.error('❌ Local file write failed during edit:', localError);
         }
@@ -869,10 +896,7 @@ exports.updateDesign = async (req, res, next) => {
           const filename = `designFile-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(designFile.originalname) || '.zip'}`;
           const filePath = path.join(uploadsDir, filename);
           fs.writeFileSync(filePath, designFile.buffer);
-          
-          // Resolve backend URL dynamically
-          const host = req.get('host');
-          req.body.designFile = `${req.protocol}://${host}/uploads/${filename}`;
+          req.body.designFile = `${getProtocol()}://${req.get('host')}/uploads/${filename}`;
         } catch (localError) {
           console.error('❌ Local design file write failed during edit:', localError);
         }
@@ -901,9 +925,7 @@ exports.updateDesign = async (req, res, next) => {
           const filename = `pdcDesignFile-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(pdcDesignFile.originalname) || '.zip'}`;
           const filePath = path.join(uploadsDir, filename);
           fs.writeFileSync(filePath, pdcDesignFile.buffer);
-          
-          const host = req.get('host');
-          req.body.pdcDesignFile = `${req.protocol}://${host}/uploads/${filename}`;
+          req.body.pdcDesignFile = `${getProtocol()}://${req.get('host')}/uploads/${filename}`;
         } catch (localError) {
           console.error('❌ Local PDC design file write failed during edit:', localError);
         }
@@ -933,9 +955,7 @@ exports.updateDesign = async (req, res, next) => {
           const filename = `pdfFile-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(pdfFile.originalname) || '.pdf'}`;
           const filePath = path.join(uploadsDir, filename);
           fs.writeFileSync(filePath, pdfFile.buffer);
-          
-          const host = req.get('host');
-          req.body.pdfUrl = `${req.protocol}://${host}/uploads/${filename}`;
+          req.body.pdfUrl = `${getProtocol()}://${req.get('host')}/uploads/${filename}`;
         } catch (localError) {
           console.error('❌ Local PDF file write failed during edit:', localError);
         }
@@ -967,9 +987,7 @@ exports.updateDesign = async (req, res, next) => {
             const filename = `design-add-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname) || '.jpg'}`;
             const filePath = path.join(uploadsDir, filename);
             fs.writeFileSync(filePath, file.buffer);
-            
-            const host = req.get('host');
-            additionalUrl = `${req.protocol}://${host}/uploads/${filename}`;
+            additionalUrl = `${getProtocol()}://${req.get('host')}/uploads/${filename}`;
           } catch (localError) {
             console.error('❌ Local additional image write failed during edit:', localError);
             additionalUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
