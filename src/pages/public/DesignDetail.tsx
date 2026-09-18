@@ -93,6 +93,7 @@ export function DesignDetail() {
   const [activeImage, setActiveImage] = useState<string>('');
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
+  const [downloadingType, setDownloadingType] = useState<string | null>(null);
   const mainWheelTimer = useRef<number>(0);
 
   useEffect(() => {
@@ -216,7 +217,7 @@ export function DesignDetail() {
     }
   })();
 
-  const [downloadingType, setDownloadingType] = useState<string | null>(null);
+
 
   const handleAdminDownload = async (fileType?: string) => {
     if (!design) return;
