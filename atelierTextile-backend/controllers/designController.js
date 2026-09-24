@@ -605,11 +605,11 @@ exports.createDesign = async (req, res, next) => {
           imageUrl = `${getProtocol()}://${req.get('host')}/uploads/${filename}`;
         } catch (localError) {
           console.error('❌ Local file write failed:', localError);
-          imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500'; // Final fallback
+          imageUrl = req.body.image || (req.body.isBulk === 'true' || req.body.isBulk === true ? '' : 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=500');
         }
       }
     } else {
-      imageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+      imageUrl = req.body.image || (req.body.isBulk === 'true' || req.body.isBulk === true ? '' : 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=500');
     }
 
     // 1b. Process additional display images
@@ -639,7 +639,7 @@ exports.createDesign = async (req, res, next) => {
             additionalUrl = `${getProtocol()}://${req.get('host')}/uploads/${filename}`;
           } catch (localError) {
             console.error('❌ Local additional image write failed:', localError);
-            additionalUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+            additionalUrl = 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=500';
           }
         }
         additionalImageUrls.push(additionalUrl);
@@ -760,6 +760,7 @@ exports.createDesign = async (req, res, next) => {
     console.log('📥 createDesign req.body keys:', Object.keys(req.body), '| image:', imageFile?.originalname, '| designFile:', designFile?.originalname, '| pdcDesignFile:', pdcDesignFile?.originalname);
     const design = await Design.create({
       ...req.body,
+      pdcPrice: req.body.pdcPrice ? Number(req.body.pdcPrice) || 0 : 0,
       areaMin: areaRange.min,
       areaMax: areaRange.max,
       needleMin: needleRange.min,
@@ -990,7 +991,7 @@ exports.updateDesign = async (req, res, next) => {
             additionalUrl = `${getProtocol()}://${req.get('host')}/uploads/${filename}`;
           } catch (localError) {
             console.error('❌ Local additional image write failed during edit:', localError);
-            additionalUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500';
+            additionalUrl = 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=500';
           }
         }
         additionalImageUrls.push(additionalUrl);
@@ -1027,6 +1028,10 @@ exports.updateDesign = async (req, res, next) => {
       const needleRange = parseRangeNumbers(req.body.needle);
       req.body.needleMin = needleRange.min;
       req.body.needleMax = needleRange.max;
+    }
+
+    if (req.body.pdcPrice !== undefined) {
+      req.body.pdcPrice = req.body.pdcPrice ? Number(req.body.pdcPrice) || 0 : 0;
     }
 
     design = await Design.findByIdAndUpdate(req.params.id, req.body, {

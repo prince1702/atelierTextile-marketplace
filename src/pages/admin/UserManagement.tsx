@@ -680,7 +680,7 @@ export function UserManagement() {
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-2.5">
                                 <div className="w-10 h-10 rounded-md overflow-hidden bg-surface-container shrink-0 border border-outline-variant/60">
-                                  {des.isBulk && !des.image ? (
+                                  {des.isBulk && (!des.image || des.image.includes('1544816155-12df9643f363')) ? (
                                     <div className="w-full h-full bg-red-600 text-white flex items-center justify-center">
                                       <span className="material-symbols-outlined text-[16px]">picture_as_pdf</span>
                                     </div>

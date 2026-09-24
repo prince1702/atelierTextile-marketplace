@@ -83,16 +83,58 @@ export function CartPage() {
     }
   };
 
+  const getAvailableLicenses = (design: Design) => {
+    if (design.category === 'Weaving Design') {
+      const format = design.designFormat ? design.designFormat.toUpperCase() : '';
+      const hasPdcFile = Boolean(design.pdcDesignFile && design.pdcDesignFile.trim() !== '');
+      const hasPdcPrice = Boolean(design.pdcPrice && Number(design.pdcPrice) > 0);
+      const hasPdc = hasPdcFile || hasPdcPrice || format === 'PDC';
+      const hasBmpFile = Boolean(design.designFile && design.designFile.trim() !== '');
+      const hasBmpPrice = Boolean(design.price && Number(design.price) > 0);
+      const isPdcOnly = format === 'PDC' || (!hasBmpFile && !hasBmpPrice && hasPdc);
+
+      const opts: { value: string; label: string }[] = [];
+      if (!isPdcOnly) {
+        opts.push({ value: 'BMP', label: 'BMP Format' });
+      }
+      if (hasPdc && format !== 'BMP') {
+        opts.push({ value: 'PDC', label: 'PDC Format' });
+      }
+      return opts.length > 0 ? opts : [{ value: 'BMP', label: 'BMP Format' }];
+    } else if (design.category === 'Digital Print Design' || design.category === 'Position Print Design') {
+      const format = design.designFormat ? design.designFormat.toUpperCase() : 'ALL';
+      const hasTifFile = Boolean(design.pdcDesignFile && design.pdcDesignFile.trim() !== '');
+      const hasTifPrice = Boolean(design.pdcPrice && Number(design.pdcPrice) > 0);
+      const hasTif = hasTifFile || hasTifPrice || format === 'TIF';
+
+      const opts: { value: string; label: string }[] = [];
+      if (format !== 'TIF' && (format === 'ALL' || format === 'PSD' || format === 'BOTH')) {
+        opts.push({ value: 'PSD', label: 'PSD Format' });
+      }
+      if (hasTif && (format === 'ALL' || format === 'TIF' || format === 'BOTH')) {
+        opts.push({ value: 'TIF', label: 'TIF Format' });
+      }
+      return opts.length > 0 ? opts : [{ value: 'PSD', label: 'PSD Format' }];
+    } else {
+      return [
+        { value: 'EMB', label: 'EMB Format' },
+        { value: 'OTHER', label: 'Other Format' }
+      ];
+    }
+  };
+
+  const getDefaultLicense = (design: Design, preferred?: string) => {
+    const opts = getAvailableLicenses(design);
+    if (preferred && opts.some(o => o.value === preferred)) {
+      return preferred;
+    }
+    return opts[0]?.value || 'BMP';
+  };
+
   const [selectedLicenses, setSelectedLicenses] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
     items.forEach(item => {
-      init[item.design.id] = item.licenseType || (
-        item.design.category === 'Weaving Design' 
-          ? 'BMP' 
-          : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design')
-            ? 'PSD' 
-            : 'EMB'
-      );
+      init[item.design.id] = getDefaultLicense(item.design, item.licenseType);
     });
     return init;
   });
@@ -102,7 +144,10 @@ export function CartPage() {
   };
 
   const getPrice = (design: Design, license: string) => {
-    if (license === 'Extended' || license === 'Other' || license === 'OTHER' || license === 'TIF') return design.price * 2.5;
+    if (license === 'Extended' || license === 'Other' || license === 'OTHER' || license === 'TIF') {
+      if (license === 'TIF' && design.pdcPrice && design.pdcPrice > 0) return design.pdcPrice;
+      return design.price * 2.5;
+    }
     if (license === 'PDC') return design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
     if (license === 'Exclusive Buyout' || license === 'Exclusive Global') return design.price * 8;
     return design.price;
@@ -110,13 +155,7 @@ export function CartPage() {
 
   const calculateTotal = () => {
     return items.reduce((sum, item) => {
-      const license = selectedLicenses[item.design.id] || (
-        item.design.category === 'Weaving Design' 
-          ? 'BMP' 
-          : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design')
-            ? 'PSD' 
-            : 'EMB'
-      );
+      const license = getDefaultLicense(item.design, selectedLicenses[item.design.id]);
       return sum + getPrice(item.design, license);
     }, 0);
   };
@@ -126,13 +165,7 @@ export function CartPage() {
     setIsSubmitting(true);
     try {
       const orderItems = items.map(item => {
-        const license = selectedLicenses[item.design.id] || (
-          item.design.category === 'Weaving Design' 
-            ? 'BMP' 
-            : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design')
-              ? 'PSD' 
-              : 'EMB'
-        );
+        const license = getDefaultLicense(item.design, selectedLicenses[item.design.id]);
         return { designId: item.design.id, licenseType: license };
       });
 
@@ -253,13 +286,7 @@ export function CartPage() {
             {/* Cart Items List */}
             <div className="lg:col-span-8 space-y-6">
               {items.map(item => {
-                const license = selectedLicenses[item.design.id] || (
-                  item.design.category === 'Weaving Design' 
-                    ? 'BMP' 
-                    : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design')
-                      ? 'PSD' 
-                      : 'EMB'
-                );
+                const license = getDefaultLicense(item.design, selectedLicenses[item.design.id]);
                 const basePrice = item.design.price;
                 const itemPrice = getPrice(item.design, license);
 
@@ -297,24 +324,9 @@ export function CartPage() {
                             onChange={(e) => handleLicenseChange(item.design.id, e.target.value)}
                             className="border border-outline-variant bg-surface-container-low rounded-lg px-3 py-1.5 text-xs font-semibold text-on-surface focus:outline-none focus:border-primary cursor-pointer w-full sm:w-fit"
                           >
-                            {item.design.category === 'Weaving Design' ? (
-                              <>
-                                <option value="BMP">BMP Format</option>
-                                {item.design.pdcPrice && item.design.pdcPrice > 0 ? (
-                                  <option value="PDC">PDC Format</option>
-                                ) : null}
-                              </>
-                            ) : (item.design.category === 'Digital Print Design' || item.design.category === 'Position Print Design') ? (
-                              <>
-                                <option value="PSD">PSD Format</option>
-                                <option value="TIF">TIF Format</option>
-                              </>
-                            ) : (
-                              <>
-                                <option value="EMB">EMB Format</option>
-                                <option value="OTHER">Other Format</option>
-                              </>
-                            )}
+                            {getAvailableLicenses(item.design).map(opt => (
+                              <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
                           </select>
                         </div>
                       </div>

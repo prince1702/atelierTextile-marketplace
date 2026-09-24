@@ -106,7 +106,10 @@ export function DesignDetail() {
         setActiveImage(data.image);
         setActiveImageIndex(0);
         if (data.category === 'Weaving Design') {
-          setSelectedLicense('BMP');
+          const format = data.designFormat ? data.designFormat.toUpperCase() : '';
+          const hasPdc = Boolean((data.pdcDesignFile && data.pdcDesignFile.trim() !== '') || (data.pdcPrice && Number(data.pdcPrice) > 0) || format === 'PDC');
+          const isPdcOnly = format === 'PDC' || (!data.price && hasPdc);
+          setSelectedLicense(isPdcOnly ? 'PDC' : 'BMP');
         } else if (data.category === 'Digital Print Design' || data.category === 'Position Print Design') {
           setSelectedLicense(data.designFormat === 'TIF' ? 'TIF' : 'PSD');
         } else {
@@ -193,22 +196,43 @@ export function DesignDetail() {
 
   const licenseOptions = (() => {
     if (design.category === 'Weaving Design') {
-      const pdcPriceVal = design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
-      return [
-        { name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' },
-        { name: 'PDC', price: pdcPriceVal, desc: 'PDC format. Extended production license.' }
-      ];
+      const format = design.designFormat ? design.designFormat.toUpperCase() : '';
+      const hasPdcFile = Boolean(design.pdcDesignFile && design.pdcDesignFile.trim() !== '');
+      const hasPdcPrice = Boolean(design.pdcPrice && Number(design.pdcPrice) > 0);
+      const hasPdc = hasPdcFile || hasPdcPrice || format === 'PDC';
+
+      const hasBmpFile = Boolean(design.designFile && design.designFile.trim() !== '');
+      const hasBmpPrice = Boolean(design.price && Number(design.price) > 0);
+      const isPdcOnly = format === 'PDC' || (!hasBmpFile && !hasBmpPrice && hasPdc);
+
+      const options = [];
+      if (!isPdcOnly) {
+        options.push({ name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' });
+      }
+      if (hasPdc && format !== 'BMP') {
+        const pdcPriceVal = hasPdcPrice ? Number(design.pdcPrice) : (design.price ? design.price * 2.5 : 0);
+        options.push({ name: 'PDC', price: pdcPriceVal, desc: 'PDC format. Extended production license.' });
+      }
+
+      if (options.length === 0) {
+        options.push({ name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' });
+      }
+      return options;
     } else if (design.category === 'Digital Print Design' || design.category === 'Position Print Design') {
       const options = [];
       const format = design.designFormat ? design.designFormat.toUpperCase() : 'ALL';
-      if (format === 'ALL' || format === 'PSD') {
+      const hasTifFile = Boolean(design.pdcDesignFile && design.pdcDesignFile.trim() !== '');
+      const hasTifPrice = Boolean(design.pdcPrice && Number(design.pdcPrice) > 0);
+      const hasTif = hasTifFile || hasTifPrice || format === 'TIF';
+
+      if (format !== 'TIF' && (format === 'ALL' || format === 'PSD' || format === 'BOTH')) {
         options.push({ name: 'PSD', price: design.price, desc: 'PSD format. Standard print license.' });
       }
-      if (format === 'ALL' || format === 'TIF') {
-        const tifPrice = design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : design.price * 2.5;
+      if (hasTif && (format === 'ALL' || format === 'TIF' || format === 'BOTH')) {
+        const tifPrice = hasTifPrice ? Number(design.pdcPrice) : design.price * 2.5;
         options.push({ name: 'TIF', price: tifPrice, desc: 'TIF format. High-resolution print format.' });
       }
-      return options;
+      return options.length > 0 ? options : [{ name: 'PSD', price: design.price, desc: 'PSD format. Standard print license.' }];
     } else {
       return [
         { name: 'EMB', price: design.price, desc: 'EMB format. Standard embroidery license.' },
@@ -217,7 +241,14 @@ export function DesignDetail() {
     }
   })();
 
-
+  useEffect(() => {
+    if (licenseOptions && licenseOptions.length > 0) {
+      const match = licenseOptions.find(opt => opt.name === selectedLicense);
+      if (!match) {
+        setSelectedLicense(licenseOptions[0].name);
+      }
+    }
+  }, [licenseOptions, selectedLicense]);
 
   const handleAdminDownload = async (fileType?: string) => {
     if (!design) return;
@@ -396,10 +427,22 @@ export function DesignDetail() {
                   <span className={`material-symbols-outlined text-[20px] ${isWishlisted ? 'filled text-error' : ''}`}>favorite</span>
                 </button>
 
-                <div className="text-center max-w-md mx-auto space-y-4 py-4">
-                  <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto shadow-sm border border-red-100">
-                    <span className="material-symbols-outlined text-[36px]">picture_as_pdf</span>
-                  </div>
+                <div className="text-center max-w-md mx-auto space-y-4 py-4 w-full">
+                  {design.image && !design.image.includes('1544816155-12df9643f363') ? (
+                    <div className="relative w-full max-w-[280px] h-[190px] mx-auto rounded-xl overflow-hidden shadow-md border border-outline-variant bg-surface-container">
+                      <WatermarkedImage
+                        src={optimizeCloudinaryUrl(design.image, 'card')}
+                        alt={design.title}
+                        designId={design.title || design.id}
+                        density="compact"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto shadow-sm border border-red-100">
+                      <span className="material-symbols-outlined text-[36px]">picture_as_pdf</span>
+                    </div>
+                  )}
                   <div>
                     <h2 className="text-lg font-bold text-on-surface">Bulk Design Catalog</h2>
                     <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">
@@ -572,7 +615,7 @@ export function DesignDetail() {
                       Download Main File
                     </button>
 
-                    {(design.pdcDesignFile || design.pdcPrice) && (
+                    {Boolean((design.pdcDesignFile && design.pdcDesignFile.trim() !== '') || (design.pdcPrice && Number(design.pdcPrice) > 0)) && (
                       <button
                         type="button"
                         onClick={() => handleAdminDownload('pdc')}

@@ -25,24 +25,35 @@ export function DesignCard({ design }: DesignCardProps) {
     }
   };
 
+  const isPlaceholderBag = Boolean(design.image && design.image.includes('1544816155-12df9643f363'));
+  const hasValidImage = Boolean(design.image && !isPlaceholderBag);
+
   return (
     <div className="bg-white rounded-xl border border-outline-variant overflow-hidden card-lift group flex flex-col h-full">
       <Link to={`/design/${design.id}`} className="relative h-40 sm:h-56 overflow-hidden bg-surface-container block">
-        {design.isBulk && !design.image ? (
-          <div className="w-full h-full bg-gradient-to-br from-red-500/80 to-amber-600/85 flex flex-col items-center justify-center text-white p-4 group-hover:scale-105 transition-transform duration-500">
+        {design.isBulk && !hasValidImage ? (
+          <div className="w-full h-full bg-gradient-to-br from-red-600/90 via-amber-600/90 to-primary/90 flex flex-col items-center justify-center text-white p-4 group-hover:scale-105 transition-transform duration-500 relative">
             <span className="material-symbols-outlined text-[48px] mb-2 drop-shadow">picture_as_pdf</span>
-            <span className="text-xs font-bold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-full border border-white/20">
+            <span className="text-xs font-bold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-full border border-white/20 shadow-xs">
               Bulk Catalog
             </span>
           </div>
         ) : (
-          <WatermarkedImage 
-            src={optimizeCloudinaryUrl(design.image, 'card')} 
-            alt={design.title} 
-            designId={design.title || design.id}
-            density="compact"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+          <div className="relative w-full h-full">
+            <WatermarkedImage 
+              src={optimizeCloudinaryUrl(design.image, 'card')} 
+              alt={design.title} 
+              designId={design.title || design.id}
+              density="compact"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            {design.isBulk && (
+              <span className="absolute bottom-2 left-2 z-10 bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
+                <span className="material-symbols-outlined text-[12px]">picture_as_pdf</span>
+                Catalog
+              </span>
+            )}
+          </div>
         )}
         {design.discountPercentage && design.discountPercentage > 0 ? (
           <div className="absolute top-2.5 left-2.5 z-10">

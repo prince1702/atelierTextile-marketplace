@@ -85,7 +85,11 @@ exports.getOrder = async (req, res, next) => {
 // @route   POST /api/orders
 // @access  Customer
 const getPriceWithLicense = (price, licenseType, design = null) => {
-  if (licenseType === 'Standard Regional' || licenseType === 'Extended' || licenseType === 'Other' || licenseType === 'OTHER' || licenseType === 'TIF') return price * 2.5;
+  if (licenseType === 'Standard Regional' || licenseType === 'Extended' || licenseType === 'Other' || licenseType === 'OTHER') return price * 2.5;
+  if (licenseType === 'TIF') {
+    if (design && design.pdcPrice && design.pdcPrice > 0) return design.pdcPrice;
+    return price * 2.5;
+  }
   if (licenseType === 'PDC') {
     return design && design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : price * 2.5;
   }
@@ -119,7 +123,13 @@ exports.createOrder = async (req, res, next) => {
       if (!seller) {
         return res.status(404).json({ success: false, error: 'Seller not found' });
       }
-      const license = item.licenseType || 'Open Regional';
+      let license = item.licenseType || 'Open Regional';
+      if (design.category === 'Weaving Design' && license === 'PDC') {
+        const hasPdc = Boolean((design.pdcDesignFile && design.pdcDesignFile.trim() !== '') || (design.pdcPrice && Number(design.pdcPrice) > 0) || design.designFormat === 'PDC');
+        if (!hasPdc) {
+          license = 'BMP';
+        }
+      }
       const itemPrice = getPriceWithLicense(design.price, license, design);
       processedItems.push({ design, seller, licenseType: license, amount: itemPrice });
     }

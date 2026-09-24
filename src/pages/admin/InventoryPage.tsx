@@ -162,7 +162,7 @@ export function InventoryPage() {
                           className="relative w-14 h-14 rounded-lg overflow-hidden bg-surface-container shrink-0 cursor-pointer border border-outline-variant/60 hover:opacity-90 transition-opacity"
                           title="Click to preview design"
                         >
-                          {design.isBulk && !design.image ? (
+                          {design.isBulk && (!design.image || design.image.includes('1544816155-12df9643f363')) ? (
                             <div className="w-full h-full bg-gradient-to-br from-red-500 to-amber-600 flex flex-col items-center justify-center text-white p-1">
                               <span className="material-symbols-outlined text-[20px]">picture_as_pdf</span>
                               <span className="text-[8px] font-bold uppercase">PDF</span>
@@ -282,7 +282,7 @@ export function InventoryPage() {
                               <span className="material-symbols-outlined text-[16px] text-emerald-600">file_download</span>
                               Main Design File
                             </button>
-                            {(design.pdcDesignFile || design.pdcPrice) && (
+                            {Boolean((design.pdcDesignFile && design.pdcDesignFile.trim() !== '') || (design.pdcPrice && Number(design.pdcPrice) > 0)) && (
                               <button
                                 type="button"
                                 onClick={() => handleDownloadFile(design, 'pdc')}
@@ -643,7 +643,7 @@ export function InventoryPage() {
                       </button>
 
                       {/* PDC / TIF File */}
-                      {(selectedDesign.pdcDesignFile || selectedDesign.pdcPrice) && (
+                      {Boolean((selectedDesign.pdcDesignFile && selectedDesign.pdcDesignFile.trim() !== '') || (selectedDesign.pdcPrice && Number(selectedDesign.pdcPrice) > 0)) && (
                         <button
                           type="button"
                           onClick={() => handleDownloadFile(selectedDesign, 'pdc')}

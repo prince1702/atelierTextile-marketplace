@@ -335,9 +335,14 @@ export function UploadPage() {
       return;
     }
 
-    // In create mode, at least one design file must be provided
-    if (!isBulk && !isEditMode && !zipFile && !pdcZipFile) {
-      showToast('Please upload at least one design source file (BMP or PDC/TIF)', 'warning');
+    if (isBulk && !isEditMode && !imageFile && !imagePreview) {
+      showToast('Please upload a cover/preview image for the bulk catalog', 'warning');
+      return;
+    }
+
+    // In create mode, at least one design source file or PDF catalog must be provided
+    if (!isEditMode && !zipFile && !pdcZipFile && !pdfFile && !pdfUrl) {
+      showToast('Please upload at least one design file (BMP, PDC, or PDF catalog)', 'warning');
       return;
     }
 
@@ -369,25 +374,22 @@ export function UploadPage() {
       formData.append('colorways', colorways);
       formData.append('licenseType', licenseType);
       formData.append('isBulk', String(isBulk));
-      if (isBulk) {
-        if (pdfFile) {
-          formData.append('pdfFile', pdfFile);
+      if (pdfFile) {
+        formData.append('pdfFile', pdfFile);
+      }
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+      additionalFiles.forEach((file) => {
+        if (file) {
+          formData.append('additionalImages', file);
         }
-      } else {
-        if (imageFile) {
-          formData.append('image', imageFile);
-        }
-        additionalFiles.forEach((file) => {
-          if (file) {
-            formData.append('additionalImages', file);
-          }
-        });
-        if (zipFile) {
-          formData.append('designFile', zipFile);
-        }
-        if (pdcZipFile) {
-          formData.append('pdcDesignFile', pdcZipFile);
-        }
+      });
+      if (zipFile) {
+        formData.append('designFile', zipFile);
+      }
+      if (pdcZipFile) {
+        formData.append('pdcDesignFile', pdcZipFile);
       }
       formData.append('designType', designType);
       if (category === 'Digital Print Design' || category === 'Position Print Design') {
@@ -401,6 +403,8 @@ export function UploadPage() {
       formData.append('designFormat', designFormat);
       if (pdcPrice) {
         formData.append('pdcPrice', pdcPrice);
+      } else {
+        formData.append('pdcPrice', '0');
       }
       formData.append('sareeConcept', sareeConcept);
 
@@ -498,12 +502,12 @@ export function UploadPage() {
               className="h-4 w-4 text-primary border-outline-variant rounded cursor-pointer"
             />
             <label htmlFor="isBulk" className="text-sm font-semibold text-on-surface cursor-pointer select-none">
-              BULK Design (Upload PDF catalog instead of preview images)
+              BULK Design (Upload PDF catalog with cover preview image)
             </label>
           </div>
 
-          {isBulk ? (
-            /* PDF Upload Area */
+          {/* If BULK is active, show PDF upload card */}
+          {isBulk && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
@@ -523,7 +527,7 @@ export function UploadPage() {
                   </button>
                 )}
               </div>
-              <div className="border-2 border-dashed border-outline-variant hover:border-primary/50 transition-colors rounded-xl p-6 flex flex-col items-center justify-center bg-surface/10 cursor-pointer relative min-h-[180px]">
+              <div className="border-2 border-dashed border-outline-variant hover:border-primary/50 transition-colors rounded-xl p-6 flex flex-col items-center justify-center bg-surface/10 cursor-pointer relative min-h-[160px]">
                 {pdfFile || pdfUrl ? (
                   <div className="text-center space-y-3">
                     <span className="material-symbols-outlined text-[48px] text-primary">picture_as_pdf</span>
@@ -540,7 +544,7 @@ export function UploadPage() {
                   <div className="text-center space-y-3">
                     <span className="material-symbols-outlined text-[48px] text-outline">picture_as_pdf</span>
                     <div>
-                      <p className="text-sm font-semibold text-on-surface">Drag & drop your PDF file or browse</p>
+                      <p className="text-sm font-semibold text-on-surface">Drag & drop your PDF catalog file or browse</p>
                       <p className="text-xs text-on-surface-variant mt-1">Supports PDF (Max 50MB)</p>
                     </div>
                   </div>
@@ -568,90 +572,124 @@ export function UploadPage() {
                 />
               </div>
             </div>
-          ) : (
-            <>
-              {/* File Upload Area */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Design File / Pattern Image *</label>
-                <div className="border-2 border-dashed border-outline-variant hover:border-primary/50 transition-colors rounded-xl p-6 flex flex-col items-center justify-center bg-surface/10 cursor-pointer relative min-h-[220px]">
-                  {imagePreview ? (
-                    <div className="text-center space-y-4">
-                      <img src={imagePreview} alt="Preview" className="max-h-[180px] rounded-lg object-contain mx-auto shadow-sm" />
-                      <p className="text-xs text-on-surface-variant font-medium">Click below to replace image</p>
+          )}
+
+          {/* Design Image / Catalog Cover Preview Image Upload Area */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                {isBulk ? 'Bulk Catalog Cover / Preview Image *' : 'Design File / Pattern Image *'}
+              </label>
+              {imagePreview && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImageFile(null);
+                    setImagePreview(null);
+                  }}
+                  className="text-xs text-red-600 font-semibold hover:underline flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-[14px]">close</span>
+                  Remove Image
+                </button>
+              )}
+            </div>
+            {isBulk && (
+              <p className="text-xs text-on-surface-variant">
+                Upload a cover photo or sample design image. This image will be shown to customers on marketplace cards and catalog headers instead of a default placeholder.
+              </p>
+            )}
+            <div className="border-2 border-dashed border-outline-variant hover:border-primary/50 transition-colors rounded-xl p-6 flex flex-col items-center justify-center bg-surface/10 cursor-pointer relative min-h-[200px]">
+              {imagePreview ? (
+                <div className="text-center space-y-3">
+                  <img src={imagePreview} alt="Preview" className="max-h-[180px] rounded-lg object-contain mx-auto shadow-sm" />
+                  <p className="text-xs text-primary font-semibold">Click or drag another image to replace</p>
+                </div>
+              ) : (
+                <div className="text-center space-y-3">
+                  <span className="material-symbols-outlined text-[48px] text-outline">
+                    {isBulk ? 'add_photo_alternate' : 'upload_file'}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-on-surface">
+                      {isBulk 
+                        ? 'Drag & drop catalog cover / preview image or browse' 
+                        : 'Drag & drop your files or browse (Select up to 5 photos at once)'}
+                    </p>
+                    <p className="text-xs text-on-surface-variant mt-1">
+                      Supports JPG, PNG, WEBP (Max 20MB)
+                    </p>
+                  </div>
+                </div>
+              )}
+              <input 
+                type="file" 
+                accept="image/*"
+                multiple={!isBulk}
+                onChange={handleFileChange}
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                required={!imagePreview}
+              />
+            </div>
+          </div>
+
+          {/* Additional Images Upload Area */}
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block">
+                {isBulk ? 'Optional Catalog Sample Photos (Up to 4)' : 'Additional Display Images (Up to 4)'}
+              </label>
+              <p className="text-xs text-on-surface-variant/80 mt-0.5">
+                {isBulk 
+                  ? 'Add extra sample preview pages from this catalog for customers to see.' 
+                  : 'Add more views or colorways of the design. Tip: You can select multiple photos at once in the file browser.'}
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {[0, 1, 2, 3].map((index) => (
+                <div 
+                  key={index}
+                  className="border-2 border-dashed border-outline-variant hover:border-primary/45 transition-colors rounded-xl bg-surface/10 relative h-28 flex flex-col items-center justify-center overflow-hidden group cursor-pointer"
+                >
+                  {additionalPreviews[index] ? (
+                    <div className="absolute inset-0 w-full h-full">
+                      <img 
+                        src={additionalPreviews[index]!} 
+                        alt={`Preview ${index + 1}`} 
+                        className="w-full h-full object-cover" 
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          removeAdditionalFile(index);
+                        }}
+                        className="absolute top-1 right-1 w-6 h-6 bg-black/60 text-white rounded-full flex items-center justify-center hover:bg-black transition-colors z-10"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">close</span>
+                      </button>
                     </div>
                   ) : (
-                    <div className="text-center space-y-3">
-                      <span className="material-symbols-outlined text-[48px] text-outline">upload_file</span>
-                      <div>
-                        <p className="text-sm font-semibold text-on-surface">Drag & drop your files or browse (Select up to 5 photos at once)</p>
-                        <p className="text-xs text-on-surface-variant mt-1">Supports JPG, PNG, WEBP — Select multiple photos to auto-fill main and sample slots (Max 20MB per file)</p>
-                      </div>
+                    <div className="text-center p-2 flex flex-col items-center">
+                      <span className="material-symbols-outlined text-[24px] text-outline mb-1">add_photo_alternate</span>
+                      <span className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wide">Add Image</span>
                     </div>
                   )}
-                  <input 
-                    type="file" 
-                    accept="image/*"
-                    multiple
-                    onChange={handleFileChange}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    required={!imagePreview}
-                  />
+                  {!additionalPreviews[index] && (
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => handleAdditionalFileChange(index, e)}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    />
+                  )}
                 </div>
-              </div>
-
-              {/* Additional Images Upload Area */}
-              <div className="space-y-3">
-                <div>
-                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Additional Display Images (Up to 4)</label>
-                  <p className="text-xs text-on-surface-variant/80 mt-0.5">Add more views or colorways of the design. Tip: You can select multiple photos at once in the file browser.</p>
-                </div>
-                
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {[0, 1, 2, 3].map((index) => (
-                    <div 
-                      key={index}
-                      className="border-2 border-dashed border-outline-variant hover:border-primary/45 transition-colors rounded-xl bg-surface/10 relative h-28 flex flex-col items-center justify-center overflow-hidden group cursor-pointer"
-                    >
-                      {additionalPreviews[index] ? (
-                        <div className="absolute inset-0 w-full h-full">
-                          <img 
-                            src={additionalPreviews[index]!} 
-                            alt={`Preview ${index + 1}`} 
-                            className="w-full h-full object-cover" 
-                          />
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              removeAdditionalFile(index);
-                            }}
-                            className="absolute top-1 right-1 w-6 h-6 bg-black/60 text-white rounded-full flex items-center justify-center hover:bg-black transition-colors z-10"
-                          >
-                            <span className="material-symbols-outlined text-[16px]">close</span>
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="text-center p-2 flex flex-col items-center">
-                          <span className="material-symbols-outlined text-[24px] text-outline mb-1">add_photo_alternate</span>
-                          <span className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wide">Add Image</span>
-                        </div>
-                      )}
-                      {!additionalPreviews[index] && (
-                        <input 
-                          type="file" 
-                          accept="image/*"
-                          multiple
-                          onChange={(e) => handleAdditionalFileChange(index, e)}
-                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
+              ))}
+            </div>
+          </div>
 
           {/* BMP / PSD Design Source File Upload Area */}
           <div className="space-y-2">
