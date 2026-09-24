@@ -66,7 +66,7 @@ export function PortalLayout({ children }: PortalLayoutProps) {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-[280px] bg-white border-r border-outline-variant h-full z-20">
         <div className="p-6 mb-2 border-b border-outline-variant flex items-center gap-3">
-          <Link to="/" className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-container text-white">
+          <Link to={`/${role}/dashboard`} className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-container text-white" title="Go to Dashboard">
             <span className="material-symbols-outlined">texture</span>
           </Link>
           <div>
@@ -232,7 +232,7 @@ export function PortalLayout({ children }: PortalLayoutProps) {
               </div>
             </button>
             
-            <Link to="/profile" className="flex items-center gap-2 pl-3 ml-1 border-l border-outline-variant hover:opacity-80 transition-opacity">
+            <Link to={`/${role}/dashboard`} className="flex items-center gap-2 pl-3 ml-1 border-l border-outline-variant hover:opacity-80 transition-opacity" title="Go to Dashboard">
               <div className="hidden sm:block text-right">
                 <p className="text-sm font-bold text-on-surface leading-tight">{user.name}</p>
                 <p className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">{role}</p>

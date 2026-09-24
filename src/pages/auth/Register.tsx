@@ -21,9 +21,18 @@ export function Register() {
 
   const otpInputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  const { sendSignupOtp, verifySignupOtp } = useAuth();
+  const { sendSignupOtp, verifySignupOtp, user, isAuthenticated } = useAuth();
   const { showToast } = useNotification();
   const navigate = useNavigate();
+
+  // If already logged in, redirect directly to dashboard
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === 'seller') navigate('/seller/dashboard', { replace: true });
+      else if (user.role === 'customer') navigate('/customer/dashboard', { replace: true });
+      else if (user.role === 'admin') navigate('/admin/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   // Handle Resend Countdown Timer
   useEffect(() => {

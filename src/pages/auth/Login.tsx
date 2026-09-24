@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
@@ -9,9 +9,18 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login } = useAuth();
+  const { login, user, isAuthenticated } = useAuth();
   const { showToast } = useNotification();
   const navigate = useNavigate();
+
+  // If already logged in, redirect directly to dashboard
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === 'seller') navigate('/seller/dashboard', { replace: true });
+      else if (user.role === 'customer') navigate('/customer/dashboard', { replace: true });
+      else if (user.role === 'admin') navigate('/admin/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,19 +32,18 @@ export function Login() {
     setIsLoading(true);
     try {
       await login(email, password);
-      // Wait for login to set user context, then redirect
+      // Wait for login to set user context, then redirect directly to dashboard
       showToast('Welcome back to TexDesigner!');
-      // Navigate is handled by ProtectedRoute once auth state updates, 
-      // but we can force it here for UX flow.
+      
       const storedUserStr = localStorage.getItem('texdesigner_user') || localStorage.getItem('atelier_user');
-      let targetPath = '/profile';
+      let targetPath = '/customer/dashboard';
       if (storedUserStr) {
         try {
           const storedUser = JSON.parse(storedUserStr);
-          if (storedUser.role === 'customer') {
-            targetPath = '/';
-          } else if (storedUser.role === 'seller') {
+          if (storedUser.role === 'seller') {
             targetPath = '/seller/dashboard';
+          } else if (storedUser.role === 'customer') {
+            targetPath = '/customer/dashboard';
           } else if (storedUser.role === 'admin') {
             targetPath = '/admin/dashboard';
           }

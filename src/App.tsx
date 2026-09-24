@@ -67,6 +67,34 @@ function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode,
   return <PortalLayout>{children}</PortalLayout>;
 }
 
+// Direct seller, customer, and admin to their respective dashboard when opening the site,
+// while third-party visitors directly see the Marketplace dashboard.
+function HomeRoute() {
+  const { user, isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-surface flex justify-center items-center">
+        <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated && user) {
+    if (user.role === 'seller') {
+      return <Navigate to="/seller/dashboard" replace />;
+    }
+    if (user.role === 'customer') {
+      return <Navigate to="/customer/dashboard" replace />;
+    }
+    if (user.role === 'admin') {
+      return <Navigate to="/admin/dashboard" replace />;
+    }
+  }
+
+  return <Marketplace />;
+}
+
 export default function App() {
   return (
     <NotificationProvider>
@@ -76,8 +104,8 @@ export default function App() {
             <Routes>
               {/* Public Routes */}
               <Route element={<PublicLayout />}>
-                <Route path="/" element={<Marketplace />} />
-                <Route path="/marketplace" element={<Navigate to="/" replace />} />
+                <Route path="/" element={<HomeRoute />} />
+                <Route path="/marketplace" element={<Marketplace />} />
                 <Route path="/collection" element={<CollectionPage />} />
                 <Route path="/design/:id" element={<DesignDetail />} />
                 <Route path="/cart" element={<CartPage />} />
@@ -144,6 +172,9 @@ export default function App() {
                   <Profile />
                 </ProtectedRoute>
               } />
+
+              {/* Account alias redirects directly to dashboard */}
+              <Route path="/account" element={<Navigate to="/" replace />} />
 
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />

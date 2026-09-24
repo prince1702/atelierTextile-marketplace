@@ -27,7 +27,7 @@ export function Navbar() {
             <span className="font-bold text-xl tracking-tight">TexDesigner</span>
           </Link>
           <div className="hidden md:flex gap-6">
-            <Link to="/" className={`text-sm font-medium py-4 relative group ${(isActive('/') || isActive('/marketplace')) ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}>
+            <Link to="/marketplace" className={`text-sm font-medium py-4 relative group ${(isActive('/') || isActive('/marketplace')) ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}>
               Marketplace
               <div className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-200 ${(isActive('/') || isActive('/marketplace')) ? 'w-full' : 'w-0 group-hover:w-full'}`}></div>
             </Link>
@@ -89,7 +89,7 @@ export function Navbar() {
       {/* Mobile Menu Content */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-outline-variant absolute top-16 left-0 w-full shadow-lg p-4 flex flex-col gap-4">
-          <Link to="/" onClick={() => setMobileMenuOpen(false)} className={`text-sm font-medium ${(isActive('/') || isActive('/marketplace')) ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}>Marketplace</Link>
+          <Link to="/marketplace" onClick={() => setMobileMenuOpen(false)} className={`text-sm font-medium ${(isActive('/') || isActive('/marketplace')) ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}>Marketplace</Link>
           {/* No additional links */}
           
           {!isAuthenticated && (
