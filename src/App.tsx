@@ -70,7 +70,7 @@ function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode,
 // Direct seller, customer, and admin to their respective dashboard when opening the site,
 // while third-party visitors directly see the Marketplace dashboard.
 function HomeRoute() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -78,18 +78,6 @@ function HomeRoute() {
         <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
       </div>
     );
-  }
-
-  if (isAuthenticated && user) {
-    if (user.role === 'seller') {
-      return <Navigate to="/seller/dashboard" replace />;
-    }
-    if (user.role === 'customer') {
-      return <Navigate to="/customer/dashboard" replace />;
-    }
-    if (user.role === 'admin') {
-      return <Navigate to="/admin/dashboard" replace />;
-    }
   }
 
   return <Marketplace />;

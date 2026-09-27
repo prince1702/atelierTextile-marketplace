@@ -9,9 +9,9 @@ const {
   clearCart,
 } = require('../controllers/cartController');
 
-router.get('/', auth, authorize('customer'), getCart);
-router.post('/', auth, authorize('customer'), addToCart);
-router.delete('/:designId', auth, authorize('customer'), removeFromCart);
-router.delete('/', auth, authorize('customer'), clearCart);
+router.get('/', auth, authorize('customer', 'seller', 'admin'), getCart);
+router.post('/', auth, authorize('customer', 'seller', 'admin'), addToCart);
+router.delete('/:designId', auth, authorize('customer', 'seller', 'admin'), removeFromCart);
+router.delete('/', auth, authorize('customer', 'seller', 'admin'), clearCart);
 
 module.exports = router;

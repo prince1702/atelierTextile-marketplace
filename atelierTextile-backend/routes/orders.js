@@ -16,10 +16,10 @@ const {
   rejectOrder,
 } = require('../controllers/orderController');
 
-// Customer
-router.get('/my', auth, authorize('customer'), getMyOrders);
-router.post('/', auth, authorize('customer'), createOrder);
-router.post('/:id/payment-screenshot', auth, authorize('customer'), upload.single('screenshot'), uploadPaymentScreenshot);
+// Customer / Buyer (Customer, Seller, Admin)
+router.get('/my', auth, authorize('customer', 'seller', 'admin'), getMyOrders);
+router.post('/', auth, authorize('customer', 'seller', 'admin'), createOrder);
+router.post('/:id/payment-screenshot', auth, authorize('customer', 'seller', 'admin'), upload.single('screenshot'), uploadPaymentScreenshot);
 
 // Seller
 router.get('/seller', auth, authorize('seller'), getSellerOrders);

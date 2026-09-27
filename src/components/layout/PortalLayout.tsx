@@ -66,32 +66,27 @@ export function PortalLayout({ children }: PortalLayoutProps) {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-[280px] bg-white border-r border-outline-variant h-full z-20">
         <div className="p-6 mb-2 border-b border-outline-variant flex items-center gap-3">
-          <Link to={`/${role}/dashboard`} className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-container text-white" title="Go to Dashboard">
+          <Link to="/marketplace" className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-container text-white" title="Go to Marketplace">
             <span className="material-symbols-outlined">texture</span>
           </Link>
-          <div>
-            <h2 className="font-bold text-primary leading-tight">TexDesigner</h2>
+          <Link to="/marketplace" title="Go to Marketplace">
+            <h2 className="font-bold text-primary leading-tight hover:underline">TexDesigner</h2>
             <p className="text-xs text-on-surface-variant font-medium capitalize">{role} Portal</p>
-          </div>
+          </Link>
         </div>
         
-        {role === 'seller' && (
-          <div className="px-6 mb-4 mt-4">
+        <div className="px-4 mb-2 mt-4 space-y-2">
+          <Link to="/marketplace" className="flex items-center justify-center gap-2 w-full py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-semibold text-sm shadow-sm">
+            <span className="material-symbols-outlined text-[18px]">storefront</span>
+            Browse Marketplace
+          </Link>
+          {role === 'seller' && (
             <Link to="/seller/upload" className="flex items-center justify-center gap-2 w-full py-2.5 bg-primary-container text-white rounded-lg hover:bg-primary transition-colors font-semibold text-sm shadow-sm">
               <span className="material-symbols-outlined text-[18px]">add</span>
               New Design
             </Link>
-          </div>
-        )}
-
-        {role === 'customer' && (
-          <div className="px-4 mb-2 mt-4">
-            <Link to="/marketplace" className="flex items-center justify-center gap-2 w-full py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-semibold text-sm shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">storefront</span>
-              Browse Marketplace
-            </Link>
-          </div>
-        )}
+          )}
+        </div>
 
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
           {navItems.map(item => (
@@ -136,7 +131,7 @@ export function PortalLayout({ children }: PortalLayoutProps) {
         mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="p-6 border-b border-outline-variant flex justify-between items-center">
-          <div className="flex items-center gap-3">
+          <Link to="/marketplace" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary-container text-white flex items-center justify-center">
               <span className="material-symbols-outlined">texture</span>
             </div>
@@ -144,24 +139,22 @@ export function PortalLayout({ children }: PortalLayoutProps) {
               <h2 className="font-bold text-primary leading-tight">TexDesigner</h2>
               <p className="text-xs text-on-surface-variant font-medium capitalize">{role} Portal</p>
             </div>
-          </div>
+          </Link>
           <button onClick={() => setMobileMenuOpen(false)} className="text-on-surface-variant">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
         
-        {role === 'customer' && (
-          <div className="px-4 mb-2 mt-4">
-            <Link
-              to="/marketplace"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 w-full py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-semibold text-sm shadow-sm"
-            >
-              <span className="material-symbols-outlined text-[18px]">storefront</span>
-              Browse Marketplace
-            </Link>
-          </div>
-        )}
+        <div className="px-4 mb-2 mt-4">
+          <Link
+            to="/marketplace"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center justify-center gap-2 w-full py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-semibold text-sm shadow-sm"
+          >
+            <span className="material-symbols-outlined text-[18px]">storefront</span>
+            Browse Marketplace
+          </Link>
+        </div>
 
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
           {navItems.map(item => (

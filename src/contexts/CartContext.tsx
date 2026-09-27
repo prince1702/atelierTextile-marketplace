@@ -42,7 +42,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Sync cart and wishlist when user logs in/out
   useEffect(() => {
     const fetchUserData = async () => {
-      if (isAuthenticated && user?.role === 'customer') {
+      if (isAuthenticated && user && ['customer', 'seller', 'admin'].includes(user.role)) {
         setIsLoading(true);
         try {
           const [cartData, wishlistData] = await Promise.all([
@@ -108,8 +108,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       showToast('Please login to add designs to cart', 'warning');
       return;
     }
-    if (user?.role !== 'customer') {
-      showToast('Only customers can purchase designs', 'warning');
+    if (!user || !['customer', 'seller', 'admin'].includes(user.role)) {
+      showToast('Please login to purchase designs', 'warning');
       return;
     }
 
@@ -151,8 +151,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       showToast('Please login to add designs to wishlist', 'warning');
       return;
     }
-    if (user?.role !== 'customer') {
-      showToast('Only customers can manage wishlists', 'warning');
+    if (!user || !['customer', 'seller', 'admin'].includes(user.role)) {
+      showToast('Please login to manage wishlists', 'warning');
       return;
     }
 
