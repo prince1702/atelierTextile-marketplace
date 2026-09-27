@@ -170,8 +170,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [isAuthenticated, user, showToast]);
 
-  const isInWishlist = useCallback((designId: string) => {
-    return wishlist.some(d => d.id === designId);
+  const isInWishlist = useCallback((designId?: string) => {
+    if (!designId) return false;
+    return wishlist.some(d => Boolean(d && (d.id === designId || (d as any)._id === designId)));
   }, [wishlist]);
 
   return (

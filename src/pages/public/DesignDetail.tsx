@@ -9,7 +9,8 @@ import { ImageLightbox } from '../../components/ui/ImageLightbox';
 import { WatermarkedImage } from '../../components/ui/WatermarkedImage';
 import { optimizeCloudinaryUrl } from '../../utils/imageOptimize';
 
-const getParentSubcategory = (sub: string): string => {
+const getParentSubcategory = (sub?: string): string => {
+  if (!sub || typeof sub !== 'string') return 'All';
   const ALL_SAREE_SUBCATEGORIES_VALUES = [
     'Saree Design', 'Kota Lichi Design', '50 600 Design', 'Dolla-Nylon Design', 'Viscouse Design',
     '(50 600) Satin Design', 'Nylon Satin Design', 'Cotton Design', 'Dharmavarm Design',
@@ -69,7 +70,8 @@ const getParentSubcategory = (sub: string): string => {
   return 'All';
 };
 
-const getSubcategoryDisplayName = (sub: string) => {
+const getSubcategoryDisplayName = (sub?: string) => {
+  if (!sub || typeof sub !== 'string') return '';
   if (sub.startsWith('Lehengha - ')) return sub.replace('Lehengha - ', '');
   if (sub.startsWith('Suit - ')) return sub.replace('Suit - ', '');
   if (sub.startsWith('Dupatta - ')) return sub.replace('Dupatta - ', '');
@@ -131,9 +133,9 @@ export function DesignDetail() {
     fetchDesign();
   }, [id, showToast]);
 
-  const allImagesRaw = design ? [design.image, ...(design.additionalImages || [])].filter(Boolean) : [];
-  const allImages = allImagesRaw.map(img => optimizeCloudinaryUrl(img, 'detail'));
-  const allImagesThumbnail = allImagesRaw.map(img => optimizeCloudinaryUrl(img, 'thumbnail'));
+  const allImagesRaw = design ? [design.image, ...(Array.isArray(design.additionalImages) ? design.additionalImages : [])].filter(Boolean) : [];
+  const allImages = allImagesRaw.map(img => optimizeCloudinaryUrl(typeof img === 'string' ? img : '', 'detail')).filter(Boolean);
+  const allImagesThumbnail = allImagesRaw.map(img => optimizeCloudinaryUrl(typeof img === 'string' ? img : '', 'thumbnail')).filter(Boolean);
 
   const handleImageSelect = (idx: number) => {
     if (allImages[idx]) {

@@ -34,8 +34,8 @@ const SIZE_CONFIG: Record<ImageSize, string> = {
  * // Original: https://res.cloudinary.com/xxx/image/upload/v123/folder/img.jpg  (9 MB)
  * // Optimized: https://res.cloudinary.com/xxx/image/upload/w_500,c_limit,q_70,f_auto/v123/folder/img.jpg  (200 KB)
  */
-export function optimizeCloudinaryUrl(url: string, size: ImageSize = 'card'): string {
-  if (!url) return url;
+export function optimizeCloudinaryUrl(url?: string, size: ImageSize = 'card'): string {
+  if (!url || typeof url !== 'string') return '';
 
   const transforms = SIZE_CONFIG[size];
   if (!transforms) return url;

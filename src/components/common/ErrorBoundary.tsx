@@ -41,9 +41,14 @@ export class ErrorBoundary extends Component<Props, State> {
             <span className="material-symbols-outlined text-[36px]">error</span>
           </div>
           <h2 className="text-2xl font-bold text-on-surface mb-2">Something went wrong</h2>
-          <p className="text-sm text-on-surface-variant max-w-md mb-6 leading-relaxed">
+          <p className="text-sm text-on-surface-variant max-w-md mb-3 leading-relaxed">
             An unexpected error occurred while loading this view. You can reload the page or return to the marketplace.
           </p>
+          {this.state.error && (
+            <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-xs font-mono text-red-800 max-w-lg overflow-x-auto text-left">
+              <strong>Error Details:</strong> {this.state.error.message || String(this.state.error)}
+            </div>
+          )}
           <div className="flex items-center gap-3">
             <button
               onClick={this.handleReset}
