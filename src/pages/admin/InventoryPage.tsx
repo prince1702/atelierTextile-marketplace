@@ -316,7 +316,7 @@ export function InventoryPage() {
 
                       {/* Direct Live Page Link */}
                       <a
-                        href={`/design/${design.id}`}
+                        href={`/design/${design.id || (design as any)._id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-2.5 py-1.5 bg-surface text-on-surface-variant border border-outline-variant rounded-lg text-xs font-semibold hover:bg-surface-container hover:text-primary transition-all inline-flex items-center gap-1"
@@ -699,7 +699,7 @@ export function InventoryPage() {
                   {/* Public Store Link */}
                   <div className="pt-1">
                     <a
-                      href={`/design/${selectedDesign.id}`}
+                      href={`/design/${selectedDesign.id || (selectedDesign as any)._id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-xs text-primary font-semibold hover:underline"

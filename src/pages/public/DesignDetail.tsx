@@ -102,6 +102,11 @@ export function DesignDetail() {
       setIsLoading(true);
       try {
         const data = await api.designs.getById(id);
+        if (!data) {
+          setError('Design not found or failed to load');
+          showToast('Failed to load design details', 'error');
+          return;
+        }
         setDesign(data);
         setActiveImage(data.image);
         setActiveImageIndex(0);
@@ -153,7 +158,7 @@ export function DesignDetail() {
     }
   };
 
-  const isWishlisted = design ? isInWishlist(design.id) : false;
+  const isWishlisted = design ? isInWishlist(design.id || (design as any)._id) : false;
 
   const handleAddToCart = () => {
     if (!design) return;
@@ -164,13 +169,14 @@ export function DesignDetail() {
     addToCart(design, selectedLicense);
   };
 
-  const getPrice = (price: number, license: string) => {
-    if (license === 'Extended' || license === 'Other' || license === 'OTHER') return price * 2.5;
+  const getPrice = (price: number = 0, license: string = 'BMP') => {
+    const numPrice = Number(price) || 0;
+    if (license === 'Extended' || license === 'Other' || license === 'OTHER') return numPrice * 2.5;
     if (license === 'PDC' || license === 'TIF') {
-      return design && design.pdcPrice && design.pdcPrice > 0 ? design.pdcPrice : price * 2.5;
+      return design && design.pdcPrice && Number(design.pdcPrice) > 0 ? Number(design.pdcPrice) : numPrice * 2.5;
     }
-    if (license === 'Exclusive Buyout') return price * 8;
-    return price;
+    if (license === 'Exclusive Buyout') return numPrice * 8;
+    return numPrice;
   };
 
   if (isLoading) {
@@ -195,6 +201,7 @@ export function DesignDetail() {
   }
 
   const licenseOptions = (() => {
+    const basePrice = Number(design?.price) || 0;
     if (design.category === 'Weaving Design') {
       const format = design.designFormat ? design.designFormat.toUpperCase() : '';
       const hasPdcFile = Boolean(design.pdcDesignFile && design.pdcDesignFile.trim() !== '');
@@ -207,15 +214,15 @@ export function DesignDetail() {
 
       const options = [];
       if (!isPdcOnly) {
-        options.push({ name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' });
+        options.push({ name: 'BMP', price: basePrice, desc: 'BMP format. Standard production license.' });
       }
       if (hasPdc && format !== 'BMP') {
-        const pdcPriceVal = hasPdcPrice ? Number(design.pdcPrice) : (design.price ? design.price * 2.5 : 0);
+        const pdcPriceVal = hasPdcPrice ? Number(design.pdcPrice) : (basePrice ? basePrice * 2.5 : 0);
         options.push({ name: 'PDC', price: pdcPriceVal, desc: 'PDC format. Extended production license.' });
       }
 
       if (options.length === 0) {
-        options.push({ name: 'BMP', price: design.price, desc: 'BMP format. Standard production license.' });
+        options.push({ name: 'BMP', price: basePrice, desc: 'BMP format. Standard production license.' });
       }
       return options;
     } else if (design.category === 'Digital Print Design' || design.category === 'Position Print Design') {
@@ -226,17 +233,17 @@ export function DesignDetail() {
       const hasTif = hasTifFile || hasTifPrice || format === 'TIF';
 
       if (format !== 'TIF' && (format === 'ALL' || format === 'PSD' || format === 'BOTH')) {
-        options.push({ name: 'PSD', price: design.price, desc: 'PSD format. Standard print license.' });
+        options.push({ name: 'PSD', price: basePrice, desc: 'PSD format. Standard print license.' });
       }
       if (hasTif && (format === 'ALL' || format === 'TIF' || format === 'BOTH')) {
-        const tifPrice = hasTifPrice ? Number(design.pdcPrice) : design.price * 2.5;
+        const tifPrice = hasTifPrice ? Number(design.pdcPrice) : (basePrice ? basePrice * 2.5 : 0);
         options.push({ name: 'TIF', price: tifPrice, desc: 'TIF format. High-resolution print format.' });
       }
-      return options.length > 0 ? options : [{ name: 'PSD', price: design.price, desc: 'PSD format. Standard print license.' }];
+      return options.length > 0 ? options : [{ name: 'PSD', price: basePrice, desc: 'PSD format. Standard print license.' }];
     } else {
       return [
-        { name: 'EMB', price: design.price, desc: 'EMB format. Standard embroidery license.' },
-        { name: 'OTHER', price: design.price * 2.5, desc: 'Other formats (DST, PES, JEF, etc.).' }
+        { name: 'EMB', price: basePrice, desc: 'EMB format. Standard embroidery license.' },
+        { name: 'OTHER', price: basePrice * 2.5, desc: 'Other formats (DST, PES, JEF, etc.).' }
       ];
     }
   })();
@@ -256,8 +263,9 @@ export function DesignDetail() {
     setDownloadingType(key);
     try {
       const label = fileType ? fileType.toUpperCase() : 'Main';
+      const designId = design.id || (design as any)._id || id || '';
       showToast(`Downloading ${label} file: ${design.title}...`, 'info');
-      await api.designs.downloadFile(design.id, design.title, fileType);
+      await api.designs.downloadFile(designId, design.title || 'design', fileType);
       showToast(`${label} file downloaded successfully!`, 'success');
     } catch (err: any) {
       console.error('Download error:', err);
@@ -270,13 +278,17 @@ export function DesignDetail() {
   const handleAdminUpdateStatus = async (newStatus: 'active' | 'pending' | 'rejected') => {
     if (!design) return;
     try {
-      await api.designs.updateStatus(design.id, newStatus);
+      const designId = design.id || (design as any)._id || id || '';
+      await api.designs.updateStatus(designId, newStatus);
       showToast(`Design status updated to ${newStatus}`, 'success');
       setDesign({ ...design, status: newStatus });
     } catch (err: any) {
       showToast('Failed to update design status', 'error');
     }
   };
+
+  const currentStatus = design.status || 'pending';
+  const effectiveDesignId = design.id || (design as any)._id || id || '';
 
   return (
     <div className="bg-surface min-h-screen pb-24">
@@ -289,20 +301,20 @@ export function DesignDetail() {
               <span className="text-xs font-bold uppercase tracking-wider text-on-surface">
                 Admin Review Mode · Current Status:{' '}
                 <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
-                  design.status === 'active' 
+                  currentStatus === 'active' 
                     ? 'bg-emerald-100 text-emerald-800' 
-                    : design.status === 'rejected' 
+                    : currentStatus === 'rejected' 
                       ? 'bg-red-100 text-red-800'
                       : 'bg-amber-100 text-amber-800'
                 }`}>
-                  {design.status.toUpperCase()}
+                  {currentStatus.toUpperCase()}
                 </span>
               </span>
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
               <Link
-                to={`/admin/edit/${design.id}`}
+                to={`/admin/edit/${effectiveDesignId}`}
                 className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1"
                 title="Edit this design in admin panel"
               >
@@ -321,7 +333,7 @@ export function DesignDetail() {
                 </span>
                 Download Free
               </button>
-              {design.status !== 'active' && (
+              {currentStatus !== 'active' && (
                 <button
                   type="button"
                   onClick={() => handleAdminUpdateStatus('active')}
@@ -331,7 +343,7 @@ export function DesignDetail() {
                   Approve & Publish
                 </button>
               )}
-              {design.status !== 'rejected' && (
+              {currentStatus !== 'rejected' && (
                 <button
                   type="button"
                   onClick={() => handleAdminUpdateStatus('rejected')}
@@ -578,7 +590,7 @@ export function DesignDetail() {
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-1">
                         <span className={`font-bold ${selectedLicense === option.name ? 'text-primary' : 'text-on-surface'}`}>{option.name}</span>
-                        <span className="font-bold text-primary-container">₹{option.price.toLocaleString()}</span>
+                        <span className="font-bold text-primary-container">₹{(option.price || 0).toLocaleString()}</span>
                       </div>
                       <p className="text-xs text-on-surface-variant">{option.desc}</p>
                     </div>
@@ -644,7 +656,7 @@ export function DesignDetail() {
                     )}
 
                     <Link
-                      to={`/admin/edit/${design.id}`}
+                      to={`/admin/edit/${effectiveDesignId}`}
                       className="py-2.5 px-3 bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 text-center"
                     >
                       <span className="material-symbols-outlined text-[16px]">edit</span>
@@ -665,11 +677,11 @@ export function DesignDetail() {
                   <div className="text-right">
                     {design.originalPrice && design.originalPrice > design.price ? (
                       <div>
-                        <span className="text-xs text-on-surface-variant line-through font-semibold block">Original: ₹{getPrice(design.originalPrice, selectedLicense).toLocaleString()}</span>
-                        <span className="text-3xl font-extrabold text-emerald-700">₹{getPrice(design.price, selectedLicense).toLocaleString()}</span>
+                        <span className="text-xs text-on-surface-variant line-through font-semibold block">Original: ₹{(getPrice(design.originalPrice, selectedLicense) || 0).toLocaleString()}</span>
+                        <span className="text-3xl font-extrabold text-emerald-700">₹{(getPrice(design.price, selectedLicense) || 0).toLocaleString()}</span>
                       </div>
                     ) : (
-                      <span className="text-3xl font-bold text-primary">₹{getPrice(design.price, selectedLicense).toLocaleString()}</span>
+                      <span className="text-3xl font-bold text-primary">₹{(getPrice(design.price || 0, selectedLicense) || 0).toLocaleString()}</span>
                     )}
                   </div>
                 </div>
@@ -692,7 +704,7 @@ export function DesignDetail() {
                       {/* Row 1: Design Code */}
                       <div className="grid grid-cols-2 items-start gap-4 py-3.5 border-b border-outline-variant/30">
                         <span className="font-semibold text-on-surface-variant">Design Code</span>
-                        <span className="text-on-surface font-semibold text-right break-all select-all">#DT-{design.id.slice(-8).toUpperCase()}</span>
+                        <span className="text-on-surface font-semibold text-right break-all select-all">#DT-{String(effectiveDesignId || '00000000').slice(-8).toUpperCase()}</span>
                       </div>
 
                       {/* Row 2: Category */}

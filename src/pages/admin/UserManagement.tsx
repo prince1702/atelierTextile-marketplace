@@ -22,6 +22,11 @@ export function UserManagement() {
   const [sellerDesigns, setSellerDesigns] = useState<Design[]>([]);
   const [isLoadingDesigns, setIsLoadingDesigns] = useState(false);
 
+  // Selected design preview modal state (for direct inspection)
+  const [previewingDesign, setPreviewingDesign] = useState<Design | null>(null);
+  const [previewImage, setPreviewImage] = useState<string>('');
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
   // Selected customer profile modal state
   const [selectedCustomer, setSelectedCustomer] = useState<User | null>(null);
 
@@ -92,6 +97,32 @@ export function UserManagement() {
       console.warn('Could not load specific seller designs:', err);
     } finally {
       setIsLoadingDesigns(false);
+    }
+  };
+
+  const openDesignPreview = (design: Design) => {
+    setPreviewingDesign(design);
+    setPreviewImage(design.image || '');
+  };
+
+  const closeDesignPreview = () => {
+    setPreviewingDesign(null);
+    setPreviewImage('');
+  };
+
+  const handleDownloadFile = async (design: Design, fileType?: string) => {
+    const designId = design.id || (design as any)._id;
+    setDownloadingId(`${designId}-${fileType || 'main'}`);
+    try {
+      const typeLabel = fileType ? fileType.toUpperCase() : 'Main';
+      showToast(`Downloading ${typeLabel} file: ${design.title}...`, 'info');
+      await api.designs.downloadFile(designId, design.title, fileType);
+      showToast(`${typeLabel} file downloaded successfully!`, 'success');
+    } catch (err: any) {
+      console.error('Download error:', err);
+      showToast(err.message || 'Failed to download design file', 'error');
+    } finally {
+      setDownloadingId(null);
     }
   };
 
@@ -711,15 +742,26 @@ export function UserManagement() {
                               </span>
                             </td>
                             <td className="py-3 px-4 text-right">
-                              <a
-                                href={`/design/${des.id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="px-2.5 py-1 bg-surface border border-outline-variant rounded-md text-[11px] font-semibold text-primary hover:bg-primary hover:text-white transition-all inline-flex items-center gap-1"
-                              >
-                                <span className="material-symbols-outlined text-[13px]">open_in_new</span>
-                                View
-                              </a>
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => openDesignPreview(des)}
+                                  className="px-2.5 py-1 bg-primary/10 text-primary border border-primary/25 rounded-md text-[11px] font-semibold hover:bg-primary hover:text-white transition-all inline-flex items-center gap-1 shadow-2xs"
+                                  title="View full design specifications, image, and download files"
+                                >
+                                  <span className="material-symbols-outlined text-[13px]">visibility</span>
+                                  View
+                                </button>
+                                <a
+                                  href={`/design/${des.id || (des as any)._id}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2 py-1 bg-surface border border-outline-variant rounded-md text-[11px] font-semibold text-on-surface-variant hover:text-primary hover:border-primary/50 transition-all inline-flex items-center gap-0.5"
+                                  title="Open live customer page in new tab"
+                                >
+                                  <span className="material-symbols-outlined text-[13px]">open_in_new</span>
+                                </a>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -1014,6 +1056,225 @@ export function UserManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Design Details Direct Preview Modal ────────────────────────────── */}
+      {previewingDesign && (
+        <div className="fixed inset-0 z-60 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fade-in">
+          <div 
+            className="bg-white rounded-2xl shadow-2xl border border-outline-variant w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[22px]">visibility</span>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-on-surface">{previewingDesign.title}</h3>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                      previewingDesign.status === 'active' ? 'bg-emerald-100 text-emerald-800' :
+                      previewingDesign.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                      'bg-amber-100 text-amber-800'
+                    }`}>
+                      {previewingDesign.status}
+                    </span>
+                  </div>
+                  <p className="text-xs text-on-surface-variant font-mono">
+                    ID: {previewingDesign.id || (previewingDesign as any)._id} · Category: {previewingDesign.category}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={closeDesignPreview}
+                className="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-6 flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                {/* Image Column */}
+                <div className="md:col-span-6 space-y-3">
+                  <div className="w-full h-64 sm:h-72 rounded-xl overflow-hidden bg-surface-container border border-outline-variant relative shadow-sm">
+                    {previewingDesign.isBulk && previewingDesign.pdfUrl ? (
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-red-50 p-6 text-center">
+                        <span className="material-symbols-outlined text-[48px] text-red-600 mb-2">picture_as_pdf</span>
+                        <p className="text-sm font-bold text-red-900 mb-1">Bulk PDF Catalog</p>
+                        <a
+                          href={previewingDesign.pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700 transition-colors inline-flex items-center gap-1 shadow-sm"
+                        >
+                          <span className="material-symbols-outlined text-[15px]">open_in_new</span>
+                          Open PDF Viewer
+                        </a>
+                      </div>
+                    ) : (
+                      <WatermarkedImage
+                        src={optimizeCloudinaryUrl(previewImage || previewingDesign.image, 'card')}
+                        alt={previewingDesign.title}
+                        density="normal"
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
+
+                  {/* Thumbnail Row */}
+                  {previewingDesign.additionalImages && previewingDesign.additionalImages.length > 0 && (
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                      {[previewingDesign.image, ...previewingDesign.additionalImages].filter(Boolean).map((img, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setPreviewImage(img)}
+                          className={`w-14 h-14 rounded-lg overflow-hidden border-2 shrink-0 transition-all ${
+                            previewImage === img ? 'border-primary ring-2 ring-primary/20' : 'border-outline-variant/60 opacity-70 hover:opacity-100'
+                          }`}
+                        >
+                          <img src={optimizeCloudinaryUrl(img, 'thumbnail')} alt="" className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Specs Column */}
+                <div className="md:col-span-6 space-y-4">
+                  {/* Price Banner */}
+                  <div className="p-4 bg-primary-fixed/20 border border-primary/20 rounded-xl flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] uppercase font-bold text-primary">Price</span>
+                      <p className="text-2xl font-black text-primary">₹{(previewingDesign.price || 0).toLocaleString()}</p>
+                    </div>
+                    {previewingDesign.pdcPrice ? (
+                      <div className="text-right">
+                        <span className="text-[11px] uppercase font-bold text-on-surface-variant">PDC / TIF Price</span>
+                        <p className="text-xl font-bold text-on-surface">₹{Number(previewingDesign.pdcPrice).toLocaleString()}</p>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {/* Meta Specs Grid */}
+                  <div className="bg-surface-container-low rounded-xl p-4 border border-outline-variant/60 space-y-2.5 text-xs">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <span className="text-on-surface-variant block font-medium">Category:</span>
+                        <span className="font-semibold text-on-surface">{previewingDesign.category}</span>
+                      </div>
+                      <div>
+                        <span className="text-on-surface-variant block font-medium">Subcategory:</span>
+                        <span className="font-semibold text-on-surface">{previewingDesign.subcategory || 'None'}</span>
+                      </div>
+                      {previewingDesign.designType && (
+                        <div>
+                          <span className="text-on-surface-variant block font-medium">Design Type:</span>
+                          <span className="font-semibold text-on-surface">{previewingDesign.designType}</span>
+                        </div>
+                      )}
+                      {previewingDesign.designFormat && (
+                        <div>
+                          <span className="text-on-surface-variant block font-medium">Format:</span>
+                          <span className="font-semibold text-on-surface uppercase">{previewingDesign.designFormat}</span>
+                        </div>
+                      )}
+                      {previewingDesign.dimensions && (
+                        <div>
+                          <span className="text-on-surface-variant block font-medium">Dimensions:</span>
+                          <span className="font-semibold text-on-surface">{previewingDesign.dimensions}</span>
+                        </div>
+                      )}
+                      {previewingDesign.area && (
+                        <div>
+                          <span className="text-on-surface-variant block font-medium">
+                            {previewingDesign.category === 'Weaving Design' ? 'Reed:' : 'Area:'}
+                          </span>
+                          <span className="font-semibold text-on-surface">{previewingDesign.area}</span>
+                        </div>
+                      )}
+                      {previewingDesign.needle && (
+                        <div>
+                          <span className="text-on-surface-variant block font-medium">
+                            {previewingDesign.category === 'Weaving Design' ? 'Pick:' : 'Needle:'}
+                          </span>
+                          <span className="font-semibold text-on-surface">{previewingDesign.needle}</span>
+                        </div>
+                      )}
+                      {previewingDesign.sareeConcept && (
+                        <div>
+                          <span className="text-on-surface-variant block font-medium">Concept:</span>
+                          <span className="font-semibold text-on-surface">{previewingDesign.sareeConcept}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Quick Admin Downloads */}
+                  <div className="space-y-2">
+                    <span className="text-[11px] uppercase font-bold text-on-surface-variant">Admin File Access</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadFile(previewingDesign)}
+                        disabled={downloadingId === `${previewingDesign.id || (previewingDesign as any)._id}-main`}
+                        className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition-all shadow-2xs flex items-center justify-center gap-1.5"
+                      >
+                        <span className={`material-symbols-outlined text-[15px] ${downloadingId === `${previewingDesign.id || (previewingDesign as any)._id}-main` ? 'animate-spin' : ''}`}>
+                          {downloadingId === `${previewingDesign.id || (previewingDesign as any)._id}-main` ? 'sync' : 'download'}
+                        </span>
+                        Master File
+                      </button>
+
+                      {Boolean((previewingDesign.pdcDesignFile && previewingDesign.pdcDesignFile.trim() !== '') || (previewingDesign.pdcPrice && Number(previewingDesign.pdcPrice) > 0)) && (
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadFile(previewingDesign, 'pdc')}
+                          disabled={downloadingId === `${previewingDesign.id || (previewingDesign as any)._id}-pdc`}
+                          className="px-3 py-2 bg-primary hover:bg-primary-container text-white rounded-lg text-xs font-semibold transition-all shadow-2xs flex items-center justify-center gap-1.5"
+                        >
+                          <span className={`material-symbols-outlined text-[15px] ${downloadingId === `${previewingDesign.id || (previewingDesign as any)._id}-pdc` ? 'animate-spin' : ''}`}>
+                            {downloadingId === `${previewingDesign.id || (previewingDesign as any)._id}-pdc` ? 'sync' : 'download'}
+                          </span>
+                          PDC / TIF
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Public Store Link */}
+                  <div className="pt-2">
+                    <a
+                      href={`/design/${previewingDesign.id || (previewingDesign as any)._id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs text-primary font-semibold hover:underline"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">visibility</span>
+                      View in Public Customer Store
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-3.5 border-t border-outline-variant bg-surface-container-lowest flex items-center justify-end">
+              <button
+                type="button"
+                onClick={closeDesignPreview}
+                className="px-4 py-2 bg-surface text-on-surface border border-outline-variant rounded-xl text-xs font-semibold hover:bg-surface-container transition-colors"
+              >
+                Close Preview
+              </button>
+            </div>
           </div>
         </div>
       )}

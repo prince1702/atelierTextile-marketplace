@@ -215,6 +215,9 @@ export const api = {
       } catch (error) {
         console.warn('API connection failed, falling back to local design by ID:', error);
         const design = FRONTEND_MOCK_DESIGNS.find(d => d.id === id) || FRONTEND_MOCK_DESIGNS[0];
+        if (!design) {
+          throw error;
+        }
         return design;
       }
     },
