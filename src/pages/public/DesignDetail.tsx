@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import type { Design } from '../../types';
@@ -181,29 +181,9 @@ export function DesignDetail() {
     return numPrice;
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] bg-surface flex justify-center items-center">
-        <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (error || !design) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] bg-surface flex flex-col justify-center items-center p-6 text-center">
-        <span className="material-symbols-outlined text-[64px] text-outline mb-4">error</span>
-        <h2 className="text-2xl font-bold text-on-surface mb-2">Something went wrong</h2>
-        <p className="text-on-surface-variant mb-6">{error || 'Design not found'}</p>
-        <Link to="/marketplace" className="px-6 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary-container transition-colors shadow-sm">
-          Return to Marketplace
-        </Link>
-      </div>
-    );
-  }
-
-  const licenseOptions = (() => {
-    const basePrice = Number(design?.price) || 0;
+  const licenseOptions = useMemo(() => {
+    if (!design) return [];
+    const basePrice = Number(design.price) || 0;
     if (design.category === 'Weaving Design') {
       const format = design.designFormat ? design.designFormat.toUpperCase() : '';
       const hasPdcFile = Boolean(design.pdcDesignFile && design.pdcDesignFile.trim() !== '');
@@ -248,7 +228,7 @@ export function DesignDetail() {
         { name: 'OTHER', price: basePrice * 2.5, desc: 'Other formats (DST, PES, JEF, etc.).' }
       ];
     }
-  })();
+  }, [design]);
 
   useEffect(() => {
     if (licenseOptions && licenseOptions.length > 0) {
@@ -258,6 +238,27 @@ export function DesignDetail() {
       }
     }
   }, [licenseOptions, selectedLicense]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] bg-surface flex justify-center items-center">
+        <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (error || !design) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] bg-surface flex flex-col justify-center items-center p-6 text-center">
+        <span className="material-symbols-outlined text-[64px] text-outline mb-4">error</span>
+        <h2 className="text-2xl font-bold text-on-surface mb-2">Something went wrong</h2>
+        <p className="text-on-surface-variant mb-6">{error || 'Design not found'}</p>
+        <Link to="/marketplace" className="px-6 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary-container transition-colors shadow-sm">
+          Return to Marketplace
+        </Link>
+      </div>
+    );
+  }
 
   const handleAdminDownload = async (fileType?: string) => {
     if (!design) return;
