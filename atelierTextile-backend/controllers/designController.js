@@ -1227,7 +1227,7 @@ exports.downloadDesign = async (req, res, next) => {
         const filePath = path.join(__dirname, '../public/uploads', filename);
 
         if (fs.existsSync(filePath)) {
-          const ext = path.extname(filename) || '.rar';
+          const ext = path.extname(filename);
           res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
           return res.download(filePath, `${safeTitle}${ext}`);
         }
@@ -1241,9 +1241,11 @@ exports.downloadDesign = async (req, res, next) => {
       const https = require('https');
       const http = require('http');
 
+      // Preserve whatever file extension the seller uploaded
       let ext = '';
       try {
-        ext = path.extname(new URL(fileUrl).pathname);
+        const urlPath = new URL(fileUrl).pathname;
+        ext = path.extname(urlPath).toLowerCase();
       } catch (e) {}
 
       if (!ext) {
@@ -1251,7 +1253,7 @@ exports.downloadDesign = async (req, res, next) => {
         else if (requestedType === 'pdc') ext = '.pdc';
         else if (requestedType === 'tif') ext = '.tif';
         else if (requestedType === 'image') ext = '.jpg';
-        else ext = '.rar';
+        else ext = '.zip';
       }
 
       const downloadFilename = `${safeTitle}${ext}`;
@@ -1283,7 +1285,11 @@ exports.downloadDesign = async (req, res, next) => {
             if (!contentType || contentType === 'application/octet-stream' || contentType.includes('text/plain')) {
               if (ext === '.rar') contentType = 'application/vnd.rar';
               else if (ext === '.zip') contentType = 'application/zip';
+              else if (ext === '.7z') contentType = 'application/x-7z-compressed';
               else if (ext === '.pdf') contentType = 'application/pdf';
+              else if (ext === '.bmp') contentType = 'image/bmp';
+              else if (ext === '.tif' || ext === '.tiff') contentType = 'image/tiff';
+              else if (ext === '.psd') contentType = 'image/vnd.adobe.photoshop';
               else contentType = 'application/octet-stream';
             }
             res.setHeader('Content-Type', contentType);

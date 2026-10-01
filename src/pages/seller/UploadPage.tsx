@@ -287,8 +287,9 @@ export function UploadPage() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const ext = file.name.split('.').pop()?.toLowerCase();
-      if (ext !== 'zip' && ext !== 'rar') {
-        showToast('Please upload a ZIP or RAR archive file only', 'warning');
+      const validExts = ['zip', 'rar', '7z', 'bmp', 'psd', 'tif', 'tiff', 'emb', 'dst', 'pdc', 'jef', 'pes'];
+      if (ext && !validExts.includes(ext)) {
+        showToast('Please upload a valid design file or archive (ZIP, RAR, BMP, PSD, etc.)', 'warning');
         return;
       }
       if (file.size > 200 * 1024 * 1024) {
@@ -695,23 +696,23 @@ export function UploadPage() {
             </div>
           </div>
 
-          {/* BMP / PSD / Bulk Master RAR Design Source File Upload Area */}
+          {/* Main Production Design File Upload Area */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block">
                   {isBulk
-                    ? `Bulk Catalog Production RAR File (All Master Designs in .RAR) *`
+                    ? `Bulk Catalog Master Production File (ZIP / RAR / Production Archive) *`
                     : category === 'Weaving Design'
-                      ? `BMP Master Production File (.RAR / .ZIP) ${pdcZipFile ? '(Optional)' : '*'}`
+                      ? `BMP Master Production File (ZIP / RAR / BMP) ${pdcZipFile || existingPdcFile ? '(Optional)' : '*'}`
                       : (category === 'Digital Print Design' || category === 'Position Print Design')
-                        ? `PSD Master Production File (.RAR / .ZIP) ${pdcZipFile ? '(Optional)' : '*'}`
-                        : `Design Master Production File (.RAR / .ZIP) *`
+                        ? `PSD Master Production File (ZIP / RAR / PSD) ${pdcZipFile || existingPdcFile ? '(Optional)' : '*'}`
+                        : `Design Master Production File (ZIP / RAR / EMB) *`
                   }
                 </label>
                 {isBulk && (
                   <p className="text-[11px] text-primary font-medium mt-0.5">
-                    Upload the .rar archive containing all master production designs for this bulk catalog. This file is delivered when clicking "Download Main File".
+                    Upload the archive containing all master production designs for this bulk catalog. Whatever file format you upload will be downloaded exactly as-is via "Download Main File".
                   </p>
                 )}
               </div>
@@ -727,13 +728,13 @@ export function UploadPage() {
               )}
             </div>
 
-            {/* In Edit mode, show whether a RAR file is currently active on the server */}
+            {/* In Edit mode, show whether a main file is currently active on the server */}
             {isEditMode && (
               existingDesignFile ? (
                 <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-xs text-emerald-800 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 overflow-hidden">
                     <span className="material-symbols-outlined text-emerald-600 text-[18px] shrink-0">check_circle</span>
-                    <span className="font-semibold shrink-0">Current Master RAR:</span>
+                    <span className="font-semibold shrink-0">Current Main File:</span>
                     <span className="truncate font-mono text-[11px]">{existingDesignFile.split('/').pop()}</span>
                   </div>
                   <span className="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-extrabold uppercase shrink-0">
@@ -744,9 +745,9 @@ export function UploadPage() {
                 <div className="p-3 rounded-xl bg-amber-50 border border-amber-300 text-xs text-amber-900 flex items-center gap-2">
                   <span className="material-symbols-outlined text-amber-600 text-[20px] shrink-0">warning</span>
                   <div>
-                    <p className="font-bold">⚠️ No Master RAR File Attached Yet</p>
+                    <p className="font-bold">⚠️ No Master Production File Attached Yet</p>
                     <p className="text-[11px] text-amber-800">
-                      Please select and upload your <strong>.rar archive</strong> below so buyers and admins can download the main design file.
+                      Please select and upload your production file (ZIP, RAR, BMP, PSD, etc.) below so buyers and admins can download the main design file.
                     </p>
                   </div>
                 </div>
@@ -761,16 +762,16 @@ export function UploadPage() {
                     {zipFile 
                       ? zipFile.name 
                       : existingDesignFile 
-                        ? 'Click to replace existing RAR file with a new .rar archive'
+                        ? 'Click to replace existing file with a new file'
                         : isBulk
-                          ? 'Select Master .RAR file containing all catalog designs'
-                          : (category === 'Weaving Design' ? 'Select .RAR or .ZIP file for BMP' : 'Select .RAR or .ZIP file')
+                          ? 'Select Master file (ZIP / RAR) containing all catalog designs'
+                          : 'Select or drag your master design file (ZIP, RAR, BMP, PSD, etc.)'
                     }
                   </p>
                   <p className="text-xs text-on-surface-variant">
                     {zipFile 
                       ? `${(zipFile.size / 1024 / 1024).toFixed(2)} MB` 
-                      : 'Supports RAR, ZIP (Max 200MB - Recommended: .RAR)'
+                      : 'Supports ZIP, RAR, 7Z, BMP, PSD, TIF, EMB, DST (Max 200MB)'
                     }
                   </p>
                 </div>
@@ -783,7 +784,7 @@ export function UploadPage() {
               </button>
               <input 
                 type="file" 
-                accept=".rar,.zip,.7z"
+                accept=".rar,.zip,.7z,.bmp,.psd,.tif,.tiff,.emb,.dst,.pdc"
                 onChange={handleZipFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />

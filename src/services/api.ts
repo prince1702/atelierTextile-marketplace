@@ -246,7 +246,7 @@ export const api = {
       const response = await client.patch(`/designs/${id}/status`, { status });
       return normalize<Design>(response.data.data);
     },
-    downloadFile: async (designId: string, designTitle: string, fileType?: string): Promise<void> => {
+    downloadFile: async (designId: string, designTitle: string, fileType?: string, knownFileUrl?: string): Promise<void> => {
       const token = localStorage.getItem('texdesigner_token') || localStorage.getItem('atelier_token') || '';
       const typeParam = fileType ? `&fileType=${fileType}` : '';
       const downloadUrl = `${API_URL}/api/designs/${designId}/download?token=${encodeURIComponent(token)}${typeParam}`;
@@ -304,6 +304,21 @@ export const api = {
         detectedExt = '.psd';
       }
 
+      // Extract extension from seller's uploaded file URL if provided
+      let urlExt = '';
+      if (knownFileUrl) {
+        try {
+          const p = new URL(knownFileUrl).pathname;
+          const dot = p.lastIndexOf('.');
+          if (dot !== -1) {
+            const extCandidate = p.slice(dot).toLowerCase();
+            if (extCandidate.length <= 6 && !extCandidate.includes('/')) {
+              urlExt = extCandidate;
+            }
+          }
+        } catch (e) {}
+      }
+
       // Parse server filename from Content-Disposition if exposed
       const disposition = response.headers.get('Content-Disposition') || '';
       let filename = '';
@@ -322,7 +337,7 @@ export const api = {
       const suffix = isMainFile ? '' : `_${fileType}`;
 
       if (filename) {
-        // If server provided filename, ensure its extension matches the detected magic bytes
+        // If server provided filename, ensure its extension matches the detected magic bytes if known
         if (detectedExt) {
           const dotIdx = filename.lastIndexOf('.');
           if (dotIdx !== -1) {
@@ -332,9 +347,8 @@ export const api = {
           }
         }
       } else {
-        // Construct filename and append the detected extension (or appropriate fallback)
-        // Master production archive defaults to .rar
-        const fallbackExt = detectedExt || (fileType === 'pdf' ? '.pdf' : fileType === 'tif' ? '.tif' : fileType === 'pdc' ? '.pdc' : '.rar');
+        // Construct filename preserving the seller's original format and extension
+        const fallbackExt = detectedExt || urlExt || (fileType === 'pdf' ? '.pdf' : fileType === 'tif' ? '.tif' : fileType === 'pdc' ? '.pdc' : '.zip');
         filename = `${safeBase}${suffix}${fallbackExt}`;
       }
 

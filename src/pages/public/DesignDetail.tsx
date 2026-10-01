@@ -264,16 +264,17 @@ export function DesignDetail() {
     if (!design) return;
     const isMain = !fileType || fileType === 'main';
     if (isMain && (!design.designFile || design.designFile.trim() === '')) {
-      showToast('Master RAR file has not been uploaded for this design yet. Please click "Edit Design" to upload the RAR archive.', 'warning');
+      showToast('Main production file has not been uploaded for this design yet. Please click "Edit Design" to upload the file.', 'warning');
       return;
     }
     const key = fileType || 'main';
     setDownloadingType(key);
     try {
-      const label = fileType ? fileType.toUpperCase() : 'Main RAR';
+      const label = fileType ? fileType.toUpperCase() : 'Main';
       const designId = design.id || (design as any)._id || id || '';
+      const targetUrl = fileType === 'pdc' ? design.pdcDesignFile : fileType === 'pdf' ? design.pdfUrl : design.designFile;
       showToast(`Downloading ${label} file: ${design.title}...`, 'info');
-      await api.designs.downloadFile(designId, design.title || 'design', fileType);
+      await api.designs.downloadFile(designId, design.title || 'design', fileType, targetUrl);
       showToast(`${label} file downloaded successfully!`, 'success');
     } catch (err: any) {
       console.error('Download error:', err);
@@ -627,15 +628,15 @@ export function DesignDetail() {
                       <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined text-amber-600 text-[20px] shrink-0">warning</span>
                         <div>
-                          <p className="font-bold">Main Production RAR File Missing</p>
-                          <p className="text-[11px] text-amber-800">No master .rar archive has been attached to this design yet. Click Edit Design to upload the RAR file.</p>
+                          <p className="font-bold">Main Production File Missing</p>
+                          <p className="text-[11px] text-amber-800">No master production file has been uploaded for this design yet. Click Edit Design to attach the file.</p>
                         </div>
                       </div>
                       <Link
                         to={`/admin/edit/${effectiveDesignId}`}
                         className="px-2.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold shrink-0 transition-colors shadow-xs"
                       >
-                        Upload RAR
+                        Upload File
                       </Link>
                     </div>
                   )}
@@ -650,12 +651,12 @@ export function DesignDetail() {
                           ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
                           : 'bg-emerald-700/85 hover:bg-emerald-800 text-white'
                       }`}
-                      title={design.designFile && design.designFile.trim() !== '' ? 'Download master RAR production file' : 'Main RAR file not uploaded yet'}
+                      title={design.designFile && design.designFile.trim() !== '' ? 'Download master production file' : 'Main file not uploaded yet'}
                     >
                       <span className={`material-symbols-outlined text-[16px] ${downloadingType === 'main' ? 'animate-spin' : ''}`}>
                         {downloadingType === 'main' ? 'sync' : 'download'}
                       </span>
-                      {design.designFile && design.designFile.trim() !== '' ? 'Download Main File (.RAR)' : 'Download Main File (.RAR)'}
+                      Download Main File
                     </button>
 
                     {Boolean((design.pdcDesignFile && design.pdcDesignFile.trim() !== '') || (design.pdcPrice && Number(design.pdcPrice) > 0)) && (
