@@ -53,6 +53,8 @@ export function UploadPage() {
   const [additionalPreviews, setAdditionalPreviews] = useState<(string | null)[]>([null, null, null, null]);
   const [zipFile, setZipFile] = useState<File | null>(null);
   const [pdcZipFile, setPdcZipFile] = useState<File | null>(null);
+  const [existingDesignFile, setExistingDesignFile] = useState<string | null>(null);
+  const [existingPdcFile, setExistingPdcFile] = useState<string | null>(null);
   const [isBulk, setIsBulk] = useState(false);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -89,6 +91,8 @@ export function UploadPage() {
           if (design.isBulk !== undefined) setIsBulk(design.isBulk);
           if (design.pdfUrl) setPdfUrl(design.pdfUrl);
           if (design.image) setImagePreview(design.image);
+          if (design.designFile) setExistingDesignFile(design.designFile);
+          if (design.pdcDesignFile) setExistingPdcFile(design.pdcDesignFile);
           if (design.additionalImages && Array.isArray(design.additionalImages)) {
             const prevs: (string | null)[] = [null, null, null, null];
             design.additionalImages.forEach((imgUrl, i) => {
@@ -691,17 +695,26 @@ export function UploadPage() {
             </div>
           </div>
 
-          {/* BMP / PSD Design Source File Upload Area */}
+          {/* BMP / PSD / Bulk Master RAR Design Source File Upload Area */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                {category === 'Weaving Design'
-                  ? `BMP Design Source File (ZIP / RAR) ${pdcZipFile ? '(Optional)' : '*'}`
-                  : (category === 'Digital Print Design' || category === 'Position Print Design')
-                    ? `PSD Design Source File (ZIP / RAR) ${pdcZipFile ? '(Optional)' : '*'}`
-                    : `Design Source File (ZIP / RAR) *`
-                }
-              </label>
+              <div>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block">
+                  {isBulk
+                    ? `Bulk Catalog Production RAR File (All Master Designs in .RAR) *`
+                    : category === 'Weaving Design'
+                      ? `BMP Master Production File (.RAR / .ZIP) ${pdcZipFile ? '(Optional)' : '*'}`
+                      : (category === 'Digital Print Design' || category === 'Position Print Design')
+                        ? `PSD Master Production File (.RAR / .ZIP) ${pdcZipFile ? '(Optional)' : '*'}`
+                        : `Design Master Production File (.RAR / .ZIP) *`
+                  }
+                </label>
+                {isBulk && (
+                  <p className="text-[11px] text-primary font-medium mt-0.5">
+                    Upload the .rar archive containing all master production designs for this bulk catalog. This file is delivered when clicking "Download Main File".
+                  </p>
+                )}
+              </div>
               {zipFile && (
                 <button
                   type="button"
@@ -709,19 +722,56 @@ export function UploadPage() {
                   className="text-xs text-red-600 font-semibold hover:underline flex items-center gap-1"
                 >
                   <span className="material-symbols-outlined text-[14px]">close</span>
-                  Remove File
+                  Remove Selection
                 </button>
               )}
             </div>
+
+            {/* In Edit mode, show whether a RAR file is currently active on the server */}
+            {isEditMode && (
+              existingDesignFile ? (
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-xs text-emerald-800 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <span className="material-symbols-outlined text-emerald-600 text-[18px] shrink-0">check_circle</span>
+                    <span className="font-semibold shrink-0">Current Master RAR:</span>
+                    <span className="truncate font-mono text-[11px]">{existingDesignFile.split('/').pop()}</span>
+                  </div>
+                  <span className="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-extrabold uppercase shrink-0">
+                    Active on Server
+                  </span>
+                </div>
+              ) : (
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-300 text-xs text-amber-900 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-amber-600 text-[20px] shrink-0">warning</span>
+                  <div>
+                    <p className="font-bold">⚠️ No Master RAR File Attached Yet</p>
+                    <p className="text-[11px] text-amber-800">
+                      Please select and upload your <strong>.rar archive</strong> below so buyers and admins can download the main design file.
+                    </p>
+                  </div>
+                </div>
+              )
+            )}
+
             <div className="border-2 border-dashed border-outline-variant hover:border-primary/50 transition-colors rounded-xl p-4 flex items-center justify-between bg-surface/10 cursor-pointer relative">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[32px] text-outline">archive</span>
+                <span className="material-symbols-outlined text-[32px] text-primary">archive</span>
                 <div className="text-left">
                   <p className="text-sm font-semibold text-on-surface">
-                    {zipFile ? zipFile.name : (category === 'Weaving Design' ? 'Select ZIP or RAR file for BMP' : 'Select ZIP or RAR file')}
+                    {zipFile 
+                      ? zipFile.name 
+                      : existingDesignFile 
+                        ? 'Click to replace existing RAR file with a new .rar archive'
+                        : isBulk
+                          ? 'Select Master .RAR file containing all catalog designs'
+                          : (category === 'Weaving Design' ? 'Select .RAR or .ZIP file for BMP' : 'Select .RAR or .ZIP file')
+                    }
                   </p>
                   <p className="text-xs text-on-surface-variant">
-                    {zipFile ? `${(zipFile.size / 1024 / 1024).toFixed(2)} MB` : 'Supports ZIP, RAR (Max 200MB)'}
+                    {zipFile 
+                      ? `${(zipFile.size / 1024 / 1024).toFixed(2)} MB` 
+                      : 'Supports RAR, ZIP (Max 200MB - Recommended: .RAR)'
+                    }
                   </p>
                 </div>
               </div>
@@ -733,7 +783,7 @@ export function UploadPage() {
               </button>
               <input 
                 type="file" 
-                accept=".zip,.rar"
+                accept=".rar,.zip,.7z"
                 onChange={handleZipFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
@@ -746,8 +796,8 @@ export function UploadPage() {
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                   {category === 'Weaving Design' 
-                    ? `PDC Design Source File (ZIP / RAR) ${zipFile ? '(Optional)' : '*'}`
-                    : `TIF Design Source File (ZIP / RAR) ${zipFile ? '(Optional)' : '*'}`
+                    ? `PDC Design Source File (.RAR / .ZIP / .PDC) ${zipFile || existingDesignFile ? '(Optional)' : '*'}`
+                    : `TIF Design Source File (.RAR / .ZIP / .TIF) ${zipFile || existingDesignFile ? '(Optional)' : '*'}`
                   }
                 </label>
                 {pdcZipFile && (
@@ -757,10 +807,25 @@ export function UploadPage() {
                     className="text-xs text-red-600 font-semibold hover:underline flex items-center gap-1"
                   >
                     <span className="material-symbols-outlined text-[14px]">close</span>
-                    Remove File
+                    Remove Selection
                   </button>
                 )}
               </div>
+
+              {/* In Edit mode, show whether a PDC/TIF file is currently active on the server */}
+              {isEditMode && existingPdcFile && (
+                <div className="p-3 rounded-xl bg-primary-fixed/20 border border-primary/30 text-xs text-primary flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <span className="material-symbols-outlined text-primary text-[18px] shrink-0">check_circle</span>
+                    <span className="font-semibold shrink-0">Current PDC/TIF File:</span>
+                    <span className="truncate font-mono text-[11px]">{existingPdcFile.split('/').pop()}</span>
+                  </div>
+                  <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded font-extrabold uppercase shrink-0">
+                    Active
+                  </span>
+                </div>
+              )}
+
               <div className="border-2 border-dashed border-outline-variant hover:border-primary/50 transition-colors rounded-xl p-4 flex items-center justify-between bg-surface/10 cursor-pointer relative">
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-[32px] text-primary">folder_zip</span>
@@ -768,13 +833,15 @@ export function UploadPage() {
                     <p className="text-sm font-semibold text-on-surface">
                       {pdcZipFile 
                         ? pdcZipFile.name 
-                        : (category === 'Weaving Design' ? 'Select ZIP or RAR file for PDC' : 'Select ZIP, RAR, or TIF file for TIF')
+                        : existingPdcFile
+                          ? 'Click to replace existing PDC / TIF file'
+                          : (category === 'Weaving Design' ? 'Select .RAR or .ZIP file for PDC' : 'Select .RAR, .ZIP, or .TIF file for TIF')
                       }
                     </p>
                     <p className="text-xs text-on-surface-variant">
                       {pdcZipFile 
                         ? `${(pdcZipFile.size / 1024 / 1024).toFixed(2)} MB` 
-                        : (category === 'Weaving Design' ? 'Supports ZIP, RAR, PDC (Max 200MB)' : 'Supports ZIP, RAR, TIF (Max 200MB)')
+                        : (category === 'Weaving Design' ? 'Supports RAR, ZIP, PDC (Max 200MB)' : 'Supports RAR, ZIP, TIF (Max 200MB)')
                       }
                     </p>
                   </div>
@@ -787,10 +854,10 @@ export function UploadPage() {
                 </button>
                 <input 
                   type="file" 
-                  accept={category === 'Weaving Design' ? ".zip,.rar,.pdc" : ".zip,.rar,.tif,.tiff"}
+                  accept={category === 'Weaving Design' ? ".rar,.zip,.pdc,.7z" : ".rar,.zip,.tif,.tiff,.7z"}
                   onChange={handlePdcZipFileChange}
                   className="absolute inset-0 opacity-0 cursor-pointer"
-                  required={(designFormat === 'PDC' || designFormat === 'TIF') && !pdcZipFile}
+                  required={(designFormat === 'PDC' || designFormat === 'TIF') && !pdcZipFile && !existingPdcFile}
                 />
               </div>
             </div>

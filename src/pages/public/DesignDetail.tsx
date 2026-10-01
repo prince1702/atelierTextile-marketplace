@@ -262,10 +262,15 @@ export function DesignDetail() {
 
   const handleAdminDownload = async (fileType?: string) => {
     if (!design) return;
+    const isMain = !fileType || fileType === 'main';
+    if (isMain && (!design.designFile || design.designFile.trim() === '')) {
+      showToast('Master RAR file has not been uploaded for this design yet. Please click "Edit Design" to upload the RAR archive.', 'warning');
+      return;
+    }
     const key = fileType || 'main';
     setDownloadingType(key);
     try {
-      const label = fileType ? fileType.toUpperCase() : 'Main';
+      const label = fileType ? fileType.toUpperCase() : 'Main RAR';
       const designId = design.id || (design as any)._id || id || '';
       showToast(`Downloading ${label} file: ${design.title}...`, 'info');
       await api.designs.downloadFile(designId, design.title || 'design', fileType);
@@ -617,17 +622,40 @@ export function DesignDetail() {
                     </span>
                   </div>
 
+                  {Boolean(!design.designFile || design.designFile.trim() === '') && (
+                    <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-900 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-amber-600 text-[20px] shrink-0">warning</span>
+                        <div>
+                          <p className="font-bold">Main Production RAR File Missing</p>
+                          <p className="text-[11px] text-amber-800">No master .rar archive has been attached to this design yet. Click Edit Design to upload the RAR file.</p>
+                        </div>
+                      </div>
+                      <Link
+                        to={`/admin/edit/${effectiveDesignId}`}
+                        className="px-2.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold shrink-0 transition-colors shadow-xs"
+                      >
+                        Upload RAR
+                      </Link>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                     <button
                       type="button"
                       onClick={() => handleAdminDownload()}
                       disabled={!!downloadingType}
-                      className="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5"
+                      className={`py-2.5 px-3 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 ${
+                        design.designFile && design.designFile.trim() !== ''
+                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                          : 'bg-emerald-700/85 hover:bg-emerald-800 text-white'
+                      }`}
+                      title={design.designFile && design.designFile.trim() !== '' ? 'Download master RAR production file' : 'Main RAR file not uploaded yet'}
                     >
                       <span className={`material-symbols-outlined text-[16px] ${downloadingType === 'main' ? 'animate-spin' : ''}`}>
                         {downloadingType === 'main' ? 'sync' : 'download'}
                       </span>
-                      Download Main File
+                      {design.designFile && design.designFile.trim() !== '' ? 'Download Main File (.RAR)' : 'Download Main File (.RAR)'}
                     </button>
 
                     {Boolean((design.pdcDesignFile && design.pdcDesignFile.trim() !== '') || (design.pdcPrice && Number(design.pdcPrice) > 0)) && (

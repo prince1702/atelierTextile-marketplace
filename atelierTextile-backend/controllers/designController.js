@@ -1190,11 +1190,13 @@ exports.downloadDesign = async (req, res, next) => {
       }
       fileUrl = design.image;
     } else {
-      // If default download requested and designFile is missing, gracefully fallback to PDF or image
-      if ((!fileUrl || fileUrl.trim() === '') && design.pdfUrl) {
-        fileUrl = design.pdfUrl;
-      } else if ((!fileUrl || fileUrl.trim() === '') && design.image) {
-        fileUrl = design.image;
+      // Main production file requested (default or fileType=main/bmp)
+      // Never fallback to PDF or image when main production file is requested
+      if (!fileUrl || fileUrl.trim() === '') {
+        return res.status(404).json({
+          success: false,
+          error: 'No master RAR / ZIP production file has been uploaded for this design yet. Please upload the RAR archive in Edit Design.',
+        });
       }
     }
 
@@ -1202,7 +1204,7 @@ exports.downloadDesign = async (req, res, next) => {
     const isExpiredUrl = (url) => typeof url === 'string' && url.includes('/uploads/') && url.includes('onrender.com');
 
     if (!fileUrl || fileUrl.trim() === '') {
-      const fileFormatName = (requestedType === 'pdc' || requestedType === 'tif' || requestedType === 'optional') ? 'PDC/TIF' : 'BMP';
+      const fileFormatName = (requestedType === 'pdc' || requestedType === 'tif' || requestedType === 'optional') ? 'PDC/TIF' : 'RAR';
       return res.status(404).json({
         success: false,
         error: `No downloadable ${fileFormatName} file has been uploaded for this design yet.`,
@@ -1210,7 +1212,7 @@ exports.downloadDesign = async (req, res, next) => {
     }
 
     if (isExpiredUrl(fileUrl)) {
-      const fileFormatName = (requestedType === 'pdc' || requestedType === 'tif' || requestedType === 'optional') ? 'PDC/TIF' : 'BMP';
+      const fileFormatName = (requestedType === 'pdc' || requestedType === 'tif' || requestedType === 'optional') ? 'PDC/TIF' : 'RAR';
       return res.status(410).json({
         success: false,
         error: `The ${fileFormatName} design file was uploaded to a temporary server and has expired. Please ask the seller to re-upload the file.`,
@@ -1225,7 +1227,7 @@ exports.downloadDesign = async (req, res, next) => {
         const filePath = path.join(__dirname, '../public/uploads', filename);
 
         if (fs.existsSync(filePath)) {
-          const ext = path.extname(filename) || '.zip';
+          const ext = path.extname(filename) || '.rar';
           res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
           return res.download(filePath, `${safeTitle}${ext}`);
         }
@@ -1249,7 +1251,7 @@ exports.downloadDesign = async (req, res, next) => {
         else if (requestedType === 'pdc') ext = '.pdc';
         else if (requestedType === 'tif') ext = '.tif';
         else if (requestedType === 'image') ext = '.jpg';
-        else ext = '.zip';
+        else ext = '.rar';
       }
 
       const downloadFilename = `${safeTitle}${ext}`;
@@ -1277,7 +1279,14 @@ exports.downloadDesign = async (req, res, next) => {
             }
             res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
             res.setHeader('Content-Disposition', `attachment; filename="${dlName}"; filename*=UTF-8''${encodeURIComponent(dlName)}`);
-            res.setHeader('Content-Type', remoteRes.headers['content-type'] || 'application/octet-stream');
+            let contentType = remoteRes.headers['content-type'];
+            if (!contentType || contentType === 'application/octet-stream' || contentType.includes('text/plain')) {
+              if (ext === '.rar') contentType = 'application/vnd.rar';
+              else if (ext === '.zip') contentType = 'application/zip';
+              else if (ext === '.pdf') contentType = 'application/pdf';
+              else contentType = 'application/octet-stream';
+            }
+            res.setHeader('Content-Type', contentType);
             if (remoteRes.headers['content-length']) {
               res.setHeader('Content-Length', remoteRes.headers['content-length']);
             }

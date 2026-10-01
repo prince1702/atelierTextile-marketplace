@@ -318,7 +318,8 @@ export const api = {
       }
 
       const safeBase = (designTitle || 'design').trim().replace(/[/\\?%*:|"<>]/g, '_');
-      const suffix = fileType ? `_${fileType}` : '';
+      const isMainFile = !fileType || fileType.toLowerCase() === 'main';
+      const suffix = isMainFile ? '' : `_${fileType}`;
 
       if (filename) {
         // If server provided filename, ensure its extension matches the detected magic bytes
@@ -332,7 +333,8 @@ export const api = {
         }
       } else {
         // Construct filename and append the detected extension (or appropriate fallback)
-        const fallbackExt = detectedExt || (fileType === 'pdf' ? '.pdf' : fileType === 'tif' ? '.tif' : fileType === 'pdc' ? '.pdc' : '.zip');
+        // Master production archive defaults to .rar
+        const fallbackExt = detectedExt || (fileType === 'pdf' ? '.pdf' : fileType === 'tif' ? '.tif' : fileType === 'pdc' ? '.pdc' : '.rar');
         filename = `${safeBase}${suffix}${fallbackExt}`;
       }
 
