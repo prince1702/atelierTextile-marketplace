@@ -292,8 +292,8 @@ export function UploadPage() {
         showToast('Please upload a valid design file or archive (ZIP, RAR, BMP, PSD, etc.)', 'warning');
         return;
       }
-      if (file.size > 200 * 1024 * 1024) {
-        showToast('File size exceeds the 200MB limit', 'warning');
+      if (file.size > 500 * 1024 * 1024) {
+        showToast('File size exceeds the 500MB limit', 'warning');
         return;
       }
       setZipFile(file);
@@ -315,8 +315,8 @@ export function UploadPage() {
           return;
         }
       }
-      if (file.size > 200 * 1024 * 1024) {
-        showToast('File size exceeds the 200MB limit', 'warning');
+      if (file.size > 500 * 1024 * 1024) {
+        showToast('File size exceeds the 500MB limit', 'warning');
         return;
       }
       setPdcZipFile(file);
@@ -771,7 +771,7 @@ export function UploadPage() {
                   <p className="text-xs text-on-surface-variant">
                     {zipFile 
                       ? `${(zipFile.size / 1024 / 1024).toFixed(2)} MB` 
-                      : 'Supports ZIP, RAR, 7Z, BMP, PSD, TIF, EMB, DST (Max 200MB)'
+                      : 'Supports ZIP, RAR, 7Z, BMP, PSD, TIF, EMB, DST (Max 500MB)'
                     }
                   </p>
                 </div>
@@ -842,7 +842,7 @@ export function UploadPage() {
                     <p className="text-xs text-on-surface-variant">
                       {pdcZipFile 
                         ? `${(pdcZipFile.size / 1024 / 1024).toFixed(2)} MB` 
-                        : (category === 'Weaving Design' ? 'Supports RAR, ZIP, PDC (Max 200MB)' : 'Supports RAR, ZIP, TIF (Max 200MB)')
+                        : (category === 'Weaving Design' ? 'Supports RAR, ZIP, PDC (Max 500MB)' : 'Supports RAR, ZIP, TIF (Max 500MB)')
                       }
                     </p>
                   </div>

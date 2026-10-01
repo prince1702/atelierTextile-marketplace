@@ -11,7 +11,7 @@ const uploadToCloudinary = (buffer, resourceType = 'image', originalName = '') =
     const options = {
       folder: 'atelierTextile/designs',
       resource_type: resourceType,
-      timeout: 120000,
+      timeout: 300000, // 5 min timeout for files up to 500MB
     };
     if (resourceType === 'raw') {
       // Design archive files stay authenticated (not meant to be publicly accessible)
