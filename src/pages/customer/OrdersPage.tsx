@@ -33,33 +33,14 @@ export function OrdersPage() {
       return;
     }
 
-    const token = localStorage.getItem('texdesigner_token') || localStorage.getItem('atelier_token') || '';
-    const typeParam = fileType ? `&fileType=${fileType}` : '';
-    const downloadUrl = `${API_URL}/api/designs/${designId}/download?token=${encodeURIComponent(token)}${typeParam}`;
-
-    showToast(`Downloading ${fileType ? fileType.toUpperCase() : ''}: ${designTitle}...`, 'success');
+    showToast(`Downloading ${fileType ? fileType.toUpperCase() : ''}: ${designTitle}...`, 'info');
 
     try {
-      const response = await fetch(downloadUrl);
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        showToast(errData.error || `Download failed (${response.status})`, 'error');
-        return;
-      }
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      const disposition = response.headers.get('Content-Disposition') || '';
-      const match = disposition.match(/filename="?([^"\n]+)"?/);
-      link.download = match ? match[1] : `${designTitle}${fileType ? `_${fileType}` : ''}.zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
-    } catch (err) {
+      await api.designs.downloadFile(designId, designTitle, fileType);
+      showToast(`${fileType ? fileType.toUpperCase() + ' file' : 'File'} downloaded successfully!`, 'success');
+    } catch (err: any) {
       console.error('Download error:', err);
-      showToast('Download failed. Please try again.', 'error');
+      showToast(err.message || 'Download failed. Please try again.', 'error');
     }
   };
 

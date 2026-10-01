@@ -258,12 +258,88 @@ export const api = {
       }
 
       const blob = await response.blob();
+
+      // Read magic bytes to determine real file type and detect accidental error payloads
+      const headerBuf = await blob.slice(0, 8).arrayBuffer();
+      const header = new Uint8Array(headerBuf);
+
+      // Check if server returned a JSON error with HTTP 200 OK
+      if (header[0] === 0x7b) {
+        try {
+          const text = await blob.text();
+          const parsed = JSON.parse(text);
+          if (parsed && (parsed.error || parsed.message)) {
+            throw new Error(parsed.error || parsed.message);
+          }
+        } catch (e: any) {
+          if (e.message && !e.message.includes('JSON')) throw e;
+        }
+      }
+
+      // Check real archive / file format by binary signature (magic bytes)
+      let detectedExt = '';
+      if (header[0] === 0x52 && header[1] === 0x61 && header[2] === 0x72 && header[3] === 0x21) {
+        // 52 61 72 21 = 'Rar!' -> RAR Archive
+        detectedExt = '.rar';
+      } else if (header[0] === 0x50 && header[1] === 0x4b && (header[2] === 0x03 || header[2] === 0x05 || header[2] === 0x07)) {
+        // 50 4B = 'PK' -> ZIP Archive
+        detectedExt = '.zip';
+      } else if (header[0] === 0x37 && header[1] === 0x7a && header[2] === 0xbc && header[3] === 0xaf) {
+        // 7-Zip
+        detectedExt = '.7z';
+      } else if (header[0] === 0x25 && header[1] === 0x50 && header[2] === 0x44 && header[3] === 0x46) {
+        // %PDF
+        detectedExt = '.pdf';
+      } else if (
+        (header[0] === 0x49 && header[1] === 0x49 && header[2] === 0x2a && header[3] === 0x00) ||
+        (header[0] === 0x4d && header[1] === 0x4d && header[2] === 0x00 && header[3] === 0x2a)
+      ) {
+        // TIFF
+        detectedExt = '.tif';
+      } else if (header[0] === 0x42 && header[1] === 0x4d) {
+        // BMP
+        detectedExt = '.bmp';
+      } else if (header[0] === 0x38 && header[1] === 0x42 && header[2] === 0x50 && header[3] === 0x53) {
+        // 8BPS -> PSD
+        detectedExt = '.psd';
+      }
+
+      // Parse server filename from Content-Disposition if exposed
+      const disposition = response.headers.get('Content-Disposition') || '';
+      let filename = '';
+      const utf8Match = disposition.match(/filename\*=UTF-8''([^;\n]+)/i);
+      if (utf8Match) {
+        filename = decodeURIComponent(utf8Match[1]);
+      } else {
+        const standardMatch = disposition.match(/filename="?([^"\n;]+)"?/i);
+        if (standardMatch) {
+          filename = standardMatch[1];
+        }
+      }
+
+      const safeBase = (designTitle || 'design').trim().replace(/[/\\?%*:|"<>]/g, '_');
+      const suffix = fileType ? `_${fileType}` : '';
+
+      if (filename) {
+        // If server provided filename, ensure its extension matches the detected magic bytes
+        if (detectedExt) {
+          const dotIdx = filename.lastIndexOf('.');
+          if (dotIdx !== -1) {
+            filename = filename.substring(0, dotIdx) + detectedExt;
+          } else {
+            filename = `${filename}${detectedExt}`;
+          }
+        }
+      } else {
+        // Construct filename and append the detected extension (or appropriate fallback)
+        const fallbackExt = detectedExt || (fileType === 'pdf' ? '.pdf' : fileType === 'tif' ? '.tif' : fileType === 'pdc' ? '.pdc' : '.zip');
+        filename = `${safeBase}${suffix}${fallbackExt}`;
+      }
+
       const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = blobUrl;
-      const disposition = response.headers.get('Content-Disposition') || '';
-      const match = disposition.match(/filename="?([^"\n;]+)"?/);
-      link.download = match ? match[1] : `${designTitle}${fileType ? `_${fileType}` : ''}.zip`;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

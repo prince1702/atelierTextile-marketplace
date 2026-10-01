@@ -1226,6 +1226,7 @@ exports.downloadDesign = async (req, res, next) => {
 
         if (fs.existsSync(filePath)) {
           const ext = path.extname(filename) || '.zip';
+          res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
           return res.download(filePath, `${safeTitle}${ext}`);
         }
       } catch (e) {
@@ -1238,10 +1239,18 @@ exports.downloadDesign = async (req, res, next) => {
       const https = require('https');
       const http = require('http');
 
-      let ext = '.zip';
+      let ext = '';
       try {
-        ext = path.extname(new URL(fileUrl).pathname) || '.zip';
+        ext = path.extname(new URL(fileUrl).pathname);
       } catch (e) {}
+
+      if (!ext) {
+        if (requestedType === 'pdf') ext = '.pdf';
+        else if (requestedType === 'pdc') ext = '.pdc';
+        else if (requestedType === 'tif') ext = '.tif';
+        else if (requestedType === 'image') ext = '.jpg';
+        else ext = '.zip';
+      }
 
       const downloadFilename = `${safeTitle}${ext}`;
 
@@ -1266,7 +1275,8 @@ exports.downloadDesign = async (req, res, next) => {
               }
               return;
             }
-            res.setHeader('Content-Disposition', `attachment; filename="${dlName}"`);
+            res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+            res.setHeader('Content-Disposition', `attachment; filename="${dlName}"; filename*=UTF-8''${encodeURIComponent(dlName)}`);
             res.setHeader('Content-Type', remoteRes.headers['content-type'] || 'application/octet-stream');
             if (remoteRes.headers['content-length']) {
               res.setHeader('Content-Length', remoteRes.headers['content-length']);
